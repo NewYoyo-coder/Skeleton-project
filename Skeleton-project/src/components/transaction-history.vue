@@ -3,7 +3,12 @@
     <h1>거래내역</h1>
 
     <ul class="list">
-      <li v-for="t in transactions" :key="t.id" class="item" @click="selected = t">
+      <li
+        v-for="t in pagedTransactions"
+        :key="t.id"
+        class="item"
+        @click="selected = t"
+      >
         <div class="left">
           <span class="category-tag">{{ t.category }}</span>
           <div class="names" v-if="t.shop_name || t.item_name">
@@ -17,10 +22,26 @@
           <div class="memo" v-if="t.memo">{{ t.memo }}</div>
         </div>
         <div class="amount" :class="t.transaction_type">
-          {{ t.transaction_type === 'income' ? '+' : '-' }}{{ t.amount.toLocaleString() }}원
+          {{ t.transaction_type === 'income' ? '+' : '-'
+          }}{{ t.amount.toLocaleString() }}원
         </div>
       </li>
     </ul>
+
+    <div class="pagination">
+      <button @click="currentPage--" :disabled="currentPage === 1">이전</button>
+      <button
+        v-for="p in totalPages"
+        :key="p"
+        @click="currentPage = p"
+        :class="{ active: currentPage === p }"
+      >
+        {{ p }}
+      </button>
+      <button @click="currentPage++" :disabled="currentPage === totalPages">
+        다음
+      </button>
+    </div>
 
     <TransactionDetailModal
       v-if="selected"
@@ -31,22 +52,33 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import TransactionDetailModal from './transaction-detail-modal.vue'
+import { ref, computed, onMounted } from 'vue';
+import TransactionDetailModal from './transaction-detail-modal.vue';
 
-const transactions = ref([])
-const selected = ref(null)
+const transactions = ref([]);
+const selected = ref(null);
+const currentPage = ref(1);
+const PAGE_SIZE = 10;
 
 const paymentLabel = {
   card: '카드',
   cash: '현금',
-  account: '계좌이체'
-}
+  account: '계좌이체',
+};
+
+const totalPages = computed(() =>
+  Math.ceil(transactions.value.length / PAGE_SIZE),
+);
+
+const pagedTransactions = computed(() => {
+  const start = (currentPage.value - 1) * PAGE_SIZE;
+  return transactions.value.slice(start, start + PAGE_SIZE);
+});
 
 onMounted(async () => {
-  const res = await fetch('/api/transactions')
-  transactions.value = await res.json()
-})
+  const res = await fetch('/api/transactions');
+  transactions.value = await res.json();
+});
 </script>
 
 <style scoped>
@@ -120,5 +152,33 @@ onMounted(async () => {
 
 .amount.expense {
   color: #f44336;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1.5rem;
+}
+
+.pagination button {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.pagination button:disabled {
+  color: #ccc;
+  cursor: default;
+}
+
+.pagination button.active {
+  background: #2196f3;
+  color: #fff;
+  border-color: #2196f3;
 }
 </style>

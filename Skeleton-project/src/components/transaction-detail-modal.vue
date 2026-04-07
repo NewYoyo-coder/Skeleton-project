@@ -8,7 +8,8 @@
       </div>
 
       <div class="amount" :class="transaction.transaction_type">
-        {{ transaction.transaction_type === 'income' ? '+' : '-' }}{{ transaction.amount.toLocaleString() }}원
+        {{ transaction.transaction_type === 'income' ? '+' : '-'
+        }}{{ Number(transaction.amount).toLocaleString() }}원
       </div>
 
       <ul class="detail-list">
@@ -47,17 +48,17 @@
 defineProps({
   transaction: {
     type: Object,
-    required: true
-  }
-})
+    required: true,
+  },
+});
 
-defineEmits(['close'])
+defineEmits(['close']);
 
 const paymentLabel = {
   card: '카드',
   cash: '현금',
-  account: '계좌이체'
-}
+  account: '계좌이체',
+};
 </script>
 
 <style scoped>

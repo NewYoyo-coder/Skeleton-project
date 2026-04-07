@@ -126,7 +126,7 @@ const handleSave = async () => {
     shopName: currentType.value === 'expense' ? shopName.value : '',
     itemName: currentType.value === 'expense' ? itemName.value : '',
     memo: memo.value,
-    type: currentType.value,
+    transactionType: currentType.value,
   };
 
   try {

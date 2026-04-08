@@ -4,18 +4,18 @@
       <div class="stat-card balance">
         <p class="label">남은 재산</p>
         <h2 class="value">
-          {{ kmj_totalBalance.toLocaleString() }}<span>원</span>
+          {{ totalBalance.toLocaleString() }}<span>원</span>
         </h2>
         <div class="deco-circle"></div>
       </div>
       <div class="stat-group">
         <div class="stat-card income">
           <p class="label">총 수입</p>
-          <h3 class="value">+{{ kmj_totalIncome.toLocaleString() }}</h3>
+          <h3 class="value">+{{ totalIncome.toLocaleString() }}</h3>
         </div>
         <div class="stat-card expense">
           <p class="label">총 지출</p>
-          <h3 class="value">-{{ kmj_totalExpense.toLocaleString() }}</h3>
+          <h3 class="value">-{{ totalExpense.toLocaleString() }}</h3>
         </div>
       </div>
     </header>
@@ -26,11 +26,11 @@
     </div>
 
     <main v-else class="transaction-grid">
-      <div v-for="item in kmj_items" :key="item.id" class="wide-card">
+      <div v-for="item in items" :key="item.id" class="wide-card">
         <div class="card-left">
           <div class="date-box">
-            <span class="day">{{ item.date.split("-")[2] }}</span>
-            <span class="month">{{ item.date.split("-")[1] }}월</span>
+            <span class="day">{{ item.date.split('-')[2] }}</span>
+            <span class="month">{{ item.date.split('-')[1] }}월</span>
           </div>
           <div class="info-group">
             <h4 class="shop">{{ item.shop_name }}</h4>
@@ -44,7 +44,7 @@
 
         <div class="card-right">
           <div :class="['amount', item.transaction_type]">
-            {{ item.transaction_type === "income" ? "+" : "-"
+            {{ item.transaction_type === 'income' ? '+' : '-'
             }}{{ item.amount.toLocaleString() }}원
           </div>
           <p v-if="item.memo" class="memo">"{{ item.memo }}"</p>
@@ -55,54 +55,52 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted } from 'vue';
 
-const kmj_items = ref([]);
+const items = ref([]);
 const loading = ref(true);
 
 // 통계 계산 (computed)
-const kmj_totalIncome = computed(() =>
-  kmj_items.value
-    .filter((i) => i.transaction_type === "income")
+const totalIncome = computed(() =>
+  items.value
+    .filter((i) => i.transaction_type === 'income')
     .reduce((acc, cur) => acc + cur.amount, 0),
 );
 
-const kmj_totalExpense = computed(() =>
-  kmj_items.value
-    .filter((i) => i.transaction_type === "expense")
+const totalExpense = computed(() =>
+  items.value
+    .filter((i) => i.transaction_type === 'expense')
     .reduce((acc, cur) => acc + cur.amount, 0),
 );
 
-const kmj_totalBalance = computed(
-  () => kmj_totalIncome.value - kmj_totalExpense.value,
-);
+const totalBalance = computed(() => totalIncome.value - totalExpense.value);
 
-const kmj_loadData = async () => {
+const loadData = async () => {
   try {
     // transaction_db.json 서버 연결
-    const res = await fetch("http://localhost:3000/transactions");
+    const res = await fetch('http://localhost:3000/transactions');
     const data = await res.json();
-    kmj_items.value = Array.isArray(data) ? data : data.transactions;
+    items.value = Array.isArray(data) ? data : data.transactions;
   } catch (e) {
-    console.error("데이터 로드 실패", e);
+    console.error('데이터 로드 실패', e);
   } finally {
     loading.value = false;
   }
 };
 
-onMounted(kmj_loadData);
+onMounted(loadData);
 </script>
 
 <style scoped>
 /* 폰트 및 기본 설정 */
-@import url("https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap');
 
 .kmj-light-container {
   background: #f0f7ff;
   min-height: 100vh;
   padding: 40px 5%;
   color: #1e293b;
-  font-family: "Pretendard", sans-serif;
+  font-family: 'Pretendard', sans-serif;
   box-sizing: border-box;
 }
 

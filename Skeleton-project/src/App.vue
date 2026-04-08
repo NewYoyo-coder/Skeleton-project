@@ -1,15 +1,15 @@
 <template>
-  <div id="app">
-    <header>
-      <h1>가계부 앱 테스트 서버 (transaction_db.json)</h1>
-    </header>
+  <nav style="padding: 20px; background: #eee; display: flex; gap: 10px">
+    <RouterLink to="/">메인</RouterLink>
+    <RouterLink to="/test1">테스트 1</RouterLink>
+    <RouterLink to="/test2">테스트 2 (요약)</RouterLink>
+  </nav>
 
-    <router-view />
-  </div>
+  <RouterView />
 </template>
 <script setup>
-import { RouterView } from "vue-router";
-import JsonTest from "./components/json-test.vue"; // 경로에 맞춰 수정
+import { RouterView } from 'vue-router';
+import JsonTest from './components/json-test.vue'; // 경로에 맞춰 수정
 </script>
 
 <style>

@@ -9,6 +9,16 @@ const router = createRouter({
       name: "home",
       component: JsonTest,
     },
+    {
+      path: "/test1",
+      name: "test1",
+      component: () => import("../components/json-test.vue"),
+    },
+    {
+      path: "/test2",
+      name: "test2",
+      component: () => import("../components/json-test2.vue"),
+    },
   ],
 });
 

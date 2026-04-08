@@ -1,10 +1,10 @@
 <template>
   <nav style="padding: 20px; background: #eee; display: flex; gap: 10px">
     <RouterLink to="/">메인</RouterLink>
-    <RouterLink to="/test1">테스트 1</RouterLink>
-    <RouterLink to="/test2">테스트 2 (요약)</RouterLink>
     <RouterLink to="/">Home</RouterLink>
-    <RouterLink to="/history">History</RouterLink>
+    <RouterLink to="/test1">메인 카드 테스트 1</RouterLink>
+    <RouterLink to="/test2">메인 카드 테스트 2 (요약)</RouterLink>
+    <RouterLink to="/history">상세 거래내역 및 모달 테스트</RouterLink>
   </nav>
   <RouterView />
 </template>

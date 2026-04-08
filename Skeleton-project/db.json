@@ -1,0 +1,94 @@
+{
+  "transactions": [
+    {
+      "id": 61,
+      "date": "2026-03-30",
+      "transaction_type": "income",
+      "payment_method": "account",
+      "amount": 150000,
+      "category": "보너스",
+      "shop_name": "주식회사 본사",
+      "item_name": "우수사원 포상",
+      "memo": "자랑"
+    },
+
+    {
+      "id": 62,
+      "date": "2026-03-31",
+      "transaction_type": "expense",
+      "payment_method": "card",
+      "amount": 26000,
+      "category": "식비",
+      "shop_name": "배달의민족",
+      "item_name": "초밥 세트",
+      "memo": null
+    },
+    {
+      "id": 63,
+      "date": "2026-03-31",
+      "transaction_type": "expense",
+      "payment_method": "cash",
+      "amount": 6000,
+      "category": "생활용품",
+      "shop_name": "올리브영",
+      "item_name": "클렌징폼",
+      "memo": "리마인드"
+    },
+    {
+      "id": 64,
+      "date": "2026-04-01",
+      "transaction_type": "expense",
+      "payment_method": "card",
+      "amount": 4500,
+      "category": "식비",
+      "shop_name": "스타벅스",
+      "item_name": "아이스 아메리카노",
+      "memo": "카공"
+    },
+    {
+      "id": 65,
+      "date": "2026-04-01",
+      "transaction_type": "income",
+      "payment_method": "account",
+      "amount": 100000,
+      "category": "용돈",
+      "shop_name": "부모님",
+      "item_name": "4월 첫 용돈",
+      "memo": "아껴쓰기"
+    },
+    {
+      "id": 66,
+      "date": "2026-04-02",
+      "transaction_type": "expense",
+      "payment_method": "card",
+      "amount": 32000,
+      "category": "쇼핑",
+      "shop_name": "무신사",
+      "item_name": "캡모자",
+      "memo": null
+    },
+
+    {
+      "id": 67,
+      "date": "2026-04-02",
+      "transaction_type": "expense",
+      "payment_method": "account",
+      "amount": 1500,
+      "category": "교통",
+      "shop_name": "카카오택시",
+      "item_name": "지하철 환승",
+      "memo": null
+    },
+    {
+      "id": 68,
+      "date": "2026-04-03",
+      "transaction_type": "expense",
+      "payment_method": "card",
+      "amount": 6900,
+      "category": "통신",
+      "shop_name": "네이버페이",
+      "item_name": "구독 서비스",
+      "memo": "정기결제"
+    }
+  ]
+}

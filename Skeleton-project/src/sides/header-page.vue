@@ -72,22 +72,29 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useDateStore } from '@/stores/select-date.js';
 
-const today = new Date();
-const displayYear = ref(today.getFullYear());
-const displayMonth = ref(today.getMonth() + 1);
+const dateStore = useDateStore();
+
+const displayYear = ref(dateStore.selectedYear);
+const displayMonth = ref(dateStore.selectedMonth);
 
 const monthStr =
   displayMonth.value < 10 ? `0${displayMonth.value}` : displayMonth.value;
 const tempDate = ref(`${displayYear.value}-${monthStr}`);
 
-const applyDate = () => {
+const applyDate = (event) => {
   if (tempDate.value) {
     const [year, month] = tempDate.value.split('-');
     displayYear.value = parseInt(year, 10);
     displayMonth.value = parseInt(month, 10);
 
-    console.log(`선택된 날짜: ${displayYear.value}년 ${displayMonth.value}월`);
+    //날짜를 Pinia 스토어에 저장
+    dateStore.setDate(displayYear.value, displayMonth.value);
+
+    console.log(
+      `스토어에 저장 완료: ${dateStore.selectedYear}년 ${dateStore.selectedMonth}월`,
+    );
   }
 };
 </script>

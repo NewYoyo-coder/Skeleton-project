@@ -1,84 +1,125 @@
 <template>
-  <div class="history">
-    <h1>거래내역</h1>
+  <div class="container py-4" style="max-width: 600px">
+    <h5 class="fw-bold mb-4">거래내역</h5>
 
-    <div class="filter">
-      <input v-model="filterFrom" type="date" />
-      <span>~</span>
-      <input v-model="filterTo" type="date" />
-      <button class="reset-btn" @click="resetFilter">초기화</button>
+    <!-- 날짜 필터 -->
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <input
+        v-model="filterFrom"
+        type="date"
+        class="form-control form-control-sm flex-fill"
+      />
+      <span class="text-muted">~</span>
+      <input
+        v-model="filterTo"
+        type="date"
+        class="form-control form-control-sm flex-fill"
+      />
+      <button
+        class="btn btn-sm btn-light border text-nowrap"
+        @click="resetFilter"
+      >
+        초기화
+      </button>
     </div>
 
-    <div class="type-filter">
+    <!-- 타입 필터 -->
+    <div class="d-flex gap-2 mb-3">
       <button
         v-for="type in typeOptions"
         :key="type.value"
-        :class="[
-          'type-btn',
-          type.value,
-          { active: selectedType === type.value },
-        ]"
+        :class="['btn btn-sm', typeButtonClass(type.value)]"
+        style="flex: 1 1 0%"
         @click="toggleType(type.value)"
       >
         {{ type.label }}
       </button>
     </div>
 
-    <div class="category-filter">
+    <!-- 카테고리 필터 -->
+    <div class="d-flex flex-wrap gap-1 mb-3">
       <button
         v-for="cat in categoryOptions"
         :key="cat"
-        :class="['cat-btn', { active: selectedCategory === cat }]"
+        :class="[
+          'btn btn-sm rounded-pill px-3',
+          selectedCategory === cat ? 'btn-dark' : 'btn-outline-secondary',
+        ]"
         @click="toggleCategory(cat)"
       >
         {{ cat }}
       </button>
     </div>
 
-    <ul class="list">
-      <li
+    <!-- 정렬 -->
+    <div class="d-flex justify-content-end mb-2">
+      <div class="dropdown">
+        <button
+          class="btn btn-sm btn-light border dropdown-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+        >
+          {{ sortOrder === 'desc' ? '최신순' : '오래된순' }}
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li>
+            <button
+              class="dropdown-item"
+              :class="{ active: sortOrder === 'desc' }"
+              @click="sortOrder = 'desc'"
+            >
+              최신순
+            </button>
+          </li>
+          <li>
+            <button
+              class="dropdown-item"
+              :class="{ active: sortOrder === 'asc' }"
+              @click="sortOrder = 'asc'"
+            >
+              오래된순
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 거래 목록 -->
+    <div class="d-flex flex-column gap-2">
+      <TransactionItem
         v-for="t in pagedTransactions"
         :key="t.id"
-        class="item"
+        :transaction="t"
         @click="selected = t"
-      >
-        <div class="left">
-          <span class="category-tag">{{ t.category }}</span>
-          <div class="names" v-if="t.shop_name || t.item_name">
-            <span v-if="t.shop_name">{{ t.shop_name }}</span>
-            <span v-if="t.item_name"> · {{ t.item_name }}</span>
-          </div>
-          <div class="meta">
-            <span>{{ t.date }}</span>
-            <span>{{ paymentLabel[t.payment_method] }}</span>
-          </div>
-          <div class="memo" v-if="t.memo">{{ t.memo }}</div>
-        </div>
-        <div class="amount" :class="t.transaction_type">
-          {{ t.transaction_type === 'income' ? '+' : '-'
-          }}{{ t.amount.toLocaleString() }}원
-        </div>
-      </li>
-    </ul>
+      />
+    </div>
 
-    <p v-if="filteredTransactions.length === 0" class="empty">
+    <p
+      v-if="filteredTransactions.length === 0"
+      class="text-center text-muted mt-5"
+    >
       해당 기간의 거래내역이 없습니다.
     </p>
 
-    <div class="pagination" v-if="totalPages > 1">
-      <button @click="currentPage--" :disabled="currentPage === 1">이전</button>
-      <button
-        v-for="p in totalPages"
-        :key="p"
-        @click="currentPage = p"
-        :class="{ active: currentPage === p }"
-      >
-        {{ p }}
-      </button>
-      <button @click="currentPage++" :disabled="currentPage === totalPages">
-        다음
-      </button>
-    </div>
+    <!-- 페이지네이션 -->
+    <nav v-if="totalPages > 1" class="mt-4 d-flex justify-content-center">
+      <ul class="pagination pagination-sm mb-0">
+        <li class="page-item" :class="{ disabled: currentPage === 1 }">
+          <button class="page-link" @click="currentPage--">이전</button>
+        </li>
+        <li
+          v-for="p in totalPages"
+          :key="p"
+          class="page-item"
+          :class="{ active: currentPage === p }"
+        >
+          <button class="page-link" @click="currentPage = p">{{ p }}</button>
+        </li>
+        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+          <button class="page-link" @click="currentPage++">다음</button>
+        </li>
+      </ul>
+    </nav>
 
     <TransactionDetailModal
       v-if="selected"
@@ -91,28 +132,31 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import TransactionDetailModal from './transaction-detail-modal.vue';
+import TransactionItem from './transaction-item.vue';
 
 const transactions = ref([]);
 const selected = ref(null);
 const currentPage = ref(1);
 const PAGE_SIZE = 10;
 
-const filterFrom = ref(''); //0월0일부터
-const filterTo = ref(''); //0월0일까지
+const filterFrom = ref('');
+const filterTo = ref('');
 const selectedType = ref('all');
 const selectedCategory = ref('전체');
-
-const paymentLabel = {
-  card: '카드',
-  cash: '현금',
-  account: '계좌이체',
-};
+const sortOrder = ref('desc');
 
 const typeOptions = [
   { value: 'all', label: '전체' },
   { value: 'income', label: '수입' },
   { value: 'expense', label: '지출' },
 ];
+
+function typeButtonClass(value) {
+  if (selectedType.value !== value) return 'btn-outline-secondary';
+  if (value === 'income') return 'btn-primary';
+  if (value === 'expense') return 'btn-danger';
+  return 'btn-dark';
+}
 
 const categoryOptions = computed(() => {
   const base =
@@ -125,21 +169,17 @@ const categoryOptions = computed(() => {
   return ['전체', ...cats];
 });
 
+//필터링 및 정렬
 const filteredTransactions = computed(() => {
   return transactions.value
     .filter((t) => {
-      //날짜 필터링
       if (filterFrom.value && t.date < filterFrom.value) return false;
       if (filterTo.value && t.date > filterTo.value) return false;
-
-      //타입 필터링
       if (
         selectedType.value !== 'all' &&
         t.transaction_type !== selectedType.value
       )
         return false;
-
-      //카테고리 필터링
       if (
         selectedCategory.value !== '전체' &&
         t.category !== selectedCategory.value
@@ -147,7 +187,10 @@ const filteredTransactions = computed(() => {
         return false;
       return true;
     })
-    .sort((a, b) => (a.date < b.date ? 1 : -1));
+    .sort((a, b) => {
+      if (sortOrder.value === 'desc') return a.date < b.date ? 1 : -1;
+      return a.date > b.date ? 1 : -1;
+    });
 });
 
 const totalPages = computed(() =>
@@ -184,200 +227,3 @@ onMounted(async () => {
   transactions.value = await res.json();
 });
 </script>
-
-<style scoped>
-.history {
-  padding: 1rem;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.filter {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
-}
-
-.type-filter {
-  display: flex;
-  gap: 0.4rem;
-  margin-bottom: 0.75rem;
-}
-
-.type-btn {
-  flex: 1;
-  padding: 0.4rem 0;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  background: #fff;
-  cursor: pointer;
-  font-size: 0.9rem;
-  color: #555;
-}
-
-.type-btn.active.all {
-  background: #555;
-  color: #fff;
-  border-color: #555;
-}
-.type-btn.active.income {
-  background: #2196f3;
-  color: #fff;
-  border-color: #2196f3;
-}
-.type-btn.active.expense {
-  background: #f44336;
-  color: #fff;
-  border-color: #f44336;
-}
-
-.filter input {
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  padding: 0.3rem 0.5rem;
-  font-size: 0.9rem;
-}
-
-.category-filter {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-bottom: 1rem;
-}
-
-.cat-btn {
-  padding: 0.25rem 0.75rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 999px;
-  background: #fff;
-  cursor: pointer;
-  font-size: 0.85rem;
-  color: #555;
-}
-
-.cat-btn:hover {
-  border-color: #2196f3;
-  color: #2196f3;
-}
-
-.cat-btn.active {
-  background: #2196f3;
-  color: #fff;
-  border-color: #2196f3;
-}
-
-.reset-btn {
-  padding: 0.3rem 0.75rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  background: #fff;
-  cursor: pointer;
-  font-size: 0.85rem;
-  color: #555;
-}
-
-.reset-btn:hover {
-  background: #f5f5f5;
-}
-
-.list {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.item {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 1rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background: #fff;
-  cursor: pointer;
-}
-
-.item:hover {
-  border-color: #bbb;
-  background: #fafafa;
-}
-
-.category-tag {
-  display: inline-block;
-  background: #f0f0f0;
-  border-radius: 4px;
-  padding: 2px 8px;
-  font-size: 0.75rem;
-  margin-bottom: 4px;
-}
-
-.names {
-  font-size: 0.95rem;
-  font-weight: 500;
-}
-
-.meta {
-  font-size: 0.8rem;
-  color: #888;
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 4px;
-}
-
-.memo {
-  font-size: 0.8rem;
-  color: #aaa;
-  margin-top: 2px;
-}
-
-.amount {
-  font-weight: 600;
-  font-size: 1rem;
-  white-space: nowrap;
-}
-
-.amount.income {
-  color: #2196f3;
-}
-
-.amount.expense {
-  color: #f44336;
-}
-
-.empty {
-  text-align: center;
-  color: #aaa;
-  margin-top: 2rem;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.4rem;
-  margin-top: 1.5rem;
-}
-
-.pagination button {
-  padding: 0.4rem 0.75rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  background: #fff;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.pagination button:disabled {
-  color: #ccc;
-  cursor: default;
-}
-
-.pagination button.active {
-  background: #2196f3;
-  color: #fff;
-  border-color: #2196f3;
-}
-</style>

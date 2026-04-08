@@ -93,7 +93,7 @@
       "category": "식비",
       "shop_name": "김밥천국",
       "item_name": "김밥 세트",
-      "memo": ""
+      "memo": "축약을 위한 테스트 텍스트. 김밥, 떡볶이, 순대, 모둠튀김, 음료, 등등..."
     },
     {
       "id": "11",
@@ -125,7 +125,7 @@
       "transaction_type": "expense",
       "category": "배달",
       "shop_name": "쿠팡이츠",
-      "item_name": "피자",
+      "item_name": "콤비네이션 피자, 콜라, 파스타, 떡볶이, 샐러드, 모둠튀김",
       "memo": ""
     },
     {

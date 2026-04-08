@@ -56,6 +56,12 @@
         </div>
       </div>
     </div>
+    <router-link
+      to="/addTransaction"
+      class="btn btn-dark rounded-circle position-fixed shadow floating-add-btn d-flex justify-content-center align-items-center"
+    >
+      <i class="fa-solid fa-plus fs-3"></i>
+    </router-link>
   </div>
 </template>
 
@@ -119,5 +125,13 @@ const formatNumber = (num) => {
 <style scoped>
 .bg-f1f1f1 {
   background-color: #f1f1f1;
+}
+.floating-add-btn {
+  width: 60px;
+  height: 60px;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1000;
+  transition: transform 0.2s ease;
 }
 </style>

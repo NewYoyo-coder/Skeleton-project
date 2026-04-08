@@ -1,34 +1,42 @@
 <template>
-  <header class="bg-black py-3">
+  <header class="bg-white py-3">
     <div class="container">
-      <nav class="d-flex justify-content-center align-items-center gap-3">
-        <router-link to="/mainDashboard" class="text-white text-decoration-none"
-          >홈</router-link
-        >
-        <span class="text-white-50">|</span>
-
-        <a
-          href="#"
-          class="text-white text-decoration-none"
-          data-bs-toggle="modal"
-          data-bs-target="#monthModal"
-          @click.prevent
-        >
-          날짜선택
-        </a>
-
-        <span class="text-white-50">|</span>
+      <nav
+        class="d-flex align-items-center flex-nowrap text-nowrap overflow-x-auto"
+      >
         <router-link
-          to="/transactionHistory"
-          class="text-white text-decoration-none"
-          >거래내역</router-link
+          to="/mainDashboard"
+          class="text-black text-decoration-none fs-1 fs-md-1 fw-bold me-auto"
         >
-        <span class="text-white-50">|</span>
-        <router-link
-          to="/profileSettings"
-          class="text-white text-decoration-none"
-          >프로필&설정</router-link
-        >
+          가계부
+        </router-link>
+
+        <div class="d-flex align-items-center gap-2 gap-md-3">
+          <a
+            href="#"
+            class="text-black text-decoration-none ms-2 ms-md-4"
+            data-bs-toggle="modal"
+            data-bs-target="#monthModal"
+            @click.prevent
+          >
+            날짜선택
+          </a>
+
+          <span class="text-black">|</span>
+          <router-link
+            to="/transactionHistory"
+            class="text-black text-decoration-none"
+          >
+            거래내역
+          </router-link>
+
+          <router-link
+            to="/profileSettings"
+            class="text-black text-decoration-none ms-2 ms-md-3"
+          >
+            <i class="fa-solid fa-gear fs-5 fs-md-4"></i>
+          </router-link>
+        </div>
       </nav>
     </div>
 

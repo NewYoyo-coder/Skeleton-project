@@ -1,7 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import MainDashboard from '../components/main-dashboard.vue';
 import AddTransaction from '../components/add-transaction.vue';
 
 const routes = [
+  {
+    path: '/',
+    name: 'dashboard',
+    component: MainDashboard,
+  },
   {
     path: '/add/:type',
     name: 'add-transaction',

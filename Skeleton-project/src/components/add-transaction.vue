@@ -18,7 +18,7 @@
     <h2>{{ currentType === 'expense' ? '지출' : '수입' }} 추가</h2>
 
     <div class="form-group">
-      <label>날짜 선택:</label>
+      <label>날짜 선택: </label>
       <input type="date" v-model="selectedDate" required />
     </div>
 
@@ -73,8 +73,12 @@
     </div>
 
     <div class="button-group">
-      <button @click="handleSave" class="btn-submit">추가</button>
-      <button @click="handleCancel" class="btn-cancel">취소</button>
+      <button @click="handleSave" class="btn-submit btn btn-success">
+        추가
+      </button>
+      <button @click="handleCancel" class="btn-cancel btn btn-danger">
+        취소
+      </button>
     </div>
   </div>
 </template>
@@ -110,15 +114,12 @@ const handleSave = async () => {
   if (!amount.value || !category.value || !selectedDate.value)
     return alert('모든 항목을 입력해 주세요');
 
-  const timestampId = Date.now().toString();
-
   const finalAmount =
     currentType.value === 'expense'
       ? -Math.abs(amount.value)
       : Math.abs(amount.value);
 
   const newReceipt = {
-    id: timestampId,
     date: selectedDate.value,
     amount: finalAmount,
     category: category.value,
@@ -130,7 +131,7 @@ const handleSave = async () => {
   };
 
   try {
-    await axios.post('http://localhost:3000/receipts', newReceipt);
+    await axios.post('http://localhost:3000/transactions', newReceipt);
     router.push('/');
   } catch (error) {
     console.error('Failed to save:', error);
@@ -165,7 +166,7 @@ const handleCancel = () => {
   gap: 10px;
   margin-top: 20px;
 }
-.btn-submit {
+/* .btn-submit {
   background-color: #42b983;
   color: white;
   padding: 10px 20px;
@@ -178,7 +179,7 @@ const handleCancel = () => {
   padding: 10px 20px;
   border: none;
   cursor: pointer;
-}
+} */
 .form-group {
   margin-bottom: 15px;
 }

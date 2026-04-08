@@ -15,16 +15,16 @@ const KB_LIGHT = '\x1b[38;2;255;245;120m'; // 하이라이트 연한 노랑
 
 // 그라데이션 최적화 로고 (백슬래시 교정 완료)
 const LOGO = [
-    "_______ _________     __________________________________________________  __________            ",
-    "___  //_/__  __ )     ___  __ )_  __ \\_  __ \\__  __/_  ____/__    |__   |/  /__  __ \\           ",
-    "__  ,<  __  __  |     __  __  |  / / /  / / /_  /  _  /    __  /| |_  /|_/ /__  /_/ /           ",
-    "_  /| | _  /_/ /      _  /_/ // /_/ // /_/ /_  /   / /___  _  ___ |  /  / / _  ____/            ",
-    "/_/ |_| /_____/       /_____/ \\____/ \\____/ /_/    \\____/  /_/  |_/_/  /_/  /_/                 "
+    "    __ __ ____     ____  ____  ____  _______________    __  _______ ",
+    "   / //_// __ )   / __ )/ __ \\/ __ \\/_  __/ ____/   |  /  |/  / __ \\",
+    "  / ,<  / __  |  / __  / / / / / / / / / / /   / /| | / /|_/ / /_/ /",
+    " / /| |/ /_/ /  / /_/ / /_/ / /_/ / / / / /___/ ___ |/ /  / / ____/ ",
+    "/_/ |_/_____/  /_____/\\____/\\____/ /_/  \\____/_/  |_/_/  /_/_/      "
 ];
 const FOOTER = `
-  ╷╭ ╭╮   ╭─╮╭─╮╭─╮ ╭╮╭─╴╭─╴╶┬╴   ╭╮ ╭─╮╶┬╴╭─╴╷ ╷   ╭─╮╭─╮   ╶┬╴╭─╴╭─╮╭┬╮   ╭─╮
-  ├┴╮├┴╮--├─╯├┬╯│ │  │├╴ │   │    ├┴╮├─┤ │ │  ├─┤   ╭─╯╰─┤    │ ├╴ ├─┤│││   ╭─╯
-  ╵ ╵╰─╯  ╵  ╵╰╴╰─╯╰─╯╰─╴╰─╴ ╵    ╰─╯╵ ╵ ╵ ╰─╴╵ ╵╶─╴╰─╴╰─╯    ╵ ╰─╴╵ ╵╵ ╵╶─╴╰─╴
+  ╷╭ ╭╮   ╭─╮╭─╮╭─╮ ╭╮╭─╴╭─╴╶┬╴   ╭╮ ╭─╮╶┬╴╭─╴╷ ╷   ╭─╮╭─╮   ╶┬╴╭─╴╭─╮╭┬╮   ╭─╮ 
+  ├┴╮├┴╮--├─╯├┬╯│ │  │├╴ │   │    ├┴╮├─┤ │ │  ├─┤   ╭─╯╰─┤    │ ├╴ ├─┤│││   ╭─╯ 
+  ╵ ╵╰─╯  ╵  ╵╰╴╰─╯╰─╯╰─╴╰─╴ ╵    ╰─╯╵ ╵ ╵ ╰─╴╵ ╵╶─╴╰─╴╰─╯    ╵ ╰─╴╵ ╵╵ ╵╶─╴╰─╴ 
 `;
 
 const clear = () => process.stdout.write('\x1Bc');
@@ -78,10 +78,9 @@ async function run() {
     // 2. [핵심] 완벽 원복 & 그라데이션 채우기 똭!
     LOGO.forEach((line, i) => {
         setCursor(4, startY + i);
-        process.stdout.write(" ".repeat(maxLen + 10)); // 한 번 싹 지우기
+        process.stdout.write(" ".repeat(maxLen + 10)); // 잔상 제거
         setCursor(4, startY + i);
 
-        // 최종 그라데이션 로고 출력
         let coloredLine = "";
         [...line].forEach((char, x) => {
             coloredLine += `${getGradientColor(x, maxLen)}${char}`;
@@ -89,35 +88,49 @@ async function run() {
         process.stdout.write(coloredLine + RESET);
     });
 
-    setCursor(4, startY + LOGO.length);
-    process.stdout.write(`${GRAY}${FOOTER}${RESET}\n`);
-    // console.log(`${GRAY}  ----------------------------------------------------------------------------------${RESET}`);
+    // --- 색상 설정 (배경색 추가) ---
+    const BLACK = '\x1b[30m'; // 검정색 글자
+
+    // KB 정품 배경색 (Background Colors)
+    const BG_KB_MAIN = '\x1b[48;2;255;212;0m'; // #FFD400 배경
+    const BG_KB_DEEP = '\x1b[48;2;255;180;0m'; // 진한 노랑 배경
+
+    // [수정] 푸터 출력 부분 (run 함수 내)
+    // ---------------------------------------------------------
+    setCursor(0, startY + LOGO.length + 1);
+
+    // 텍스트는 BLACK(30), 배경은 BG_KB_MAIN(48)
+    // 양옆에 공백을 한 칸씩 더 넣어서 노란 박스가 글자를 예쁘게 감싸게 함
+    const paddedFooter = `  ${FOOTER.trim()} `;
+    process.stdout.write(`${BG_KB_MAIN}${BLACK}${paddedFooter}${RESET}\n`);
+    // ---------------------------------------------------------
 
     // 상태창 설정
     const statusY = startY + LOGO.length + 5;
     const status = { core1: 'LOADING...', core2: 'LOADING...' };
+    // 만약 상태창(ONLINE) 대괄호 안에도 노랑 배경을 넣고 싶다면...
     const drawStatus = () => {
         setCursor(0, statusY);
 
-        // 정중앙 정렬 유틸리티 (12칸 기준)
         const center = (str, len = 12) => {
             const pad = Math.max(0, len - str.length);
             const left = Math.floor(pad / 2);
-            const right = pad - left;
-            return " ".repeat(left) + str + " ".repeat(right);
+            return " ".repeat(left) + str + " ".repeat(pad - left);
         };
 
         const text1 = center(status.core1);
         const text2 = center(status.core2);
 
-        // 색상 입히기
-        const s1 = status.core1 === 'ONLINE' ? `${GREEN}${text1}${RESET}` : `${KB_MAIN}${text1}${RESET}`;
-        const s2 = status.core2 === 'ONLINE' ? `${GREEN}${text2}${RESET}` : `${KB_MAIN}${text2}${RESET}`;
+        // 상태창 반전 효과 (온라인일 때 초록 배경에 검정 글자 / 로딩일 때 노랑 배경에 검정 글자)
+        const s1 = status.core1 === 'ONLINE'
+            ? `\x1b[42m${BLACK}${text1}${RESET}` // 초록 배경
+            : `${BG_KB_MAIN}${BLACK}${text1}${RESET}`; // 노랑 배경
 
-        // 출력 및 커서 유배
+        const s2 = status.core2 === 'ONLINE'
+            ? `\x1b[42m${BLACK}${text2}${RESET}`
+            : `${BG_KB_MAIN}${BLACK}${text2}${RESET}`;
+
         process.stdout.write(`  CORE-1: JSON  [${s1}]    CORE-2: VITE  [${s2}]   `);
-
-        // 커서를 맨 아래로 치워서 검은색 바 안 보이게 처리
         readline.cursorTo(process.stdout, 0, statusY + 1);
     };
     drawStatus();

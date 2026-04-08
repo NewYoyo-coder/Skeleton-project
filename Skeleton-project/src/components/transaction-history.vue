@@ -1,6 +1,6 @@
 <template>
   <div class="container py-4" style="max-width: 600px">
-    <h5 class="fw-bold mb-4">거래내역</h5>
+    <h5 class="fw-bold mb-4 text-center">거래내역</h5>
 
     <!-- 날짜 필터 -->
     <div class="d-flex align-items-center gap-2 mb-3">
@@ -15,12 +15,6 @@
         type="date"
         class="form-control form-control-sm flex-fill"
       />
-      <button
-        class="btn btn-sm btn-light border text-nowrap"
-        @click="resetFilter"
-      >
-        초기화
-      </button>
     </div>
 
     <!-- 타입 필터 -->
@@ -47,12 +41,15 @@
         ]"
         @click="toggleCategory(cat)"
       >
-        {{ cat }}
+        {{ cat === '전체' ? '전체' : (CATEGORY_LABEL[cat] ?? cat) }}
       </button>
     </div>
 
     <!-- 정렬 -->
-    <div class="d-flex justify-content-end mb-2">
+    <div class="d-flex justify-content-end align-items-center gap-2 mb-2">
+      <button class="btn btn-sm btn-light border" @click="resetFilter">
+        초기화
+      </button>
       <div class="dropdown">
         <button
           class="btn btn-sm btn-light border dropdown-toggle"
@@ -90,9 +87,10 @@
         v-for="t in pagedTransactions"
         :key="t.id"
         :transaction="t"
-        @click="selected = t"
+        @click="selectedId = t.id"
       />
     </div>
+    <!-- item클릭을 받음 -->
 
     <p
       v-if="filteredTransactions.length === 0"
@@ -124,43 +122,52 @@
     <TransactionDetailModal
       v-if="selected"
       :transaction="selected"
-      @close="selected = null"
+      @close="selectedId = null"
     />
+    <!-- close 부분! 모달 사라짐 -->
   </div>
 </template>
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
+import { TRANSACTION_TYPE } from '../constants/transactionType';
+import { CATEGORY_LABEL } from '../constants/categories';
+import { useTransactionStore } from '../stores/transaction';
 import TransactionDetailModal from './transaction-detail-modal.vue';
 import TransactionItem from './transaction-item.vue';
 
-const transactions = ref([]);
-const selected = ref(null);
+const store = useTransactionStore();
+const { transactions } = storeToRefs(store);
+const selectedId = ref(null);
+const selected = computed(
+  () => transactions.value.find((t) => t.id === selectedId.value) ?? null,
+);
 const currentPage = ref(1);
 const PAGE_SIZE = 10;
 
 const filterFrom = ref('');
 const filterTo = ref('');
-const selectedType = ref('all');
+const selectedType = ref(TRANSACTION_TYPE.ALL);
 const selectedCategory = ref('전체');
 const sortOrder = ref('desc');
 
 const typeOptions = [
-  { value: 'all', label: '전체' },
-  { value: 'income', label: '수입' },
-  { value: 'expense', label: '지출' },
+  { value: TRANSACTION_TYPE.ALL, label: '전체' },
+  { value: TRANSACTION_TYPE.INCOME, label: '수입' },
+  { value: TRANSACTION_TYPE.EXPENSE, label: '지출' },
 ];
 
 function typeButtonClass(value) {
   if (selectedType.value !== value) return 'btn-outline-secondary';
-  if (value === 'income') return 'btn-primary';
-  if (value === 'expense') return 'btn-danger';
+  if (value === TRANSACTION_TYPE.INCOME) return 'btn-primary';
+  if (value === TRANSACTION_TYPE.EXPENSE) return 'btn-danger';
   return 'btn-dark';
 }
 
 const categoryOptions = computed(() => {
   const base =
-    selectedType.value === 'all'
+    selectedType.value === TRANSACTION_TYPE.ALL
       ? transactions.value
       : transactions.value.filter(
           (t) => t.transaction_type === selectedType.value,
@@ -218,12 +225,11 @@ function toggleCategory(cat) {
 function resetFilter() {
   filterFrom.value = '';
   filterTo.value = '';
-  selectedType.value = 'all';
+  selectedType.value = TRANSACTION_TYPE.ALL;
   selectedCategory.value = '전체';
 }
 
-onMounted(async () => {
-  const res = await fetch('/api/transactions');
-  transactions.value = await res.json();
+onMounted(() => {
+  store.fetchTransactions();
 });
 </script>

@@ -1,0 +1,152 @@
+{
+  "transactions": [
+    {
+      "id": "1",
+      "date": "2026-04-01",
+      "payment_method": "card",
+      "amount": 45000,
+      "transaction_type": "expense",
+      "category": "배달",
+      "shop_name": "배민",
+      "item_name": "치킨",
+      "memo": "맛있다"
+    },
+    {
+      "id": "3",
+      "date": "2026-04-09",
+      "payment_method": "card",
+      "amount": 128000,
+      "transaction_type": "expense",
+      "category": "쇼핑",
+      "shop_name": "올리브영",
+      "item_name": "스킨케어",
+      "memo": "세일 기간"
+    },
+    {
+      "id": "4",
+      "date": "2026-04-04",
+      "payment_method": "cash",
+      "amount": 50000,
+      "transaction_type": "income",
+      "category": "용돈",
+      "memo": "부모님께 받음"
+    },
+    {
+      "id": "5",
+      "date": "2026-04-05",
+      "payment_method": "card",
+      "amount": 15000,
+      "transaction_type": "expense",
+      "category": "여가",
+      "shop_name": "CGV",
+      "item_name": "영화 티켓",
+      "memo": ""
+    },
+    {
+      "id": "6",
+      "date": "2026-04-06",
+      "payment_method": "account",
+      "amount": 320000,
+      "transaction_type": "expense",
+      "category": "쇼핑",
+      "shop_name": "쿠팡",
+      "item_name": "무선 키보드",
+      "memo": "로켓배송"
+    },
+    {
+      "id": "7",
+      "date": "2026-04-07",
+      "payment_method": "card",
+      "amount": 9500,
+      "transaction_type": "expense",
+      "category": "배달",
+      "shop_name": "요기요",
+      "item_name": "점심 도시락",
+      "memo": ""
+    },
+    {
+      "id": "8",
+      "date": "2026-04-08",
+      "payment_method": "card",
+      "amount": 230000,
+      "transaction_type": "expense",
+      "category": "쇼핑",
+      "shop_name": "무신사",
+      "item_name": "반팔 티셔츠",
+      "memo": "봄 옷 구매"
+    },
+    {
+      "id": "9",
+      "date": "2026-04-09",
+      "payment_method": "account",
+      "amount": 500000,
+      "transaction_type": "income",
+      "category": "부수입",
+      "memo": "프리랜서 작업비"
+    },
+    {
+      "id": "10",
+      "date": "2026-04-10",
+      "payment_method": "cash",
+      "amount": 12000,
+      "transaction_type": "expense",
+      "category": "식비",
+      "shop_name": "김밥천국",
+      "item_name": "김밥 세트",
+      "memo": "축약을 위한 테스트 텍스트. 김밥, 떡볶이, 순대, 모둠튀김, 음료, 등등..."
+    },
+    {
+      "id": "11",
+      "date": "2026-04-11",
+      "payment_method": "card",
+      "amount": 55000,
+      "transaction_type": "expense",
+      "category": "여가",
+      "shop_name": "스타벅스",
+      "item_name": "음료 및 케이크",
+      "memo": "친구 만남"
+    },
+    {
+      "id": "12",
+      "date": "2026-04-12",
+      "payment_method": "account",
+      "amount": 80000,
+      "transaction_type": "expense",
+      "category": "교통",
+      "memo": "KTX 서울-부산",
+      "shop_name": "코레일",
+      "item_name": "기차"
+    },
+    {
+      "id": "13",
+      "date": "2026-04-13",
+      "payment_method": "card",
+      "amount": 37500,
+      "transaction_type": "expense",
+      "category": "배달",
+      "shop_name": "쿠팡이츠",
+      "item_name": "콤비네이션 피자, 콜라, 파스타, 떡볶이, 샐러드, 모둠튀김",
+      "memo": ""
+    },
+    {
+      "id": "14",
+      "date": "2026-04-14",
+      "payment_method": "cash",
+      "amount": 100000,
+      "transaction_type": "income",
+      "category": "용돈",
+      "memo": "생일 선물"
+    },
+    {
+      "id": "15",
+      "date": "2026-04-15",
+      "payment_method": "card",
+      "amount": 19800,
+      "transaction_type": "expense",
+      "category": "여가",
+      "shop_name": "넷플릭스",
+      "memo": "월 구독료"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

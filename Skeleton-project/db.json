@@ -34,17 +34,6 @@
       "memo": ""
     },
     {
-      "id": "6",
-      "date": "2026-04-06",
-      "payment_method": "계좌이체",
-      "amount": 320000,
-      "transaction_type": "지출",
-      "category": "쇼핑",
-      "shop_name": "쿠팡",
-      "item_name": "무선 키보드",
-      "memo": "로켓배송"
-    },
-    {
       "id": "7",
       "date": "2026-04-07",
       "payment_method": "카드",
@@ -53,7 +42,7 @@
       "category": "음식",
       "shop_name": "요기요",
       "item_name": "점심 도시락",
-      "memo": ""
+      "memo": "dddd"
     },
     {
       "id": "8",
@@ -64,7 +53,7 @@
       "category": "쇼핑",
       "shop_name": "무신사",
       "item_name": "반팔 티셔츠",
-      "memo": "봄 옷 구매"
+      "memo": "ddd봄 옷 구매"
     },
     {
       "id": "9",

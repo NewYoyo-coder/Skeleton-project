@@ -1,30 +1,47 @@
-import { ref } from 'vue'
-import { defineStore } from 'pinia'
+import { ref } from 'vue';
+import { defineStore } from 'pinia';
+import axios from 'axios';
 
 export const useTransactionStore = defineStore('transaction', () => {
-  const transactions = ref([])
+  const transactions = ref([]);
 
   async function fetchTransactions() {
-    const res = await fetch('/api/transactions')
-    transactions.value = await res.json()
+    try {
+      const res = await axios.get('/api/transactions');
+      transactions.value = res.data;
+    } catch (error) {
+      console.error('데이터 로드 실패:', error);
+    }
   }
 
+  //수정
   async function updateTransaction(id, data) {
-    const res = await fetch(`/api/transactions/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    })
-    const updated = await res.json()
-    const idx = transactions.value.findIndex((t) => t.id === id)
-    if (idx !== -1) transactions.value[idx] = updated
-    return updated
+    try {
+      const res = await axios.put(`/api/transactions/${id}`, data);
+      const updated = res.data;
+
+      const idx = transactions.value.findIndex((t) => t.id === id);
+      if (idx !== -1) transactions.value[idx] = updated;
+      return updated;
+    } catch (error) {
+      alert('수정 중 오류가 발생했습니다.');
+    }
   }
 
+  //삭제
   async function deleteTransaction(id) {
-    await fetch(`/api/transactions/${id}`, { method: 'DELETE' })
-    transactions.value = transactions.value.filter((t) => t.id !== id)
+    try {
+      await axios.delete(`/api/transactions/${id}`);
+      transactions.value = transactions.value.filter((t) => t.id !== id);
+    } catch (error) {
+      console.error('삭제 실패:', error);
+    }
   }
 
-  return { transactions, fetchTransactions, updateTransaction, deleteTransaction }
-})
+  return {
+    transactions,
+    fetchTransactions,
+    updateTransaction,
+    deleteTransaction,
+  };
+});

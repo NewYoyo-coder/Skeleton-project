@@ -1,36 +1,44 @@
 <template>
-  <div class="start-page">
-    <div class="intro-box">
-      <div class="image-box">
+  <div class="d-flex justify-content-center align-items-center bg-light">
+    <div
+      class="p-4 p-md-5 rounded-4 shadow-sm text-center mt-5"
+      style="max-width: 360px; width: 100%"
+    >
+      <div class="mb-4">
         <img
-          class="piggy-image"
+          class="piggy-image fade-slide-in"
           src="https://cdn-icons-png.flaticon.com/512/216/216687.png"
           alt="piggy bank"
+          style="width: 100px"
         />
       </div>
 
-      <h1 class="title">가계부 앱 시작</h1>
-      <p class="sub-text">이름 과 이메일 을 입력하고 시작하세요.</p>
+      <h1 class="h4 fw-bold mb-2">가계부 앱 시작</h1>
+      <p class="text-secondary small mb-4">이름을 입력하고 시작하세요.</p>
 
-      <form class="user-form" @submit.prevent="goToHome">
+      <form class="d-grid gap-3" @submit.prevent="goToHome">
         <input
           v-model="userName"
           type="text"
           placeholder="이름 입력"
-          class="form-input"
+          class="form-control form-control-lg fs-6"
         />
         <input
           v-model="userEmail"
           type="email"
-          placeholder="이메일 입력"
-          class="form-input"
+          placeholder="이메일 입력(선택사항)"
+          class="form-control form-control-lg fs-6"
         />
-        <button type="submit" class="start-btn">시작하기</button>
+        <button
+          type="submit"
+          class="btn btn-warning btn-lg text-white fw-bold shadow-sm"
+        >
+          시작하기
+        </button>
       </form>
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -44,10 +52,10 @@ const userEmail = ref('');
 
 const goToHome = async () => {
   // 1. 유저 정보 먼저 저장
-  // if (!userName.value.trim() || !userEmail.value.trim()) {
-  //   alert('이름과 이메일을 모두 입력해주세요.');
-  //   return;
-  // }
+  if (!userName.value.trim()) {
+    alert('이름을 입력해주세요.');
+    return;
+  }
   userStore.setUserInfo(userName.value, userEmail.value);
 
   // 2. [핵심] 대시보드 가기 전에 데이터 선로딩
@@ -62,65 +70,11 @@ const goToHome = async () => {
   router.push('/mainDashboard');
 };
 </script>
-
 <style scoped>
-.start-page {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: var(--bg-color);
+/* 애니메이션은 부트스트랩에 없으므로 이것만 남겨둡니다 */
+.fade-slide-in {
+  animation: fadeSlideIn 1s ease forwards;
 }
-
-.intro-box {
-  width: 360px;
-  padding: 32px;
-  border-radius: 20px;
-  background: var(--card-bg);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  text-align: center;
-}
-
-.image-box {
-  margin-bottom: 16px;
-}
-
-.piggy-image {
-  width: 100px;
-  animation: fadeSlideIn 1s ease;
-}
-
-.title {
-  margin: 0 0 8px;
-}
-
-.sub-text {
-  margin-bottom: 20px;
-  font-size: 14px;
-}
-
-.user-form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.form-input {
-  padding: 12px;
-  border: 1px solid #cccccc;
-  border-radius: 10px;
-}
-
-.start-btn {
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  background: #f4a261;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-
 @keyframes fadeSlideIn {
   from {
     opacity: 0;

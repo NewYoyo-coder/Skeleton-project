@@ -822,12 +822,12 @@
     },
     {
       "date": "2026-04-10",
-      "amount": 1.111111111111e96,
+      "amount": 111111111,
       "category": "월급",
       "paymentMethod": "cash",
       "shopName": "",
       "itemName": "",
-      "memo": "11111111111111",
+      "memo": "11111111111",
       "transactionType": "income",
       "id": "-nih1bILBcA"
     },
@@ -1182,6 +1182,66 @@
       "shop_name": "스타벅스",
       "item_name": "아이스 아메리카노",
       "memo": "2f342223423"
+    },
+    {
+      "date": "2026-04-10",
+      "amount": 111111111111,
+      "category": "월급",
+      "paymentMethod": "cash",
+      "shopName": "",
+      "itemName": "",
+      "memo": "기부니가 좋아요",
+      "transactionType": "income",
+      "id": "K8qfgP7zVeM"
+    },
+    {
+      "date": "2026-04-09",
+      "amount": 11111111,
+      "category": "월급",
+      "paymentMethod": "card",
+      "shopName": "",
+      "itemName": "",
+      "memo": "월급 ㄱㅇㄷ",
+      "transactionType": "income",
+      "id": "3UjBBCdPAbI"
+    },
+    {
+      "date": "2026-04-01",
+      "amount": 1000000,
+      "category": "쇼핑",
+      "paymentMethod": "cash",
+      "shopName": "",
+      "itemName": "",
+      "memo": "삼전 ㄷㄷ\ntestㅇㅇㅇㅇㅇㅇㅇ",
+      "transactionType": "income",
+      "id": "uDscgH6pFqg",
+      "transaction_type": "지출",
+      "payment_method": "계좌이체",
+      "shop_name": "testㅇㅇㅇㅇㅇㅇㅇ",
+      "item_name": "testㅇㅇㅇㅇㅇㅇㅇ"
+    },
+    {
+      "date": "2026-04-30",
+      "amount": -111111,
+      "category": "교통",
+      "paymentMethod": "cash",
+      "shopName": "ㅇㅇ",
+      "itemName": "ㄴㄴ",
+      "memo": "121211212",
+      "transactionType": "expense",
+      "id": "Tou7KOOffqc"
+    },
+    {
+      "date": "2026-04-20",
+      "amount": -111111111,
+      "category": "음식",
+      "paymentMethod": "cash",
+      "shopName": "1",
+      "itemName": "1",
+      "memo": "1",
+      "transactionType": "expense",
+      "id": "PrI709iuKp0"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

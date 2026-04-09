@@ -1,35 +1,72 @@
 <template>
-  <div class="profile-page">
-    <!-- <TopNav /> -->
+  <div
+    class="profile-page min-vh-100 py-5"
+    style="background-color: var(--bg-color); color: var(--text-color)"
+  >
+    <div class="container">
+      <div
+        class="card shadow-sm mx-auto"
+        style="max-width: 420px; background-color: var(--card-bg)"
+      >
+        <div class="card-body p-4">
+          <h2 class="h4 mb-4 fw-bold">프로필 & 설정</h2>
 
-    <div class="profile-card">
-      <h2>프로필 & 설정</h2>
+          <div class="customProfile mb-3 text-start">
+            <label class="form-label small fw-bold">이름</label>
+            <input
+              v-model="editName"
+              type="text"
+              class="form-control form-control-lg"
+              placeholder="이름을 입력하세요"
+            />
+          </div>
 
-      <div class="form-group">
-        <label>이름</label>
-        <input v-model="editName" type="text" />
-      </div>
+          <div class="customProfile mb-3 text-start">
+            <label class="form-label small fw-bold">이메일</label>
+            <input
+              v-model="editEmail"
+              type="email"
+              class="form-control form-control-lg"
+              placeholder="example@mail.com"
+            />
+          </div>
 
-      <div class="form-group">
-        <label>이메일</label>
-        <input v-model="editEmail" type="email" />
-      </div>
+          <div class="theme-section mb-4 text-start">
+            <p class="small fw-bold mb-2">화면 모드</p>
+            <div class="btn-group w-100 theme-btn-group" role="group">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                :class="{ active: userStore.theme === 'light' }"
+                @click="changeTheme('light')"
+              >
+                ☀️ 라이트
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                :class="{ active: userStore.theme === 'dark' }"
+                @click="changeTheme('dark')"
+              >
+                🌙 다크
+              </button>
+            </div>
+          </div>
 
-      <div class="theme-section">
-        <p>화면 모드</p>
-        <div class="theme-buttons">
-          <button @click="changeTheme('light')">화이트모드</button>
-          <button @click="changeTheme('dark')">다크모드</button>
+          <button
+            class="btn btn-warning w-100 fw-bold py-2 text-white"
+            style="background-color: #f4a261; border: none"
+            @click="saveProfile"
+          >
+            저장하기
+          </button>
         </div>
       </div>
-
-      <button class="save-btn" @click="saveProfile">저장</button>
     </div>
   </div>
 </template>
 
 <script setup>
-// import TopNav from '../components/TopNav.vue';
 import { ref, watch } from 'vue';
 import { useUserStore } from '../../src/stores/userStore';
 
@@ -38,9 +75,8 @@ const userStore = useUserStore();
 const editName = ref(userStore.name);
 const editEmail = ref(userStore.email);
 
-// watch 부분도 수정
 watch(
-  () => [userStore.name, userStore.email], // 객체가 없으니 각각 감시하거나
+  () => [userStore.name, userStore.email],
   ([newName, newEmail]) => {
     editName.value = newName;
     editEmail.value = newEmail;
@@ -58,62 +94,55 @@ const saveProfile = () => {
 };
 
 const changeTheme = (theme) => {
-  userStore.setTheme(theme); // 스토어 안에서 setAttribute까지 처리하니까 이거 한 줄이면 끝!
+  userStore.setTheme(theme);
 };
 </script>
 
 <style scoped>
+/* 1. 컨테이너: 배경색이 가장 넓으므로 여기서 흐름을 잡아줌 */
 .profile-page {
-  min-height: 100vh;
-  background: var(--bg-color);
-  color: var(--text-color);
+  transition:
+    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.profile-card {
-  width: 420px;
-  margin: 40px auto;
-  padding: 24px;
-  border-radius: 16px;
-  background: var(--card-bg);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+/* 2. 카드 및 내부 요소: 배경, 테두리, 그림자 일괄 트랜지션 */
+.card,
+.form-control,
+.btn,
+.form-label {
+  transition:
+    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.form-group {
-  margin-bottom: 16px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 6px;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #cccccc;
-}
-
-.theme-section {
-  margin: 20px 0;
-}
-
-.theme-buttons {
-  display: flex;
-  gap: 10px;
-}
-
-.theme-buttons button,
-.save-btn {
-  padding: 10px 14px;
+/* 3. 카드 디테일 */
+.card {
   border: none;
-  border-radius: 8px;
+  border-radius: 1rem;
+}
+
+/* 4. 입력창 포커스: 테마 전환과 별개로 부드러운 반응 */
+.form-control:focus {
+  border-color: #f4a261;
+  box-shadow: 0 0 0 0.25rem rgba(244, 162, 97, 0.25);
+}
+
+/* 5. 버튼 쫀득한 클릭 효과 */
+.btn-group .btn {
   cursor: pointer;
 }
 
-.save-btn {
-  margin-top: 10px;
-  background: #f4a261;
-  color: white;
+.btn-group .btn:active {
+  transform: scale(0.96);
+  transition: transform 0.1s ease !important; /* 클릭 반응은 빨라야 함 */
+}
+
+/* 6. 레이블 배경 (기존 요청사항 유지) */
+[data-theme='dark'] .form-label {
+  background-color: var(--border) !important;
+  transition: background-color 0.4s ease;
 }
 </style>

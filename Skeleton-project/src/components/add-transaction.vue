@@ -265,7 +265,6 @@ input[type='date'] {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #f1f1f1;
   font-family: Arial, sans-serif;
 }
 

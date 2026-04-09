@@ -11,7 +11,11 @@ import transactionHistory from '@/components/transaction-history.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', component: startPage },
+    {
+      path: '/',
+      name: 'startPage',
+      component: startPage
+    },
     { path: '/mainDashboard', component: Maindashboard },
     { path: '/addTransaction', component: addTransaction },
     { path: '/profileSettings', component: profileSettings },
@@ -27,12 +31,12 @@ const router = createRouter({
     {
       path: "/test1",
       name: "test1",
-      component: () => import("../components/json-test.vue"),
+      component: () => import("../../deleted_views/json-test.vue"),
     },
     {
       path: "/test2",
       name: "test2",
-      component: () => import("../components/json-test2.vue"),
+      component: () => import("../../deleted_views/json-test2.vue"),
     }
   ],
 });

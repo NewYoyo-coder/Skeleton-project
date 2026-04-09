@@ -1,67 +1,70 @@
 <template>
-  <div class="dashboard-wrapper bg-f1f1f1 min-vh-100 pt-4 pb-5">
-    <div class="container px-4">
-      <h3 class="text-center mb-4 text-dark" style="font-weight: 300">
-        {{ displayDate }}
-      </h3>
+  <div>
+    <div class="dashboard-wrapper pt-4 pb-2">
+      <div class="container px-4">
+        <h3 class="text-center mb-4 text-dark" style="font-weight: 300">
+          {{ displayDate }}
+        </h3>
 
-      <div class="card border-0 shadow-sm rounded-4 mb-3">
-        <div
-          class="card-body p-4 d-flex justify-content-between align-items-center"
-        >
-          <div>
-            <div class="text-dark fw-bold mb-1" style="font-size: 0.9rem">
-              순수익
+        <div class="card border-0 shadow-sm rounded-4 mb-3">
+          <div
+            class="card-body p-4 d-flex justify-content-between align-items-center"
+          >
+            <div>
+              <div class="text-dark fw-bold mb-1" style="font-size: 0.9rem">
+                순수익
+              </div>
+              <h2 class="fw-bold mb-0 text-dark">
+                {{ formatNumber(netIncome) }}
+                <span style="font-size: 1.2rem">원</span>
+              </h2>
             </div>
-            <h2 class="fw-bold mb-0 text-dark">
-              {{ formatNumber(netIncome) }}
-              <span style="font-size: 1.2rem">원</span>
-            </h2>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body text-center p-3">
+                <div
+                  class="text-primary mb-1"
+                  style="font-size: 0.85rem; font-weight: 600"
+                >
+                  총 수입
+                </div>
+                <h5 class="text-primary mb-0">
+                  {{ formatNumber(totalIncome) }}원
+                </h5>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body text-center p-3">
+                <div
+                  class="text-danger mb-1"
+                  style="font-size: 0.85rem; font-weight: 600"
+                >
+                  총 지출
+                </div>
+                <h5 class="text-danger mb-0">
+                  {{ totalExpense > 0 ? '-' : ''
+                  }}{{ formatNumber(totalExpense) }} 원
+                </h5>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-
-      <div class="row g-3">
-        <div class="col-6">
-          <div class="card border-0 shadow-sm rounded-4 h-100">
-            <div class="card-body text-center p-3">
-              <div
-                class="text-primary mb-1"
-                style="font-size: 0.85rem; font-weight: 600"
-              >
-                총 수입
-              </div>
-              <h5 class="text-primary mb-0">
-                {{ formatNumber(totalIncome) }}원
-              </h5>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-6">
-          <div class="card border-0 shadow-sm rounded-4 h-100">
-            <div class="card-body text-center p-3">
-              <div
-                class="text-danger mb-1"
-                style="font-size: 0.85rem; font-weight: 600"
-              >
-                총 지출
-              </div>
-              <h5 class="text-danger mb-0">
-                {{ totalExpense > 0 ? '-' : ''
-                }}{{ formatNumber(totalExpense) }} 원
-              </h5>
-            </div>
-          </div>
-        </div>
-      </div>
+      <router-link
+        to="/addTransaction"
+        class="btn btn-dark rounded-circle position-fixed shadow floating-add-btn d-flex justify-content-center align-items-center"
+      >
+        <i class="fa-solid fa-plus fs-3"></i>
+      </router-link>
     </div>
-    <router-link
-      to="/addTransaction"
-      class="btn btn-dark rounded-circle position-fixed shadow floating-add-btn d-flex justify-content-center align-items-center"
-    >
-      <i class="fa-solid fa-plus fs-3"></i>
-    </router-link>
+    <div><recentTransaction /></div>
   </div>
 </template>
 
@@ -69,6 +72,7 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import axios from 'axios';
 import { useDateStore } from '@/stores/select-date.js';
+import recentTransaction from './main-recentTransaction.vue';
 
 const dateStore = useDateStore();
 const transactions = ref([]);

@@ -1,5 +1,5 @@
 <template>
-  <header class="bg-white py-3">
+  <header class="py-3">
     <div class="container">
       <nav
         class="d-flex align-items-center flex-nowrap text-nowrap overflow-x-auto"

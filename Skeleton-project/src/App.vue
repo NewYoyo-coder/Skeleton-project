@@ -1,40 +1,21 @@
-<script setup>
-import { RouterView } from 'vue-router';
-// 기존에 설정하신 경로 그대로 유지합니다.
-import Header from '@/sides/header-page.vue';
-// import JsonTest from './components/json-test.vue';
-</script>
-
 <template>
-  <div class="app-container min-vh-100 bg-white">
-    <Header />
-    <main class="container py-4">
+  <div class="min-vh-100 d-flex flex-column">
+    <Header v-if="!isStartPage" />
+
+    <main class="container-fluid py-4 flex-grow-1">
       <RouterView />
     </main>
   </div>
 </template>
-<style scoped>
-/* #app {
-        font-family: Avenir, Helvetica, Arial, sans-serif;
-        padding: 20px; */
 
-.app-background {
-  background-color: #f2f2f2;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-}
+<script setup>
+import { computed } from 'vue';
+import { useRoute, RouterView } from 'vue-router';
+import Header from '@/sides/header-page.vue';
 
-header {
-  line-height: 1.5;
-}
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './assets/style.css';
 
-.mobile-container {
-  width: 100%;
-  max-width: 425px;
-  min-height: 100vh;
-  background-color: #ffffff;
-  position: relative;
-  overflow-x: hidden;
-}
-</style>
+const route = useRoute();
+const isStartPage = computed(() => route.name === 'startPage');
+</script>

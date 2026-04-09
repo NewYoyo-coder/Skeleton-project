@@ -4,6 +4,12 @@ import axios from 'axios';
 
 export const useTransactionStore = defineStore('transaction', () => {
   const transactions = ref([]);
+  const getSortedData = (sortBy) => {
+    const data = [...transactions.value]; // 원본 보존을 위해 복사
+    return sortBy === 'date'
+      ? data.sort((a, b) => new Date(b.date) - new Date(a.date))
+      : data.sort((a, b) => b.amount - a.amount);
+  };
 
   async function fetchTransactions() {
     try {
@@ -40,6 +46,7 @@ export const useTransactionStore = defineStore('transaction', () => {
 
   return {
     transactions,
+    getSortedData,
     fetchTransactions,
     updateTransaction,
     deleteTransaction,

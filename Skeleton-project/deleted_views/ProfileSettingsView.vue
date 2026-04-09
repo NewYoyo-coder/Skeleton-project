@@ -18,7 +18,7 @@
       <div class="theme-section">
         <p>화면 모드</p>
         <div class="theme-buttons">
-          <button @click="changeTheme('light')">화이트모드</button>
+          <button @click="changeTheme('light')">라이트모드</button>
           <button @click="changeTheme('dark')">다크모드</button>
         </div>
       </div>

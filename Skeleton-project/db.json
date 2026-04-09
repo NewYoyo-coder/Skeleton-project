@@ -1,7 +1,7 @@
 {
   "transactions": [
     {
-      "id": 1,
+      "id": "1",
       "date": "2026-03-01",
       "transaction_type": "income",
       "payment_method": "account",
@@ -12,7 +12,7 @@
       "memo": "성과급 포함"
     },
     {
-      "id": 2,
+      "id": "2",
       "date": "2026-03-01",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -23,7 +23,7 @@
       "memo": null
     },
     {
-      "id": 3,
+      "id": "3",
       "date": "2026-03-01",
       "transaction_type": "expense",
       "payment_method": "cash",
@@ -34,7 +34,7 @@
       "memo": "리마인드"
     },
     {
-      "id": 4,
+      "id": "4",
       "date": "2026-03-02",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -45,7 +45,7 @@
       "memo": "카공"
     },
     {
-      "id": 5,
+      "id": "5",
       "date": "2026-03-02",
       "transaction_type": "income",
       "payment_method": "account",
@@ -56,7 +56,7 @@
       "memo": "중요"
     },
     {
-      "id": 6,
+      "id": "6",
       "date": "2026-03-03",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -67,7 +67,7 @@
       "memo": null
     },
     {
-      "id": 7,
+      "id": "7",
       "date": "2026-03-03",
       "transaction_type": "expense",
       "payment_method": "account",
@@ -78,7 +78,7 @@
       "memo": null
     },
     {
-      "id": 8,
+      "id": "8",
       "date": "2026-03-04",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -89,7 +89,7 @@
       "memo": "정기결제"
     },
     {
-      "id": 9,
+      "id": "9",
       "date": "2026-03-04",
       "transaction_type": "income",
       "payment_method": "cash",
@@ -100,7 +100,7 @@
       "memo": null
     },
     {
-      "id": 10,
+      "id": "10",
       "date": "2026-03-05",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -111,7 +111,7 @@
       "memo": "재구매 필요"
     },
     {
-      "id": 11,
+      "id": "11",
       "date": "2026-03-05",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -122,7 +122,7 @@
       "memo": null
     },
     {
-      "id": 12,
+      "id": "12",
       "date": "2026-03-06",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -133,7 +133,7 @@
       "memo": "로켓배송"
     },
     {
-      "id": 13,
+      "id": "13",
       "date": "2026-03-06",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -144,7 +144,7 @@
       "memo": null
     },
     {
-      "id": 14,
+      "id": "14",
       "date": "2026-03-07",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -155,7 +155,7 @@
       "memo": "식재료 쟁여두기"
     },
     {
-      "id": 15,
+      "id": "15",
       "date": "2026-03-07",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -166,7 +166,7 @@
       "memo": null
     },
     {
-      "id": 16,
+      "id": "16",
       "date": "2026-03-08",
       "transaction_type": "income",
       "payment_method": "account",
@@ -177,7 +177,7 @@
       "memo": null
     },
     {
-      "id": 17,
+      "id": "17",
       "date": "2026-03-08",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -188,7 +188,7 @@
       "memo": "스트레스 해소"
     },
     {
-      "id": 18,
+      "id": "18",
       "date": "2026-03-09",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -199,7 +199,7 @@
       "memo": "자기계발"
     },
     {
-      "id": 19,
+      "id": "19",
       "date": "2026-03-09",
       "transaction_type": "expense",
       "payment_method": "cash",
@@ -210,7 +210,7 @@
       "memo": "갑작스러운 비"
     },
     {
-      "id": 20,
+      "id": "20",
       "date": "2026-03-10",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -221,7 +221,7 @@
       "memo": null
     },
     {
-      "id": 21,
+      "id": "21",
       "date": "2026-03-10",
       "transaction_type": "income",
       "payment_method": "account",
@@ -232,7 +232,7 @@
       "memo": "최고"
     },
     {
-      "id": 22,
+      "id": "22",
       "date": "2026-03-11",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -243,7 +243,7 @@
       "memo": null
     },
     {
-      "id": 23,
+      "id": "23",
       "date": "2026-03-11",
       "transaction_type": "expense",
       "payment_method": "cash",
@@ -254,7 +254,7 @@
       "memo": "리마인드"
     },
     {
-      "id": 24,
+      "id": "24",
       "date": "2026-03-12",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -265,7 +265,7 @@
       "memo": "출근길"
     },
     {
-      "id": 25,
+      "id": "25",
       "date": "2026-03-12",
       "transaction_type": "income",
       "payment_method": "account",
@@ -276,7 +276,7 @@
       "memo": "감사합니다"
     },
     {
-      "id": 26,
+      "id": "26",
       "date": "2026-03-13",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -287,7 +287,7 @@
       "memo": null
     },
     {
-      "id": 27,
+      "id": "27",
       "date": "2026-03-13",
       "transaction_type": "expense",
       "payment_method": "account",
@@ -298,7 +298,7 @@
       "memo": null
     },
     {
-      "id": 28,
+      "id": "28",
       "date": "2026-03-14",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -309,7 +309,7 @@
       "memo": "정기결제"
     },
     {
-      "id": 29,
+      "id": "29",
       "date": "2026-03-14",
       "transaction_type": "income",
       "payment_method": "cash",
@@ -320,7 +320,7 @@
       "memo": "직거래"
     },
     {
-      "id": 30,
+      "id": "30",
       "date": "2026-03-15",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -331,7 +331,7 @@
       "memo": "재구매 필요"
     },
     {
-      "id": 31,
+      "id": "31",
       "date": "2026-03-15",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -342,7 +342,7 @@
       "memo": null
     },
     {
-      "id": 32,
+      "id": "32",
       "date": "2026-03-16",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -353,7 +353,7 @@
       "memo": "로켓배송"
     },
     {
-      "id": 33,
+      "id": "33",
       "date": "2026-03-16",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -364,7 +364,7 @@
       "memo": null
     },
     {
-      "id": 34,
+      "id": "34",
       "date": "2026-03-17",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -375,7 +375,7 @@
       "memo": "집밥 준비"
     },
     {
-      "id": 35,
+      "id": "35",
       "date": "2026-03-17",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -386,7 +386,7 @@
       "memo": "주말 데이트"
     },
     {
-      "id": 36,
+      "id": "36",
       "date": "2026-03-18",
       "transaction_type": "income",
       "payment_method": "account",
@@ -397,7 +397,7 @@
       "memo": null
     },
     {
-      "id": 37,
+      "id": "37",
       "date": "2026-03-18",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -408,7 +408,7 @@
       "memo": "귀찮아서 배달"
     },
     {
-      "id": 38,
+      "id": "38",
       "date": "2026-03-19",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -419,7 +419,7 @@
       "memo": "중요"
     },
     {
-      "id": 39,
+      "id": "39",
       "date": "2026-03-19",
       "transaction_type": "expense",
       "payment_method": "cash",
@@ -430,7 +430,7 @@
       "memo": null
     },
     {
-      "id": 40,
+      "id": "40",
       "date": "2026-03-20",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -441,7 +441,7 @@
       "memo": null
     },
     {
-      "id": 41,
+      "id": "41",
       "date": "2026-03-20",
       "transaction_type": "income",
       "payment_method": "account",
@@ -452,7 +452,7 @@
       "memo": "화이팅"
     },
     {
-      "id": 42,
+      "id": "42",
       "date": "2026-03-21",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -463,7 +463,7 @@
       "memo": null
     },
     {
-      "id": 43,
+      "id": "43",
       "date": "2026-03-21",
       "transaction_type": "expense",
       "payment_method": "cash",
@@ -474,7 +474,7 @@
       "memo": "리마인드"
     },
     {
-      "id": 44,
+      "id": "44",
       "date": "2026-03-22",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -485,7 +485,7 @@
       "memo": "퇴근길"
     },
     {
-      "id": 45,
+      "id": "45",
       "date": "2026-03-22",
       "transaction_type": "income",
       "payment_method": "account",
@@ -496,7 +496,7 @@
       "memo": "중요"
     },
     {
-      "id": 46,
+      "id": "46",
       "date": "2026-03-23",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -507,7 +507,7 @@
       "memo": "운동 시작"
     },
     {
-      "id": 47,
+      "id": "47",
       "date": "2026-03-23",
       "transaction_type": "expense",
       "payment_method": "account",
@@ -518,7 +518,7 @@
       "memo": null
     },
     {
-      "id": 48,
+      "id": "48",
       "date": "2026-03-24",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -529,7 +529,7 @@
       "memo": "정기결제"
     },
     {
-      "id": 49,
+      "id": "49",
       "date": "2026-03-24",
       "transaction_type": "income",
       "payment_method": "cash",
@@ -540,7 +540,7 @@
       "memo": null
     },
     {
-      "id": 50,
+      "id": "50",
       "date": "2026-03-25",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -551,7 +551,7 @@
       "memo": "비상약 보충"
     },
     {
-      "id": 51,
+      "id": "51",
       "date": "2026-03-25",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -562,7 +562,7 @@
       "memo": "다이어트"
     },
     {
-      "id": 52,
+      "id": "52",
       "date": "2026-03-26",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -573,7 +573,7 @@
       "memo": "로켓배송"
     },
     {
-      "id": 53,
+      "id": "53",
       "date": "2026-03-26",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -584,7 +584,7 @@
       "memo": null
     },
     {
-      "id": 54,
+      "id": "54",
       "date": "2026-03-27",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -595,7 +595,7 @@
       "memo": "주말 장보기"
     },
     {
-      "id": 55,
+      "id": "55",
       "date": "2026-03-27",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -606,7 +606,7 @@
       "memo": null
     },
     {
-      "id": 56,
+      "id": "56",
       "date": "2026-03-28",
       "transaction_type": "income",
       "payment_method": "account",
@@ -617,7 +617,7 @@
       "memo": null
     },
     {
-      "id": 57,
+      "id": "57",
       "date": "2026-03-28",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -628,7 +628,7 @@
       "memo": "점심 식사"
     },
     {
-      "id": 58,
+      "id": "58",
       "date": "2026-03-29",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -639,7 +639,7 @@
       "memo": "스펙업"
     },
     {
-      "id": 59,
+      "id": "59",
       "date": "2026-03-29",
       "transaction_type": "expense",
       "payment_method": "cash",
@@ -650,7 +650,7 @@
       "memo": null
     },
     {
-      "id": 60,
+      "id": "60",
       "date": "2026-03-30",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -661,7 +661,7 @@
       "memo": null
     },
     {
-      "id": 61,
+      "id": "61",
       "date": "2026-03-30",
       "transaction_type": "income",
       "payment_method": "account",
@@ -672,7 +672,7 @@
       "memo": "자랑"
     },
     {
-      "id": 62,
+      "id": "62",
       "date": "2026-03-31",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -683,7 +683,7 @@
       "memo": null
     },
     {
-      "id": 63,
+      "id": "63",
       "date": "2026-03-31",
       "transaction_type": "expense",
       "payment_method": "cash",
@@ -694,7 +694,7 @@
       "memo": "리마인드"
     },
     {
-      "id": 64,
+      "id": "64",
       "date": "2026-04-01",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -705,7 +705,7 @@
       "memo": "카공"
     },
     {
-      "id": 65,
+      "id": "65",
       "date": "2026-04-01",
       "transaction_type": "income",
       "payment_method": "account",
@@ -716,7 +716,7 @@
       "memo": "아껴쓰기"
     },
     {
-      "id": 66,
+      "id": "66",
       "date": "2026-04-02",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -727,7 +727,7 @@
       "memo": null
     },
     {
-      "id": 67,
+      "id": "67",
       "date": "2026-04-02",
       "transaction_type": "expense",
       "payment_method": "account",
@@ -738,7 +738,7 @@
       "memo": null
     },
     {
-      "id": 68,
+      "id": "68",
       "date": "2026-04-03",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -749,7 +749,7 @@
       "memo": "정기결제"
     },
     {
-      "id": 69,
+      "id": "69",
       "date": "2026-04-03",
       "transaction_type": "income",
       "payment_method": "cash",
@@ -760,7 +760,7 @@
       "memo": "뿌듯함"
     },
     {
-      "id": 70,
+      "id": "70",
       "date": "2026-04-04",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -771,7 +771,7 @@
       "memo": "운동용"
     },
     {
-      "id": 71,
+      "id": "71",
       "date": "2026-04-04",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -782,7 +782,7 @@
       "memo": "당 충전"
     },
     {
-      "id": 72,
+      "id": "72",
       "date": "2026-04-05",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -793,7 +793,7 @@
       "memo": "로켓배송"
     },
     {
-      "id": 73,
+      "id": "73",
       "date": "2026-04-05",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -804,7 +804,7 @@
       "memo": null
     },
     {
-      "id": 74,
+      "id": "74",
       "date": "2026-04-06",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -815,7 +815,7 @@
       "memo": "홈파티 준비"
     },
     {
-      "id": 75,
+      "id": "75",
       "date": "2026-04-06",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -826,7 +826,7 @@
       "memo": "주말 나들이"
     },
     {
-      "id": 76,
+      "id": "76",
       "date": "2026-04-07",
       "transaction_type": "income",
       "payment_method": "account",
@@ -837,7 +837,7 @@
       "memo": null
     },
     {
-      "id": 77,
+      "id": "77",
       "date": "2026-04-07",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -848,7 +848,7 @@
       "memo": "간식"
     },
     {
-      "id": 78,
+      "id": "78",
       "date": "2026-04-08",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -859,7 +859,7 @@
       "memo": "공부 준비"
     },
     {
-      "id": 79,
+      "id": "79",
       "date": "2026-04-08",
       "transaction_type": "expense",
       "payment_method": "cash",
@@ -870,7 +870,7 @@
       "memo": null
     },
     {
-      "id": 80,
+      "id": "80",
       "date": "2026-04-09",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -881,7 +881,7 @@
       "memo": null
     },
     {
-      "id": 81,
+      "id": "81",
       "date": "2026-04-09",
       "transaction_type": "income",
       "payment_method": "account",
@@ -892,7 +892,7 @@
       "memo": "잘못 보냄"
     },
     {
-      "id": 82,
+      "id": "82",
       "date": "2026-04-10",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -903,7 +903,7 @@
       "memo": "해장"
     },
     {
-      "id": 83,
+      "id": "83",
       "date": "2026-04-10",
       "transaction_type": "expense",
       "payment_method": "cash",
@@ -914,7 +914,7 @@
       "memo": "아침용"
     },
     {
-      "id": 84,
+      "id": "84",
       "date": "2026-04-11",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -925,7 +925,7 @@
       "memo": "매일 마시는 커피"
     },
     {
-      "id": 85,
+      "id": "85",
       "date": "2026-04-11",
       "transaction_type": "income",
       "payment_method": "account",
@@ -936,7 +936,7 @@
       "memo": "감사합니다"
     },
     {
-      "id": 86,
+      "id": "86",
       "date": "2026-04-12",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -947,7 +947,7 @@
       "memo": "필수템"
     },
     {
-      "id": 87,
+      "id": "87",
       "date": "2026-04-12",
       "transaction_type": "expense",
       "payment_method": "account",
@@ -958,7 +958,7 @@
       "memo": null
     },
     {
-      "id": 88,
+      "id": "88",
       "date": "2026-04-13",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -969,7 +969,7 @@
       "memo": "정기결제"
     },
     {
-      "id": 89,
+      "id": "89",
       "date": "2026-04-13",
       "transaction_type": "income",
       "payment_method": "cash",
@@ -980,7 +980,7 @@
       "memo": "비우기"
     },
     {
-      "id": 90,
+      "id": "90",
       "date": "2026-04-14",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -991,7 +991,7 @@
       "memo": "재구매 필요"
     },
     {
-      "id": 91,
+      "id": "91",
       "date": "2026-04-14",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -1002,7 +1002,7 @@
       "memo": null
     },
     {
-      "id": 92,
+      "id": "92",
       "date": "2026-04-15",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -1013,7 +1013,7 @@
       "memo": "로켓배송"
     },
     {
-      "id": 93,
+      "id": "93",
       "date": "2026-04-15",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -1024,7 +1024,7 @@
       "memo": null
     },
     {
-      "id": 94,
+      "id": "94",
       "date": "2026-04-16",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -1035,7 +1035,7 @@
       "memo": "소고기 파티"
     },
     {
-      "id": 95,
+      "id": "95",
       "date": "2026-04-16",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -1046,7 +1046,7 @@
       "memo": "할인기간"
     },
     {
-      "id": 96,
+      "id": "96",
       "date": "2026-04-17",
       "transaction_type": "income",
       "payment_method": "account",
@@ -1057,7 +1057,7 @@
       "memo": "앱테크"
     },
     {
-      "id": 97,
+      "id": "97",
       "date": "2026-04-17",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -1068,7 +1068,7 @@
       "memo": "맵찔이"
     },
     {
-      "id": 98,
+      "id": "98",
       "date": "2026-04-18",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -1079,7 +1079,7 @@
       "memo": "성실하게"
     },
     {
-      "id": 99,
+      "id": "99",
       "date": "2026-04-18",
       "transaction_type": "expense",
       "payment_method": "cash",
@@ -1090,7 +1090,7 @@
       "memo": null
     },
     {
-      "id": 100,
+      "id": "100",
       "date": "2026-04-19",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -1099,6 +1099,40 @@
       "shop_name": "스타벅스",
       "item_name": "아이스 아메리카노",
       "memo": "마지막 100번째 데이터"
+    },
+    {
+      "date": "2026-04-08",
+      "amount": -142,
+      "category": "음식",
+      "paymentMethod": "card",
+      "shopName": "",
+      "itemName": "",
+      "memo": "",
+      "transactionType": "expense",
+      "id": "AsunvE2LmN4"
+    },
+    {
+      "date": "2026-04-08",
+      "amount": 21564,
+      "category": "부수입",
+      "paymentMethod": "account",
+      "shopName": "",
+      "itemName": "",
+      "memo": "",
+      "transactionType": "income",
+      "id": "AxEggrRqOWU"
+    },
+    {
+      "date": "2026-04-09",
+      "amount": -3200000,
+      "category": "쇼핑",
+      "paymentMethod": "card",
+      "shopName": "백화점",
+      "itemName": "밍크코트",
+      "memo": "졸업 선물로 자신에게 사주기",
+      "transactionType": "expense",
+      "id": "7MOa0YgCBtc"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

@@ -2,13 +2,13 @@
   <div class="transaction-container">
     <div class="type-selector">
       <button
-        :class="{ active: currentType === 'income' }"
+        :class="{ 'active-income': currentType === 'income' }"
         @click="currentType = 'income'"
       >
         수입
       </button>
       <button
-        :class="{ active: currentType === 'expense' }"
+        :class="{ 'active-expense': currentType === 'expense' }"
         @click="currentType = 'expense'"
       >
         지출
@@ -16,33 +16,42 @@
     </div>
     <div class="middle-body">
       <h2>{{ currentType === 'expense' ? '지출' : '수입' }} 추가</h2>
-      <div class="form-group">
-        <label class="mb-2 fw-bold text-secondary">날짜 </label>
-        <input type="date" v-model="selectedDate" required />
-      </div>
 
-      <div class="form-group">
-        <label class="mb-2 fw-bold text-secondary">수단</label>
-        <div class="radio-group">
-          <label class="me-2"
-            ><input type="radio" v-model="paymentMethod" value="cash" />
-            현금</label
-          >
-          <label class="me-2"
-            ><input type="radio" v-model="paymentMethod" value="account" />
-            계좌</label
-          >
-          <label class="me-2"
-            ><input type="radio" v-model="paymentMethod" value="card" />
-            카드</label
-          >
+      <div class="top-row-container">
+        <div class="form-group date-card">
+          <label class="mb-2 fw-bold text-secondary">날짜</label>
+          <input type="date" v-model="selectedDate" required />
+        </div>
+
+        <div class="form-group payment-card">
+          <label class="mb-2 fw-bold text-secondary">수단</label>
+          <div class="radio-group">
+            <label
+              ><input type="radio" v-model="paymentMethod" value="cash" />
+              현금</label
+            >
+            <label
+              ><input type="radio" v-model="paymentMethod" value="account" />
+              계좌</label
+            >
+            <label
+              ><input type="radio" v-model="paymentMethod" value="card" />
+              카드</label
+            >
+          </div>
         </div>
       </div>
 
       <div class="form-group">
         <label class="mb-2 fw-bold text-secondary">금액</label>
         <div class="input-wrapper">
-          <input v-model.number="amount" type="number" placeholder="0" />
+          <input
+            v-model="displayAmount"
+            type="text"
+            placeholder="0"
+            class="amount-input"
+            @input="handleAmountInput"
+          />
           <span class="unit">원</span>
         </div>
       </div>
@@ -58,19 +67,33 @@
       </div>
 
       <div v-if="currentType === 'expense'" class="optional-section">
-        <div class="form-group">
-          <label class="fw-bold text-secondary">가계 이름 (선택)</label>
-          <input v-model="shopName" type="text" />
-        </div>
+        <div class="form-group combined-card">
+          <div class="input-half">
+            <label class="mb-1 fw-bold text-secondary">가계 이름 (선택)</label>
+            <input
+              v-model="shopName"
+              type="text"
+              placeholder="가계명"
+              class="clean-input"
+            />
+          </div>
 
-        <div class="form-group">
-          <label class="fw-bold text-secondary">상품명 (선택)</label>
-          <input v-model="itemName" type="text" />
+          <div class="divider"></div>
+
+          <div class="input-half">
+            <label class="mb-1 fw-bold text-secondary">상품명 (선택)</label>
+            <input
+              v-model="itemName"
+              type="text"
+              placeholder="상품명"
+              class="clean-input"
+            />
+          </div>
         </div>
       </div>
 
       <div class="memo form-group">
-        <label>메모</label><br />
+        <label class="fw-bold text-secondary">메모</label><br />
         <input v-model="memo" type="text" />
       </div>
 
@@ -96,6 +119,13 @@ const currentType = ref('expense');
 
 const selectedDate = ref(new Date().toISOString().split('T')[0]);
 const amount = ref(null);
+const displayAmount = ref('');
+const handleAmountInput = (e) => {
+  let value = e.target.value.replace(/[^0-9]/g, '');
+  amount.value = value ? parseInt(value) : null;
+  displayAmount.value = value ? Number(value).toLocaleString() : '';
+};
+
 const category = ref('');
 const paymentMethod = ref('card');
 
@@ -157,6 +187,78 @@ const handleCancel = () => {
 </script>
 
 <style scoped>
+.combined-card {
+  display: flex;
+  align-items: flex-start;
+  padding: 15px;
+  background-color: white;
+  border-radius: 20px;
+  gap: 15px;
+}
+
+.input-half {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.divider {
+  width: 1px;
+  background-color: #eee;
+  align-self: stretch;
+  margin: 5px 0;
+}
+
+label {
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.top-row-container {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.date-card {
+  flex: 0 0 35%;
+  padding: 15px;
+  background-color: white;
+  border-radius: 15px;
+}
+
+.payment-card {
+  flex: 1;
+  padding: 15px;
+  background-color: white;
+  border-radius: 15px;
+}
+
+input[type='date'] {
+  width: 100%;
+  border: none;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.radio-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 2px;
+  margin-top: 5px;
+}
+
+.radio-group label {
+  font-size: 0.9rem;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+
+.radio-group input[type='radio'] {
+  margin-right: 4px;
+}
+
 .transaction-container {
   min-height: 100vh;
   width: 100%;
@@ -170,7 +272,7 @@ const handleCancel = () => {
 .middle-body {
   width: 100%;
   max-width: 425px;
-  padding: 20px;
+  padding: 10px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -180,12 +282,12 @@ const handleCancel = () => {
 h2 {
   text-align: center;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
   color: #333;
 }
 
 .form-group {
-  padding: 18px;
+  padding: 10px;
   background-color: white;
   border-radius: 15px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
@@ -220,10 +322,16 @@ select {
   color: #777;
 }
 
-.type-selector button.active {
-  background-color: #2c3e50;
+.type-selector button.active-income {
+  background-color: #4d70ff;
   color: white;
-  border-color: #2c3e50;
+  border-color: #4d70ff;
+}
+
+.type-selector button.active-expense {
+  background-color: #ff4d4d;
+  color: white;
+  border-color: #ff4d4d;
 }
 .button-group {
   display: flex;
@@ -240,7 +348,7 @@ select {
 }
 
 .btn-submit {
-  background-color: #4caf50;
+  background-color: #2070fc;
   color: white;
 }
 .btn-cancel {

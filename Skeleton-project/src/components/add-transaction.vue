@@ -123,12 +123,12 @@
             <div class="row g-3">
               <div class="col-6 border-end">
                 <label class="small fw-bold text-secondary d-block"
-                  >가계 이름</label
+                  >가게 이름</label
                 >
                 <input
                   v-model="shopName"
                   type="text"
-                  placeholder="가계명"
+                  placeholder="가게명"
                   class="border-0 w-100 small py-1"
                 />
               </div>

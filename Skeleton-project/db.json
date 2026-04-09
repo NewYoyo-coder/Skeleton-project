@@ -92,13 +92,13 @@
       "category": "식비",
       "shop_name": "배달의민족",
       "item_name": "저녁 치킨 세트",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "3",
       "date": "2025-12-01",
-      "transaction_type": "수입",
-      "payment_method": "현금",
+      "transaction_type": "income",
+      "payment_method": "cash",
       "amount": 3500,
       "category": "부수입",
       "shop_name": "GS25",
@@ -136,7 +136,7 @@
       "category": "쇼핑",
       "shop_name": "무신사",
       "item_name": "봄맞이 맨투맨",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "7",
@@ -147,7 +147,7 @@
       "category": "교통",
       "shop_name": "카카오택시",
       "item_name": "지하철 환승",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "8",
@@ -169,7 +169,7 @@
       "category": "기타수입",
       "shop_name": "당근마켓",
       "item_name": "안 쓰는 마우스 판매",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "10",
@@ -191,7 +191,7 @@
       "category": "식비",
       "shop_name": "파리바게뜨",
       "item_name": "샌드위치 콤보",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "12",
@@ -213,7 +213,7 @@
       "category": "교통",
       "shop_name": "카카오택시",
       "item_name": "야근 후 택시",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "14",
@@ -235,7 +235,7 @@
       "category": "문화생활",
       "shop_name": "네이버페이",
       "item_name": "영화 예매",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "16",
@@ -246,7 +246,7 @@
       "category": "금융수익",
       "shop_name": "한국은행",
       "item_name": "예금 이자",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "17",
@@ -290,7 +290,7 @@
       "category": "식비",
       "shop_name": "스타벅스",
       "item_name": "카페라떼",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "21",
@@ -312,7 +312,7 @@
       "category": "식비",
       "shop_name": "배달의민족",
       "item_name": "피자 레귤러",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "23",
@@ -356,7 +356,7 @@
       "category": "쇼핑",
       "shop_name": "무신사",
       "item_name": "와이드 팬츠",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "27",
@@ -367,7 +367,7 @@
       "category": "교통",
       "shop_name": "카카오택시",
       "item_name": "마을버스",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "28",
@@ -398,7 +398,7 @@
       "payment_method": "card",
       "amount": 12000,
       "category": "의료/건강",
-      "행복약국": "올리브영",
+      "shop_name": "올리브영",
       "item_name": "인공눈물",
       "memo": "재구매 필요"
     },
@@ -411,7 +411,7 @@
       "category": "식비",
       "shop_name": "파리바게뜨",
       "item_name": "식빵과 잼",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "32",
@@ -433,7 +433,7 @@
       "category": "교통",
       "shop_name": "카카오택시",
       "item_name": "비 오는 날 택시",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "34",
@@ -466,7 +466,7 @@
       "category": "금융수익",
       "shop_name": "토스",
       "item_name": "캐시백 리워드",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "37",
@@ -499,7 +499,7 @@
       "category": "생활용품",
       "shop_name": "GS25",
       "item_name": "물티슈",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "40",
@@ -510,7 +510,7 @@
       "category": "식비",
       "shop_name": "스타벅스",
       "item_name": "아메리카노",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "41",
@@ -532,7 +532,7 @@
       "category": "식비",
       "shop_name": "배달의민족",
       "item_name": "족발 1인 세트",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "43",
@@ -587,7 +587,7 @@
       "category": "교통",
       "shop_name": "카카오택시",
       "item_name": "버스비",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "48",
@@ -609,7 +609,7 @@
       "category": "기타수입",
       "shop_name": "당근마켓",
       "item_name": "책 판매",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "50",
@@ -653,7 +653,7 @@
       "category": "교통",
       "shop_name": "카카오택시",
       "item_name": "회식 후 택시",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "54",
@@ -675,7 +675,7 @@
       "category": "문화생활",
       "shop_name": "네이버페이",
       "item_name": "웹소설 결제",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "56",
@@ -686,7 +686,7 @@
       "category": "금융수익",
       "shop_name": "토스",
       "item_name": "포인트 출금",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "57",
@@ -719,7 +719,7 @@
       "category": "생활용품",
       "shop_name": "GS25",
       "item_name": "쓰레기봉투",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "60",
@@ -730,7 +730,7 @@
       "category": "식비",
       "shop_name": "스타벅스",
       "item_name": "오늘의 커피",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "61",
@@ -752,7 +752,7 @@
       "category": "식비",
       "shop_name": "배달의민족",
       "item_name": "초밥 세트",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "63",
@@ -796,7 +796,7 @@
       "category": "쇼핑",
       "shop_name": "무신사",
       "item_name": "캡모자",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "67",
@@ -807,7 +807,7 @@
       "category": "교통",
       "shop_name": "카카오택시",
       "item_name": "지하철 환승",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "68",
@@ -873,7 +873,7 @@
       "category": "교통",
       "shop_name": "카카오택시",
       "item_name": "기본요금 거리",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "74",
@@ -906,7 +906,7 @@
       "category": "금융수익",
       "shop_name": "카카오뱅크",
       "item_name": "소모임 정산",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "77",
@@ -939,7 +939,7 @@
       "category": "생활용품",
       "shop_name": "GS25",
       "item_name": "봉투 및 껌",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "80",
@@ -950,7 +950,7 @@
       "category": "식비",
       "shop_name": "스타벅스",
       "item_name": "바닐라 크림 콜드 브루",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "81",
@@ -1027,7 +1027,7 @@
       "category": "교통",
       "shop_name": "카카오택시",
       "item_name": "지하철",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "88",
@@ -1071,7 +1071,7 @@
       "category": "식비",
       "shop_name": "파리바게뜨",
       "item_name": "바게트와 버터",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "92",
@@ -1093,7 +1093,7 @@
       "category": "교통",
       "shop_name": "카카오택시",
       "item_name": "무거운 짐 때문에 택시",
-      "memo": null
+      "memo": ""
     },
     {
       "id": "94",

@@ -47,17 +47,24 @@ const openBrowser = (url) => {
 };
 
 const initShortcuts = () => {
+    // 이미 리스너가 있다면 중복 등록 방지
+    process.stdin.removeAllListeners('keypress');
     readline.emitKeypressEvents(process.stdin);
-    if (process.stdin.isTTY) process.stdin.setRawMode(true);
 
+    if (process.stdin.isTTY) {
+        process.stdin.setRawMode(true);
+    }
     process.stdin.on('keypress', (str, key) => {
         if (key.ctrl && key.name === 'c') process.exit();
 
-        // 영문 'a' 혹은 한글 'ㅁ' (문자열 str로 체크) 대응
+        // 한/영 통합 'a' 키 로직
         if (key.name === 'a' || str === 'ㅁ') {
             openBrowser('http://localhost:5173/');
         }
     });
+
+    // 핵심: 스트림을 다시 흐르게 만듦
+    process.stdin.resume();
 };
 
 async function run() {
@@ -157,20 +164,29 @@ async function run() {
 
     // 3. 서버 실행 (경고 로그 차단)
     const runServer = (cmd, args, key) => {
-        const proc = spawn(cmd, args, { shell: true, stdio: ['ignore', 'pipe', 'ignore'] });
+        // 1. stdio의 3번째 인자를 'pipe'로 바꿔서 에러 로그를 낚아채야 합니다.
+        const proc = spawn(cmd, args, { shell: true, stdio: ['ignore', 'pipe', 'pipe'] });
 
         proc.stdout.on('data', (data) => {
             const msg = data.toString();
-            // JSON 서버 감지 키워드 대폭 추가 (Resources, Home, localhost, 3000 등)
+            // [중요] 'Watching...' 문구가 뜨면 무조건 ONLINE으로 간주 (가장 확실한 신호)
             if (
-                msg.includes('ready in') ||
-                msg.includes('Resources') ||
-                msg.includes('Home') ||
+                msg.includes('Watching') ||
                 msg.includes('localhost:3000') ||
-                msg.includes('Index') ||
-                msg.includes('Type s + enter') // json-server v1.x 대응
+                msg.includes('Resources') ||
+                msg.includes('ready in')
             ) {
                 status[key] = 'ONLINE';
+                drawStatus();
+            }
+        });
+
+        // 2. 에러 발생 시 강제로 상태를 띄워 확인 (범인 검거용)
+        proc.stderr.on('data', (data) => {
+            const errorMsg = data.toString();
+            // 만약 'address already in use'가 뜨면 포트 충돌입니다.
+            if (errorMsg.includes('Error')) {
+                status[key] = 'ERR!';
                 drawStatus();
             }
         });
@@ -184,9 +200,10 @@ async function run() {
     console.log(`  URL: ${RESET}🌸 \x1b[4mhttp://localhost:5173/\x1b[0m 🌸  ${KB_MAIN}[a]키를 눌러서 브라우저로 바로 이동할 수 있어요${RESET}\n`);
     // console.log(`\x1b[45m\x1b[37m  🌸 KB 29-2 SUCCESS / SERVICE START!!          ${RESET}\n`);
 
+    initShortcuts();
+
     // 프로세스가 죽지 않게 유지하면서 출력은 더이상 안 함
     process.stdout.write('\x1b[?25h');
     process.stdin.resume();
-    initShortcuts();
 }
 run();

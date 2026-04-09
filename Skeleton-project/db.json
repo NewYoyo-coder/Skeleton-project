@@ -1,7 +1,7 @@
 {
   "transactions": [
     {
-      "id": 61,
+      "id": "61",
       "date": "2026-03-30",
       "transaction_type": "income",
       "payment_method": "account",
@@ -11,9 +11,8 @@
       "item_name": "우수사원 포상",
       "memo": "자랑"
     },
-
     {
-      "id": 62,
+      "id": "62",
       "date": "2026-03-31",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -24,7 +23,7 @@
       "memo": null
     },
     {
-      "id": 63,
+      "id": "63",
       "date": "2026-03-31",
       "transaction_type": "expense",
       "payment_method": "cash",
@@ -35,7 +34,7 @@
       "memo": "리마인드"
     },
     {
-      "id": 64,
+      "id": "64",
       "date": "2026-04-01",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -46,7 +45,7 @@
       "memo": "카공"
     },
     {
-      "id": 65,
+      "id": "65",
       "date": "2026-04-01",
       "transaction_type": "income",
       "payment_method": "account",
@@ -57,7 +56,7 @@
       "memo": "아껴쓰기"
     },
     {
-      "id": 66,
+      "id": "66",
       "date": "2026-04-02",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -67,9 +66,8 @@
       "item_name": "캡모자",
       "memo": null
     },
-
     {
-      "id": 67,
+      "id": "67",
       "date": "2026-04-02",
       "transaction_type": "expense",
       "payment_method": "account",
@@ -80,7 +78,7 @@
       "memo": null
     },
     {
-      "id": 68,
+      "id": "68",
       "date": "2026-04-03",
       "transaction_type": "expense",
       "payment_method": "card",
@@ -89,6 +87,29 @@
       "shop_name": "네이버페이",
       "item_name": "구독 서비스",
       "memo": "정기결제"
+    },
+    {
+      "date": "2026-04-10",
+      "amount": 1.111111111111e+96,
+      "category": "월급",
+      "paymentMethod": "cash",
+      "shopName": "",
+      "itemName": "",
+      "memo": "11111111111111",
+      "transactionType": "income",
+      "id": "-nih1bILBcA"
+    },
+    {
+      "date": "2026-04-14",
+      "amount": -3112321313,
+      "category": "교통",
+      "paymentMethod": "cash",
+      "shopName": "123",
+      "itemName": "1123213",
+      "memo": "2131321",
+      "transactionType": "expense",
+      "id": "i72VihUPlZ0"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

@@ -42,14 +42,24 @@ const userStore = useUserStore();
 const userName = ref('');
 const userEmail = ref('');
 
-const goToHome = () => {
+const goToHome = async () => {
+  // 1. 유저 정보 먼저 저장
   // if (!userName.value.trim() || !userEmail.value.trim()) {
   //   alert('이름과 이메일을 모두 입력해주세요.');
   //   return;
   // }
-
   userStore.setUserInfo(userName.value, userEmail.value);
-  router.push('/home');
+
+  // 2. [핵심] 대시보드 가기 전에 데이터 선로딩
+  try {
+    await transactionStore.fetchTransactions();
+  } catch (err) {
+    console.error('데이터 미리 가져오기 실패:', err);
+  }
+
+  // 3. 데이터 로딩 완수 후 이동 (이래야 대시보드 가자마자 뜸)
+  // router.push('/home');
+  router.push('/mainDashboard');
 };
 </script>
 

@@ -14,4 +14,20 @@ import Header from '@/sides/header-page.vue';
   </div>
 </template>
 
-<style></style>
+<style>
+.app-background {
+  background-color: #f2f2f2;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+.mobile-container {
+  width: 100%;
+  max-width: 425px;
+  min-height: 100vh;
+  background-color: #ffffff;
+  position: relative;
+  overflow-x: hidden;
+}
+</style>

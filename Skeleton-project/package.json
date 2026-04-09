@@ -5,8 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "server": "json-server db.json",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node --no-deprecation startup.mjs",
+    "all": "start /b npx json-server --watch db.json --port 3000 & npm run dev"
   },
   "dependencies": {
     "axios": "^1.14.0",

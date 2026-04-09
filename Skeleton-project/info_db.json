@@ -1,0 +1,12 @@
+{
+  "user": {
+    "name": "김민준",
+    "email": "kmj@example.com",
+    "currency": "KRW",
+    "last_login": "2026-04-08",
+    "settings": {
+      "theme": "light",
+      "auto_login": true
+    }
+  }
+}

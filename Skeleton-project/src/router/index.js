@@ -15,6 +15,12 @@ const router = createRouter({
     { path: '/addTransaction', component: addTransaction },
     { path: '/profileSettings', component: profileSettings },
     { path: '/transactionHistory', component: transactionHistory },
+    {
+      path: '/add/:type',
+      name: 'add-transaction',
+      component: addTransaction,
+      props: true,
+    },
   ],
 });
 

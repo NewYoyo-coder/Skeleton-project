@@ -95,9 +95,14 @@ const fetchTransactions = async () => {
   }
 };
 
-watch([() => dateStore.selectedYear, () => dateStore.selectedMonth], () => {
-  fetchTransactions();
-});
+watch(
+  [() => dateStore.selectedYear, () => dateStore.selectedMonth],
+  () => {
+    fetchTransactions();
+  },
+  { immediate: true },
+  // 마운트 되기 전에도 바로 실행함
+);
 
 onMounted(() => {
   fetchTransactions();

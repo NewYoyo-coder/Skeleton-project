@@ -1,72 +1,75 @@
 <template>
   <div
-    class="position-relative overflow-hidden min-vh-100 bg-white mx-auto custom-font d-flex flex-column"
-    style="user-select: none"
-    @mousedown="startDrag"
-    @mousemove="onDrag"
-    @mouseup="endDrag"
-    @mouseleave="endDrag"
-    @touchstart="startTouch"
-    @touchmove="onTouch"
-    @touchend="endTouch"
+    class="mx-auto bg-white min-vh-100 shadow-sm d-flex flex-column"
+    style="max-width: 600px"
   >
-    <div
-      class="swipe-overlay"
-      :style="{
-        transform: `translateX(${dragOffset > 0 ? '-100%' : '100%'})`,
-        left: `${dragOffset}px`,
-        opacity: Math.abs(dragOffset) / 200,
-      }"
-    ></div>
-    <transition name="value-pop" mode="out-in"> </transition>
-    <div class="px-4 mb-3 text-center">
-      <div
-        class="d-inline-block py-2 px-4 rounded-pill bg-light border shadow-sm mb-3"
-      >
-        <h6 class="fw-bold text-dark mb-0">
-          최근 거래 내역
-          <span class="text-primary" style="font-size: 0.9em">(10건)</span>
-        </h6>
+    <header class="p-4 border-bottom bg-white sticky-top z-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="fw-bold mb-0">최근 거래</h5>
+        <span class="text-muted small">
+          {{ dateStore.selectedYear }}년 {{ dateStore.selectedMonth }}월
+        </span>
       </div>
-      <div class="tab-wrapper">
-        <div
-          class="active-bg"
-          :style="{
-            transform: `translateX(${sortBy === 'date' ? '0' : '100'}%)`,
-          }"
-        ></div>
-        <button :class="{ on: sortBy === 'date' }" @click="sortBy = 'date'">
+    </header>
+
+    <div class="px-4 py-3 bg-white border-bottom">
+      <div
+        class="tab-wrapper p-1 bg-light rounded-3 d-flex"
+        style="height: 44px"
+      >
+        <button
+          @click="setSort('date')"
+          class="flex-grow-1 border-0 rounded-2 small fw-bold transition-all d-flex align-items-center justify-content-center"
+          :class="
+            sortBy === 'date'
+              ? 'bg-white shadow-sm text-primary'
+              : 'bg-transparent text-secondary'
+          "
+        >
           최근순
         </button>
-        <button :class="{ on: sortBy === 'amount' }" @click="sortBy = 'amount'">
+        <button
+          @click="setSort('amount')"
+          class="flex-grow-1 border-0 rounded-2 small fw-bold transition-all d-flex align-items-center justify-content-center"
+          :class="
+            sortBy === 'amount'
+              ? 'bg-white shadow-sm text-primary'
+              : 'bg-transparent text-secondary'
+          "
+        >
           금액순
         </button>
       </div>
     </div>
 
-    <main class="px-3 pb-5 flex-grow-1">
-      <TransitionGroup
-        name="flip-list"
-        tag="div"
-        @before-enter="beforeEnter"
-        @enter="enter"
-      >
-        <div
-          v-for="(item, index) in displayedItems"
-          :key="item.id"
-          :data-index="index"
-          class="hover-card p-3 mb-2 bg-white rounded-4 border-0 shadow-sm"
+    <main class="px-3 py-4 flex-grow-1">
+      <div v-if="displayedItems && displayedItems.length > 0">
+        <TransitionGroup
+          name="flip-list"
+          tag="div"
+          @before-enter="beforeEnter"
+          @enter="enter"
         >
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center gap-3">
-              <!-- <div
-                class="d-flex justify-content-center align-items-center rounded-3 bg-light fs-4"
-                style="width: 52px; height: 52px"
+          <div
+            v-for="(item, index) in displayedItems"
+            :key="item.id"
+            :data-index="index"
+            class="hover-card p-3 mb-2 rounded-4 border-0 shadow-sm bg-white d-flex align-items-center justify-content-between"
+          >
+            <div class="d-flex align-items-center gap-3 overflow-hidden">
+              <div
+                class="text-center border-end pe-3 text-secondary"
+                style="min-width: 45px"
               >
-                {{ getRandomIcon(item.category_id) }}
-              </div> -->
+                <div style="font-size: 10px; text-transform: uppercase">
+                  {{ getDayName(item.date) }}
+                </div>
+                <div class="fw-bold text-dark fs-5 line-height-1">
+                  {{ item.date.split('-')[2] }}
+                </div>
+              </div>
 
-              <div>
+              <div class="overflow-hidden">
                 <div class="d-flex align-items-center gap-2 mb-1">
                   <span
                     class="badge rounded-pill"
@@ -75,246 +78,142 @@
                         ? 'text-bg-primary'
                         : 'text-bg-danger'
                     "
-                    style="font-size: 11px; font-weight: 500; padding: 4px 8px"
+                    style="font-size: 13px; font-weight: 500; padding: 5px 10px"
                   >
                     {{ item.category_id }}
+                  </span>
+                  <span class="text-muted" style="font-size: 11px">
+                    {{ item.payment_method }}
                   </span>
                 </div>
 
                 <div
-                  class="fw-semibold text-dark text-truncate"
-                  style="max-width: 180px; font-size: 17px"
+                  class="fw-bold text-dark text-truncate fs-6"
+                  style="letter-spacing: -0.5px"
                 >
-                  <span>{{ item.shop_name }}</span>
+                  {{ item.shop_name }}
                   <span
                     v-if="item.item_name"
-                    class="text-muted fw-normal"
-                    style="font-size: 14px"
+                    class="fw-normal text-secondary opacity-75"
+                    style="font-size: 13px"
                   >
                     · {{ item.item_name }}
                   </span>
                 </div>
-
-                <div
-                  class="text-secondary d-flex gap-2 mt-1"
-                  style="font-size: 12px"
-                >
-                  <span>{{ item.date.split('-')[2] }}일</span>
-                  <span v-if="item.payment_method">{{
-                    item.payment_method
-                  }}</span>
-                </div>
-
-                <div
-                  v-if="item.memo"
-                  class="text-muted text-truncate mt-1"
-                  style="font-size: 12px; max-width: 180px; font-style: italic"
-                >
-                  "{{ item.memo }}"
-                </div>
               </div>
             </div>
 
-            <div
-              class="text-end fw-bold text-nowrap ms-2"
-              :class="
-                item.transaction_type === 'income'
-                  ? 'text-primary'
-                  : 'text-danger'
-              "
-              style="font-size: 18px; letter-spacing: -0.3px"
-            >
-              {{ item.transaction_type === 'income' ? '+' : '-' }}
-              {{ item.amount.toLocaleString() }}원
+            <div class="text-end ms-2">
+              <div
+                class="fw-bold fs-5"
+                :class="
+                  item.transaction_type === 'income'
+                    ? 'text-primary'
+                    : 'text-danger'
+                "
+              >
+                {{ item.transaction_type === 'income' ? '+' : '-'
+                }}{{ item.amount.toLocaleString() }}
+                <small style="font-size: 0.7em">원</small>
+              </div>
+              <div
+                v-if="item.memo"
+                class="text-muted text-truncate italic small"
+                style="max-width: 100px"
+              >
+                {{ item.memo }}
+              </div>
             </div>
           </div>
-        </div>
-      </TransitionGroup>
+        </TransitionGroup>
 
-      <!-- <div
-        v-show="hasMore"
-        ref="loadMoreTrigger"
-        class="d-flex justify-content-center py-5"
-      >
         <div
-          class="spinner-border text-primary border-3"
-          style="width: 24px; height: 24px"
-          role="status"
-        ></div>
-      </div> -->
-    </main>
+          v-if="filteredData.length > 10"
+          class="text-center py-3 text-muted small"
+        >
+          최근 10건의 내역만 표시됩니다.
+        </div>
+      </div>
 
-    <div class="swipe-hint" :style="{ opacity: dragOffset !== 0 ? 0.9 : 0 }">
-      {{ dragOffset > 50 ? '이전 달로' : dragOffset < -50 ? '다음 달로' : '' }}
-    </div>
+      <div v-else class="text-center mt-5 py-5 opacity-50">
+        <div class="display-1 mb-3">🧾</div>
+        <p class="fw-bold">이달의 내역이 비어있어요</p>
+        <small class="text-muted">새로운 결제 내역을 추가해보세요</small>
+      </div>
+    </main>
   </div>
 </template>
-
 <script setup>
-import { ref, computed, onMounted, watch, nextTick } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useDateStore } from '@/stores/select-date';
 import { useTransactionStore } from '@/stores/transaction';
+import { useRouter } from 'vue-router'; // 추가
+
+const router = useRouter();
 
 const dateStore = useDateStore();
 const transactionStore = useTransactionStore();
-
-const displayedItems = ref([]);
+const selectedItem = ref(null);
 const sortBy = ref('date');
-const slideDir = ref('slide-right');
 
-// 무한 스크롤 관련
-const page = ref(1);
-const perPage = 10;
-const hasMore = ref(true);
-const loadMoreTrigger = ref(null);
-const loading = ref(false);
+// ------------------------------
 
-// 드래그/스와이프 로직
-const startX = ref(0);
-const dragOffset = ref(0);
-const isDragging = ref(false);
-
-const startDrag = (e) => {
-  isDragging.value = true;
-  startX.value = e.pageX;
-};
-const onDrag = (e) => {
-  if (!isDragging.value) return;
-  dragOffset.value = e.pageX - startX.value;
-};
-const endDrag = () => {
-  if (!isDragging.value) return;
-  if (dragOffset.value > 100) changeMonth(-1);
-  else if (dragOffset.value < -100) changeMonth(1);
-  isDragging.value = false;
-  dragOffset.value = 0;
+// 요일 계산 헬퍼
+const getDayName = (dateString) => {
+  const date = new Date(dateString);
+  const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  return days[date.getDay()];
 };
 
-const startTouch = (e) => {
-  startX.value = e.touches[0].pageX;
-};
-const onTouch = (e) => {
-  dragOffset.value = e.touches[0].pageX - startX.value;
-};
-const endTouch = () => {
-  if (dragOffset.value > 70) changeMonth(-1);
-  else if (dragOffset.value < -70) changeMonth(1);
-  dragOffset.value = 0;
+// 정렬 변경 (상단 스크롤 이동은 유지)
+const setSort = (type) => {
+  sortBy.value = type;
+  // window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-const changeMonth = (diff) => {
-  let year = dateStore.selectedYear;
-  let month = dateStore.selectedMonth + diff;
-
-  if (month > 12) {
-    month = 1;
-    year++;
-  } else if (month < 1) {
-    month = 12;
-    year--;
-  }
-
-  dateStore.setDate(year, month); // Store 값 변경 -> 컴포넌트는 자동 반응
-};
-
+// 필터링된 데이터 (Pinia 연동)
 const filteredData = computed(() => {
-  let filtered = allTransactions.value.filter((item) => {
+  const filtered = transactionStore.transactions.filter((item) => {
     if (!item.date) return false;
     const [y, m] = item.date.split('-').map(Number);
-    return y === currentYear.value && m === currentMonth.value;
+    return y === dateStore.selectedYear && m === dateStore.selectedMonth;
   });
+
   return sortBy.value === 'date'
     ? [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date))
     : [...filtered].sort((a, b) => b.amount - a.amount);
 });
 
-const resetAndFetch = () => {
-  page.value = 1;
-  displayedItems.value = [];
-  hasMore.value = true;
-  fetchMore();
-};
+// 메인에 보여줄 10개만 추출
+const displayedItems = computed(() => filteredData.value.slice(0, 10));
 
-const fetchMore = () => {
-  const sortedData = transactionStore.getSortedData(sortBy.value); // 스토어에서 가져오기
-  const start = (page.value - 1) * perPage;
-  const nextItems = sortedData.slice(start, start + perPage);
-
-  if (nextItems.length > 0) {
-    displayedItems.value.push(...nextItems);
-    page.value++;
-  }
-  hasMore.value = displayedItems.value.length < sortedData.length;
-};
-
-let observer;
-const initObserver = () => {
-  if (observer) observer.disconnect();
-  observer = new IntersectionObserver(
-    (entries) => {
-      if (entries[0].isIntersecting && hasMore.value) fetchMore();
-    },
-    { threshold: 0.1 },
-  );
-  nextTick(() => {
-    if (loadMoreTrigger.value) observer.observe(loadMoreTrigger.value);
-  });
-};
-
-// 날짜나 정렬 방식이 바뀌면 무조건 리스트 리셋하고 새로 가져옴
-watch(
-  [() => dateStore.selectedYear, () => dateStore.selectedMonth, sortBy],
-  () => resetAndFetch(),
-);
-
-onMounted(async () => {
-  await transactionStore.fetchTransactions(); // 직접 fetch 대신 스토어 호출
-  resetAndFetch();
-  initObserver();
-});
-
-const getRandomIcon = (cat) => {
-  const icons = { food: '🍕', cafe: '☕', salary: '💰' };
-  return icons[cat] || '💸';
-};
-
-const monthlyIncome = computed(() =>
-  filteredData.value
-    .filter((i) => i.transaction_type === 'income')
-    .reduce((acc, cur) => acc + cur.amount, 0),
-);
-const monthlyExpense = computed(() =>
-  filteredData.value
-    .filter((i) => i.transaction_type === 'expense')
-    .reduce((acc, cur) => acc + cur.amount, 0),
-);
-
+// --- 촤라락 애니메이션 훅 복구 ---
 const beforeEnter = (el) => {
   el.style.opacity = 0;
   el.style.transform = 'translateY(30px) scale(0.9)';
 };
 
 const enter = (el, done) => {
-  const index = el.dataset.index % perPage;
+  const index = el.dataset.index % 10; // 무한스크롤 제거했으니 10 고정
   setTimeout(() => {
     el.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
     el.style.opacity = 1;
     el.style.transform = 'translateY(0) scale(1)';
     done();
-  }, index * 60);
+  }, index * 60); // 60ms 간격으로 하나씩 팝업
 };
+// ------------------------------
+
+onMounted(async () => {
+  // 이미 StartView에서 가져왔다면 다시 호출 안 함 (캐싱 효과)
+  if (transactionStore.transactions.length === 0) {
+    await transactionStore.fetchTransactions();
+  }
+});
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
-
-.custom-font {
-  font-family:
-    'Pretendard',
-    -apple-system,
-    sans-serif;
-  color: #191f28;
-}
 
 /* ---------------------------------------------------
    아래 항목들은 부트스트랩으로 대체 불가한 커스텀 UI 입니다.
@@ -339,6 +238,7 @@ const enter = (el, done) => {
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .tab-wrapper button {
+  line-height: 1; /* 텍스트 찐빠 방지 핵심 */
   flex: 1;
   z-index: 1;
   border: none;
@@ -351,7 +251,7 @@ const enter = (el, done) => {
   transition: color 0.3s ease;
 }
 .tab-wrapper button.on {
-  color: #3182f6; /* 활성화 파란색 */
+  color: #3182f6;
 }
 
 /* 2. 카드 터치 리플 (간지용) */
@@ -385,43 +285,6 @@ const enter = (el, done) => {
   }
 }
 
-/* 3. 스와이프 관련 UI */
-.swipe-overlay {
-  position: absolute;
-  top: 5%;
-  height: 80%;
-  width: 100%;
-  background: radial-gradient(
-    circle at center,
-    rgba(49, 130, 246, 0.8) 0%,
-    rgba(131, 56, 236, 0.4) 60%,
-    transparent 100%
-  );
-  filter: blur(20px);
-  border-radius: 50% 100% 100% 50%;
-  z-index: 9999;
-  pointer-events: none;
-  transition:
-    opacity 0.2s ease,
-    transform 0.1s linear;
-}
-
-.swipe-hint {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #3182f6;
-  color: #fff;
-  padding: 12px 24px;
-  border-radius: 30px;
-  font-weight: 700;
-  pointer-events: none;
-  z-index: 100;
-  box-shadow: 0 4px 12px rgba(49, 130, 246, 0.3);
-  transition: opacity 0.2s ease;
-}
-
 /* 4. Vue 트랜지션 로직 */
 .flip-list-move {
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -437,5 +300,44 @@ const enter = (el, done) => {
 .slide-right-enter-from {
   transform: translateY(-20px) rotateX(90deg);
   opacity: 0;
+}
+
+/* 폰트 및 기본 웨이트 설정 */
+.custom-font {
+  font-family:
+    'Pretendard',
+    -apple-system,
+    sans-serif;
+  color: #191f28;
+  letter-spacing: -0.02em;
+}
+
+.line-height-1 {
+  line-height: 1;
+}
+
+/* 호버/액티브 시 카드 반응 강화 */
+.hover-card {
+  border: 1px solid rgba(0, 0, 0, 0.03) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-card:active {
+  transform: scale(0.97) translateY(2px);
+  background-color: #f8f9fa !important;
+}
+
+/* 600px 이상에서 플로팅 버튼 위치 미세조정 */
+@media (max-width: 650px) {
+  .floating-btn {
+    left: auto !important;
+    right: 20px !important;
+    transform: none !important;
+  }
+}
+
+/* 슬라이딩 탭 전환 애니메이션 */
+.transition-all {
+  transition: all 0.2s ease-in-out;
 }
 </style>

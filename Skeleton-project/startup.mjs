@@ -41,6 +41,25 @@ const getGradientColor = (x, len) => {
     else return KB_LIGHT;
 };
 
+const openBrowser = (url) => {
+    const start = (process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open');
+    spawn(start, [url], { shell: true });
+};
+
+const initShortcuts = () => {
+    readline.emitKeypressEvents(process.stdin);
+    if (process.stdin.isTTY) process.stdin.setRawMode(true);
+
+    process.stdin.on('keypress', (str, key) => {
+        if (key.ctrl && key.name === 'c') process.exit();
+
+        // 영문 'a' 혹은 한글 'ㅁ' (문자열 str로 체크) 대응
+        if (key.name === 'a' || str === 'ㅁ') {
+            openBrowser('http://localhost:5173/');
+        }
+    });
+};
+
 async function run() {
     clear();
     process.stdout.write('\x1b[?25l'); // 커서 숨김
@@ -162,11 +181,12 @@ async function run() {
 
     setCursor(0, statusY + 1);
     console.log(`${GRAY}  ----------------------------------------------------------------------------------${RESET}`);
-    console.log(`  URL: ${RESET}🌸 \x1b[4mhttp://localhost:5173/\x1b[0m 🌸\n`);
+    console.log(`  URL: ${RESET}🌸 \x1b[4mhttp://localhost:5173/\x1b[0m 🌸  ${KB_MAIN}[a]키를 눌러서 브라우저로 바로 이동할 수 있어요${RESET}\n`);
     // console.log(`\x1b[45m\x1b[37m  🌸 KB 29-2 SUCCESS / SERVICE START!!          ${RESET}\n`);
 
     // 프로세스가 죽지 않게 유지하면서 출력은 더이상 안 함
     process.stdout.write('\x1b[?25h');
     process.stdin.resume();
+    initShortcuts();
 }
 run();

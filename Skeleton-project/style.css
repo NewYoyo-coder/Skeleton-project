@@ -1,0 +1,478 @@
+/* style.css */
+
+/* =========================
+   1. 기본 변수
+========================= */
+:root {
+  --bg: #ffffff;
+  --text: #212529;
+  --text-muted: #6c757d;
+  --text-h: #212529;
+  --border: #dee2e6;
+  --card-bg: #ffffff;
+
+  --income: #0d6efd; /* primary */
+  --expense: #dc3545; /* danger */
+  --neutral: #6c757d; /* secondary */
+  --selected: #212529; /* dark */
+
+  --shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+}
+
+/* =========================
+   2. 다크모드
+========================= */
+[data-theme='dark'] {
+  --bg: #35363a;
+  --text: #f1f1f1;
+  --text-muted: #b0b4b9;
+  --text-h: #ffffff;
+  --border: #5f6368;
+  --card-bg: #404145;
+
+  --income: #6ea8fe;
+  --expense: #ff7b88;
+  --neutral: #adb5bd;
+  --selected: #ffffff;
+
+  color-scheme: dark;
+}
+
+/* =========================
+   3. 전체 기본
+========================= */
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+}
+
+#app {
+  max-width: 600px; /* 600px 규칙 */
+  margin: 0 auto; /* mx-auto */
+  min-height: 100svh;
+  padding: 16px;
+  box-sizing: border-box;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* =========================
+   4. 공통 레이아웃 규칙
+========================= */
+.section,
+.filter-section,
+.summary-section,
+.content-section,
+.list-section,
+.modal-section {
+  margin-bottom: 1.5rem; /* mb-4 */
+}
+
+.stack-gap-2,
+.filter-group,
+.button-group,
+.detail-group,
+.form-group-custom,
+.list-group-custom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* gap-2 */
+}
+
+/* =========================
+   5. 헤더 규칙
+========================= */
+h5,
+.page-title,
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700; /* fw-bold */
+  text-align: center; /* text-center */
+  color: var(--text-h);
+  margin: 0 0 1rem 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+strong {
+  color: var(--text-h);
+}
+
+/* =========================
+   6. 카드 / 박스
+========================= */
+.card,
+.card-body,
+.summary-card,
+.transaction-card,
+.filter-box,
+.profile-card,
+.modal-content-custom {
+  background-color: var(--card-bg) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0.75rem;
+}
+
+.card,
+.summary-card,
+.transaction-card,
+.filter-box,
+.profile-card {
+  box-shadow: var(--shadow);
+}
+
+/* =========================
+   7. 의미 기반 텍스트 색상
+========================= */
+.text-income,
+.income-text,
+.income {
+  color: var(--income) !important;
+  font-weight: 600;
+}
+
+.text-expense,
+.expense-text,
+.expense {
+  color: var(--expense) !important;
+  font-weight: 600;
+}
+
+.text-neutral,
+.neutral-text,
+.neutral {
+  color: var(--neutral) !important;
+}
+
+.text-selected,
+.selected-text,
+.active-text,
+.is-selected {
+  color: var(--selected) !important;
+  font-weight: 700;
+}
+
+/* + / - 기호 표시용 */
+.income-sign::before {
+  content: '+ ';
+}
+
+.expense-sign::before {
+  content: '- ';
+}
+
+/* =========================
+   8. 버튼: 항상 btn-sm 느낌
+========================= */
+.btn,
+button {
+  font-size: 0.875rem;
+}
+
+.btn-sm,
+.btn,
+button {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+}
+
+.button-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.button-row .btn {
+  flex: 1;
+}
+
+/* 필터/탭 버튼 */
+.filter-btn,
+.nav-btn,
+.period-btn {
+  border: 1px solid var(--border);
+  background-color: var(--card-bg);
+  color: var(--neutral);
+}
+
+.filter-btn.active,
+.nav-btn.active,
+.period-btn.active,
+.filter-btn.is-selected,
+.nav-btn.is-selected,
+.period-btn.is-selected {
+  color: var(--selected) !important;
+  border-color: var(--selected) !important;
+  font-weight: 700;
+}
+
+/* =========================
+   9. 입력창 / 라벨
+========================= */
+.form-label {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.form-control,
+.form-select,
+input,
+textarea,
+select {
+  background-color: var(--card-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* =========================
+   10. 거래 리스트
+========================= */
+.transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background-color: var(--card-bg);
+}
+
+.transaction-left,
+.transaction-right {
+  min-width: 0;
+}
+
+.transaction-left {
+  flex: 1;
+  text-align: left;
+}
+
+.transaction-right {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.amount,
+.money-text {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* =========================
+   11. 말줄임 처리
+========================= */
+.store-name,
+.memo-text,
+.transaction-title,
+.transaction-desc,
+.text-truncate-custom {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Bootstrap text-truncate 보조 */
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================
+   12. 빈 상태
+========================= */
+.empty-state {
+  margin-top: 3rem; /* mt-5 */
+  text-align: center;
+  color: var(--text-muted); /* text-muted */
+  font-size: 0.95rem;
+}
+
+/* =========================
+   13. 테이블
+========================= */
+.table-wrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  margin-bottom: 0;
+  color: var(--text);
+}
+
+.table th,
+.table td {
+  vertical-align: middle;
+  font-size: 0.9rem;
+  border-color: var(--border);
+}
+
+.table .income-col,
+.table .income-text {
+  color: var(--income);
+}
+
+.table .expense-col,
+.table .expense-text {
+  color: var(--expense);
+}
+
+.table .date-col,
+.table .neutral-col {
+  color: var(--neutral);
+}
+
+/* 클릭 행 */
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row.active,
+.clickable-row.selected {
+  color: var(--selected) !important;
+  font-weight: 700;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme='dark'] .clickable-row.active,
+[data-theme='dark'] .clickable-row.selected {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* =========================
+   14. 필터 영역
+========================= */
+.filter-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filter-wrap > * {
+  flex: 1;
+  min-width: 0;
+}
+
+/* =========================
+   15. 페이지네이션
+========================= */
+.pagination-wrap {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* =========================
+   16. 모달 (v-if 전제)
+========================= */
+.modal-backdrop-custom {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1040;
+}
+
+.modal-custom {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: calc(100% - 32px);
+  max-width: 560px;
+  transform: translate(-50%, -50%);
+  background: var(--card-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  z-index: 1050;
+  box-shadow: var(--shadow);
+}
+
+.modal-header-custom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.modal-body-custom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.modal-footer-custom {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* =========================
+   17. 다크모드 강제 보정
+========================= */
+[data-theme='dark'] body,
+[data-theme='dark'] div,
+[data-theme='dark'] p,
+[data-theme='dark'] span,
+[data-theme='dark'] label,
+[data-theme='dark'] section,
+[data-theme='dark'] main {
+  color: var(--text);
+  border-color: var(--border);
+}
+
+[data-theme='dark'] .text-black,
+[data-theme='dark'] .text-dark,
+[data-theme='dark'] .fw-bold,
+[data-theme='dark'] .text-decoration-none,
+[data-theme='dark'] a.text-black {
+  color: var(--text-h) !important;
+}
+
+[data-theme='dark'] .bg-white {
+  background-color: transparent !important;
+}
+
+/* =========================
+   18. 반응형
+========================= */
+@media (max-width: 600px) {
+  #app {
+    padding: 12px;
+  }
+
+  .transaction-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .transaction-right {
+    width: 100%;
+    text-align: left;
+  }
+}

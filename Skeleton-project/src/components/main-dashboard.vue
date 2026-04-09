@@ -1,57 +1,70 @@
 <template>
   <div>
-    <div class="dashboard-wrapper pt-4 pb-2">
+    <div class="dashboard-wrapper pt-4 pb-2 mx-auto">
       <div class="container px-4">
         <h3 class="text-center mb-4 text-dark" style="font-weight: 300">
           {{ displayDate }}
         </h3>
 
-        <div class="card border-0 shadow-sm rounded-4 mb-3">
+        <div class="card border-black shadow-sm rounded-4 mb-2 bg-white">
           <div
             class="card-body p-4 d-flex justify-content-between align-items-center"
           >
             <div>
-              <div class="text-dark fw-bold mb-1" style="font-size: 0.9rem">
+              <div class="text-secondary fw-bold" style="font-size: 0.9rem">
                 순수익
               </div>
               <h2 class="fw-bold mb-0 text-dark">
                 {{ formatNumber(netIncome) }}
-                <span style="font-size: 1.2rem">원</span>
+                <span style="font-size: 1.1rem; margin-left: 2px">원</span>
               </h2>
             </div>
           </div>
         </div>
 
-        <div class="row g-3">
+        <div class="row g-3 mb-4">
           <div class="col-6">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-              <div class="card-body text-center p-3">
-                <div
-                  class="text-primary mb-1"
+            <div class="card border-dark shadow-sm rounded-4 bg-white h-100">
+              <div
+                class="card-body px-3 py-2 d-flex flex-column justify-content-center align-items-center"
+              >
+                <span
+                  class="text-secondary mb-1"
                   style="font-size: 0.85rem; font-weight: 600"
                 >
                   총 수입
-                </div>
-                <h5 class="text-primary mb-0">
-                  {{ formatNumber(totalIncome) }}원
-                </h5>
+                </span>
+
+                <span
+                  class="text-primary fw-bold mb-0"
+                  style="font-size: 0.95rem"
+                >
+                  <span v-if="totalIncome > 0">+</span
+                  >{{ formatNumber(totalIncome) }}원
+                </span>
               </div>
             </div>
           </div>
 
           <div class="col-6">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-              <div class="card-body text-center p-3">
-                <div
-                  class="text-danger mb-1"
+            <div class="card border-black shadow-sm rounded-4 bg-white h-100">
+              <div
+                class="card-body px-3 py-2 d-flex flex-column justify-content-center align-items-center"
+              >
+                <span
+                  class="text-secondary mb-1"
                   style="font-size: 0.85rem; font-weight: 600"
                 >
                   총 지출
-                </div>
-                <h5 class="text-danger mb-0">
-                  {{ totalExpense > 0 ? '-' : ''
-                  }}{{ formatNumber(totalExpense) }} 원
-                </h5>
+                </span>
+
+                <span
+                  class="text-danger fw-bold mb-0"
+                  style="font-size: 0.95rem"
+                >
+                  <span v-if="totalExpense > 0">-</span
+                  >{{ formatNumber(totalExpense) }}원
+                </span>
               </div>
             </div>
           </div>
@@ -105,7 +118,6 @@ watch(
     fetchTransactions();
   },
   { immediate: true },
-  // 마운트 되기 전에도 바로 실행함
 );
 
 onMounted(() => {
@@ -132,6 +144,9 @@ const formatNumber = (num) => {
 </script>
 
 <style scoped>
+.dashboard-wrapper {
+  max-width: 600px;
+}
 .bg-f1f1f1 {
   background-color: #f1f1f1;
 }

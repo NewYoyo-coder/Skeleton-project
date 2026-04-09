@@ -1,0 +1,22 @@
+{
+  "categories": {
+    "expense": [
+      { "id": "food", "label": "음식" },
+      { "id": "cafe", "label": "카페" },
+      { "id": "transportation", "label": "교통" },
+      { "id": "shopping", "label": "쇼핑" },
+      { "id": "housing", "label": "집" },
+      { "id": "taxes", "label": "세금" },
+      { "id": "insurance", "label": "보험" },
+      { "id": "etc", "label": "기타" }
+    ],
+    "income": [
+      { "id": "salary", "label": "월급" },
+      { "id": "additional_income", "label": "부수입" },
+      { "id": "allowance", "label": "용돈" },
+      { "id": "bonus", "label": "상여" },
+      { "id": "interest", "label": "금융소득" },
+      { "id": "etc", "label": "기타" }
+    ]
+  }
+}

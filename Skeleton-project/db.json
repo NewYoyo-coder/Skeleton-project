@@ -268,6 +268,17 @@
       "shop_name": "버거킹",
       "item_name": "와퍼 세트",
       "memo": "간단한 저녁"
+    },
+    {
+      "id": "20",
+      "date": "2026-04-10",
+      "transaction_type": "expense",
+      "payment_method": "card",
+      "amount": 9500,
+      "category": "식비",
+      "shop_name": "버거킹",
+      "item_name": "와퍼 세트",
+      "memo": "간단한 저녁"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

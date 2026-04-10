@@ -133,11 +133,13 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
-import { TRANSACTION_TYPE } from '../constants/transactionType';
-import { CATEGORY_LABEL } from '../constants/categories';
-import { useTransactionStore } from '../stores/transaction';
+
 import TransactionDetailModal from './transaction-detail-modal.vue';
 import TransactionItem from './transaction-item.vue';
+
+import { TRANSACTION_TYPE } from '../constants/transactionType';
+import { CATEGORY_LABEL, CATEGORIES } from '../constants/categories';
+import { useTransactionStore } from '../stores/transaction';
 
 const store = useTransactionStore();
 const { transactions } = storeToRefs(store);
@@ -148,7 +150,7 @@ const selected = computed(
   () => transactions.value.find((t) => t.id === selectedId.value) ?? null,
 );
 const currentPage = ref(1);
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 5; //한번에 보여줄 아이템 수
 
 //날짜 계산 로직 추가
 const now = new Date();
@@ -182,39 +184,25 @@ function typeButtonClass(value) {
 }
 
 // 💡 수정
+// 💡 💡 💡 categories.js 사용
 const categoryOptions = computed(() => {
-  const INCOME_CATEGORIES = [
-    '월급',
-    '부수입',
-    '용돈',
-    '상여',
-    '금융소득',
-    '기타',
-  ];
-  const EXPENSE_CATEGORIES = [
-    '음식',
-    '카페',
-    '교통',
-    '쇼핑',
-    '집',
-    '세금',
-    '보험',
-    '기타',
-  ];
-
-  // 💡 타입이 '전체'일 때는 카테고리를 안 보여주기 위해 빈 배열 반환
+  // 1. 타입이 '전체'일 때는 카테고리 버튼 영역을 완전히 숨김
   if (selectedType.value === TRANSACTION_TYPE.ALL) {
     return [];
   }
 
-  // 수입 또는 지출일 때만 해당 리스트 반환
-  const targetList =
-    selectedType.value === TRANSACTION_TYPE.INCOME
-      ? INCOME_CATEGORIES
-      : EXPENSE_CATEGORIES;
+  // 2. 현재 탭(수입/지출)에 맞는 영어 키 배열 가져오기
+  // 예: ['food', 'cafe', ...]
+  const keys = CATEGORIES[selectedType.value];
 
-  return ['전체', ...targetList];
+  // 3. 영어 키를 한글 라벨로 변환 (.map 활용)
+  // 예: ['식비', '카페', ...]
+  const koreanLabels = keys.map((key) => CATEGORY_LABEL[key]);
+
+  // 4. 맨 앞에 '전체' 버튼을 붙여서 반환
+  return ['전체', ...koreanLabels];
 });
+
 //💡 수정
 // 필터링 및 정렬
 const filteredTransactions = computed(() => {

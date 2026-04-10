@@ -138,7 +138,7 @@
 
         <template v-if="form.transaction_type === TRANSACTION_TYPE.EXPENSE">
           <li class="d-flex justify-content-between align-items-center">
-            <span class="text-secondary small">상호명</span>
+            <span class="text-secondary small">가게명</span>
             <div class="flex-grow-1 text-end ps-3">
               <input
                 v-if="isEditing"
@@ -152,7 +152,7 @@
             </div>
           </li>
           <li class="d-flex flex-column gap-1">
-            <span class="text-secondary small">품목</span>
+            <span class="text-secondary small">상품명</span>
             <input
               v-if="isEditing"
               v-model="form.item_name"
@@ -160,7 +160,7 @@
               class="form-control form-control-sm border-0 bg-light rounded-3"
             />
             <span v-else class="fw-medium" @click="startEdit">{{
-              transaction.item_name || '입력된 품목 없음'
+              transaction.item_name || '입력된 상품 없음'
             }}</span>
           </li>
         </template>

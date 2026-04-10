@@ -242,6 +242,10 @@ watch(currentType, () => {
 const handleSave = async () => {
   if (!amount.value || !category.value || !selectedDate.value)
     return alert('모든 항목을 입력해 주세요');
+  const today = new Date().toISOString().split('T')[0]; // 오늘 날짜 (YYYY-MM-DD)
+  if (selectedDate.value > today) {
+    return alert('미래 날짜는 선택할 수 없습니다.');
+  }
 
   const finalAmount = Math.abs(amount.value);
 

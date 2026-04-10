@@ -1,5 +1,5 @@
 <template>
-  <div class="container py-4" style="max-width: 600px">
+  <div class="container py-4 bg-white" style="max-width: 600px">
     <h5 class="fw-bold mb-4 text-center">거래내역</h5>
 
     <!-- 날짜 필터 -->
@@ -72,37 +72,33 @@
 
     <!-- 정렬 -->
     <div class="d-flex justify-content-end align-items-center gap-2 mb-2">
-      <button class="btn btn-sm btn-light border" @click="resetFilter">
-        초기화
-      </button>
-      <div class="dropdown">
+      <div class="d-flex justify-content-end align-items-center gap-2 mb-2">
         <button
-          class="btn btn-sm btn-light border dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
+          class="t-btn t-single t-push"
+          style="
+            height: 32px;
+            padding: 0 14px;
+            border-radius: 16px;
+            font-size: 13px;
+          "
+          @click="resetFilter"
         >
-          {{ sortOrder === 'desc' ? '최신순' : '오래된순' }}
+          초기화
         </button>
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li>
-            <button
-              class="dropdown-item"
-              :class="{ active: sortOrder === 'desc' }"
-              @click="sortOrder = 'desc'"
-            >
-              최신순
-            </button>
-          </li>
-          <li>
-            <button
-              class="dropdown-item"
-              :class="{ active: sortOrder === 'asc' }"
-              @click="sortOrder = 'asc'"
-            >
-              오래된순
-            </button>
-          </li>
-        </ul>
+
+        <button
+          class="t-btn t-single t-push fw-bold"
+          style="
+            height: 32px;
+            padding: 0 14px;
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--t-blue) !important;
+          "
+          @click="sortOrder = sortOrder === 'desc' ? 'asc' : 'desc'"
+        >
+          {{ sortOrder === 'desc' ? '최신순 ↓' : '오래된순 ↑' }}
+        </button>
       </div>
     </div>
 

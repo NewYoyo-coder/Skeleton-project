@@ -9,7 +9,7 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useRoute, RouterView } from 'vue-router';
+import { useRoute, RouterLink, RouterView } from 'vue-router';
 import Header from '@/sides/header-page.vue';
 
 import 'bootstrap/dist/css/bootstrap.min.css';

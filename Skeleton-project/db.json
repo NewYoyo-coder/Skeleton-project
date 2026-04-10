@@ -27186,6 +27186,17 @@
       "memo": "ㅇㅇ",
       "transaction_type": "income",
       "id": "RCsApArQu_k"
+    },
+    {
+      "date": "2026-04-26",
+      "amount": 10000,
+      "category": "카페",
+      "payment_method": "cash",
+      "shop_name": "11",
+      "item_name": "11",
+      "memo": "22",
+      "transaction_type": "expense",
+      "id": "V8_w5v9lZBU"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

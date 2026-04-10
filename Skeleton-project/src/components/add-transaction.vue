@@ -197,8 +197,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
-import { useTransactionStore } from '@/stores/transaction'; // 1. 스토어 임포트
+import { useTransactionStore } from '@/stores/transaction.js';
 
 const router = useRouter();
 const transactionStore = useTransactionStore(); // 2. 스토어 인스턴스 생성
@@ -258,24 +257,10 @@ const handleSave = async () => {
   };
 
   try {
-    // 3. 서버에 저장
-    const response = await axios.post(
-      'http://localhost:3000/transactions',
-      newReceipt,
-    );
-
-    // 4. [중요] Pinia 스토어 동기화
-    // 서버에서 다시 전체를 불러오거나(fetch), 생성된 데이터를 스토어 배열에 직접 푸시(push)
-    if (response.status === 201) {
-      // 가장 확실한 방법: 스토어의 fetch 함수를 재호출하여 최신화
-      await transactionStore.fetchTransactions();
-
-      // 만약 fetch 함수가 없다면 스토어의 state에 직접 접근 (추천하진 않음)
-      // transactionStore.transactions.unshift(response.data);
-    }
-
+    await transactionStore.addTransaction(newReceipt);
     router.push('/mainDashboard');
   } catch (error) {
+    alert('저장에 실패했습니다.');
     console.error('Failed to save:', error);
   }
 };

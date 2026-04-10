@@ -108,19 +108,31 @@
                 class="form-select form-select-sm border-0 bg-light rounded-3 text-end"
               >
                 <option
-                  v-for="opt in field.key === 'category'
-                    ? field.options.map((c) => CATEGORY_LABEL[c] || c)
-                    : field.options.map((m) => PAYMENT_LABEL[m] || m)"
-                  :key="opt"
-                  :value="opt"
+                  v-for="optKey in field.options"
+                  :key="optKey"
+                  :value="
+                    field.key === 'category'
+                      ? CATEGORY_LABEL[optKey] || optKey
+                      : optKey
+                  "
                 >
-                  {{ opt }}
+                  {{
+                    field.key === 'category'
+                      ? CATEGORY_LABEL[optKey] || optKey
+                      : PAYMENT_LABEL[optKey] || optKey
+                  }}
                 </option>
               </select>
             </template>
-            <span v-else class="fw-medium" @click="startEdit">{{
-              transaction[field.key]
-            }}</span>
+            <!-- 영어로 card account 뜨던 부분 해결 by front -->
+            <span v-else class="fw-medium" @click="startEdit">
+              {{
+                field.key === 'payment_method'
+                  ? PAYMENT_LABEL[transaction[field.key]] ||
+                    transaction[field.key]
+                  : transaction[field.key]
+              }}
+            </span>
           </div>
         </li>
 

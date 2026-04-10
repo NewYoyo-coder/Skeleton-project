@@ -1,6 +1,6 @@
 <template>
   <div class="min-vh-100 d-flex flex-column">
-    <main class="container-fluid py-4 flex-grow-1">
+    <main class="container-fluid py-2 flex-grow-1">
       <Header v-if="!isStartPage" />
       <RouterView />
     </main>

@@ -73,34 +73,57 @@ import { useUserStore } from '../../src/stores/userStore';
 
 const userStore = useUserStore();
 
-const editName = ref(userStore.name ?? '');
-const editEmail = ref(userStore.email ?? '');
+const editName = ref('');
+const editEmail = ref('');
 
-watch(
-  () => [userStore.name, userStore.email],
-  ([newName, newEmail]) => {
-    editName.value = newName;
-    editEmail.value = newEmail;
-  },
-);
-
-onMounted(() => {
+// 데이터 동기화 함수
+const syncData = () => {
   editName.value = userStore.name || '';
   editEmail.value = userStore.email || '';
+};
+
+onMounted(async () => {
+  // 1. 최신 서버 데이터 로드
+  await userStore.fetchUser();
+  syncData();
 });
 
-const saveProfile = () => {
+// 스토어 값이 변경될 때 입력 필드 동기화 (예: 다른 곳에서 변경 시)
+watch(() => [userStore.name, userStore.email], syncData);
+
+const saveProfile = async () => {
   if (!editName.value.trim() || !editEmail.value.trim()) {
     alert('이름과 이메일을 입력해주세요.');
     return;
   }
 
-  userStore.updateProfile(editName.value, editEmail.value);
-  alert('저장되었습니다.');
+  try {
+    // 2. 스토어의 updateProfile 호출 (내부적으로 axios.put 실행)
+    await userStore.updateProfile(editName.value, editEmail.value);
+    alert('저장되었습니다.');
+  } catch (err) {
+    alert('저장 중 오류가 발생했습니다.');
+  }
 };
 
-const changeTheme = (theme) => {
-  userStore.setTheme(theme);
+const changeTheme = async (theme) => {
+  // 3. 테마 변경 시에도 서버에 즉시 저장하고 싶다면 아래와 같이 처리
+  const userData = {
+    name: userStore.name,
+    email: userStore.email,
+    currency: 'KRW', // 기존 값 유지
+    last_login: new Date().toISOString().split('T')[0],
+    settings: {
+      theme: theme,
+      auto_login: userStore.autoLogin,
+    },
+  };
+
+  try {
+    await userStore.setUserInfo(userData);
+  } catch (err) {
+    console.error('테마 저장 실패:', err);
+  }
 };
 </script>
 

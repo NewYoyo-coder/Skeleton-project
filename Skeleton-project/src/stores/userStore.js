@@ -4,10 +4,9 @@ import axios from 'axios';
 
 export const useUserStore = defineStore('user', () => {
   const name = ref('');
-  const email = ref('');
+  const email = ref(''); // email 대신 id로 통일
   const theme = ref('light');
   const autoLogin = ref(true);
-
   const isDarkMode = computed(() => theme.value === 'dark');
 
   // DB에서 정보 가져오기
@@ -39,6 +38,22 @@ export const useUserStore = defineStore('user', () => {
     }
   };
 
+  // userStore.js 내부의 updateProfile 예시
+  const updateProfile = async (newName, newEmail) => {
+    const userData = {
+      name: newName,
+      email: newEmail,
+      currency: 'KRW', // 기본값 혹은 기존값
+      last_login: new Date().toISOString().split('T')[0],
+      settings: {
+        theme: theme.value, // 현재 스토어의 theme ref
+        auto_login: autoLogin.value,
+      },
+    };
+    // 기존에 만든 setUserInfo(userData)를 호출하여 서버에 PUT
+    await setUserInfo(userData);
+  };
+
   const setTheme = (newTheme) => {
     theme.value = newTheme;
     document.documentElement.setAttribute('data-theme', newTheme);
@@ -46,6 +61,6 @@ export const useUserStore = defineStore('user', () => {
 
   return {
     name, email, theme, autoLogin,
-    isDarkMode, setUserInfo, setTheme, fetchUser
+    isDarkMode, setUserInfo, setTheme, fetchUser, updateProfile
   };
 });

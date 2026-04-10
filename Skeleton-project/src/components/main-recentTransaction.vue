@@ -2,9 +2,7 @@
   <div class="mx-auto bg-white min-vh-100 shadow-sm d-flex flex-column mt-2">
     <header class="p-4 bg-white sticky-top z-3">
       <div class="d-flex justify-content-between align-items-center">
-        <h5 class="fw-bold mb-0">
-          {{ dateStore.selectedMonth }}월의 거래 내역
-        </h5>
+        <h5 class="fw-bold mb-0">최근 거래 내역</h5>
       </div>
     </header>
 
@@ -168,17 +166,15 @@ const setSort = (type) => {
 
 // 필터링된 데이터 (Pinia 연동)
 const filteredData = computed(() => {
-  const filtered = transactionStore.transactions.filter((item) => {
-    if (!item.date) return false;
-    const [y, m] = item.date.split('-').map(Number);
-    return y === dateStore.selectedYear && m === dateStore.selectedMonth;
-  });
+  const allTransactions = transactionStore.transactions;
 
   return sortBy.value === 'date'
-    ? [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date))
-    : [...filtered].sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount)); // 절대값 기준 내림차순 정렬
+    ? [...allTransactions].sort((a, b) => new Date(b.date) - new Date(a.date))
+    : [...allTransactions].sort(
+        (a, b) => Math.abs(b.amount) - Math.abs(a.amount),
+      ); // 절대값 기준 내림차순 정렬
 });
-// 메인에 보여줄 10개만 추출
+// 메인에 보여줄 5개만 추출
 const displayedItems = computed(() => filteredData.value.slice(0, 5));
 
 // --- 촤라락 애니메이션 훅 복구 ---
@@ -199,10 +195,8 @@ const enter = (el, done) => {
 // ------------------------------
 
 onMounted(async () => {
-  // 이미 StartView에서 가져왔다면 다시 호출 안 함 (캐싱 효과)
-  if (transactionStore.transactions.length === 0) {
-    await transactionStore.fetchTransactions();
-  }
+  // 서버 부하 알빠임? 무조건 안전하게 불러와서 새로고침 ㄱㄱ
+  await transactionStore.fetchTransactions();
 });
 </script>
 

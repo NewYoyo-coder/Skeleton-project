@@ -103,14 +103,18 @@
     </div>
 
     <!-- 거래 목록 -->
-    <div class="d-flex flex-column gap-2">
+    <TransitionGroup
+      name="flip-list"
+      tag="div"
+      class="main-list-container d-flex flex-column gap-2"
+    >
       <TransactionItem
         v-for="t in pagedTransactions"
         :key="t.id"
         :transaction="t"
         @click="selectedId = t.id"
       />
-    </div>
+    </TransitionGroup>
     <!-- item클릭을 받음 -->
 
     <p
@@ -315,3 +319,48 @@ onMounted(() => {
   store.fetchTransactions();
 });
 </script>
+<style scoped>
+/* 카드 터치 쫀득한 효과 */
+.hover-card {
+  position: relative;
+  overflow: hidden;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.03) !important;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-card:active {
+  background-color: #f8f9fa !important;
+  transform: scale(0.97) translateY(2px);
+}
+
+/* Vue 리스트 정렬/추가/삭제 트랜지션 애니메이션 */
+.main-list-container {
+  position: relative;
+  width: 100%;
+}
+
+.flip-list-move {
+  z-index: 1;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.flip-list-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.flip-list-leave-active {
+  position: absolute;
+  width: 100%;
+  z-index: 0;
+  transition: all 0.3s ease-in;
+  opacity: 0;
+}
+
+.flip-list-enter-from,
+.flip-list-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+</style>

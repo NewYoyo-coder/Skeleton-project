@@ -27120,6 +27120,72 @@
       "memo": "ㄱㄱ",
       "transaction_type": "income",
       "id": "yaAmvFhuiwQ"
+    },
+    {
+      "date": "2026-04-20",
+      "amount": 120000,
+      "category": "월급",
+      "payment_method": "cash",
+      "shop_name": "",
+      "item_name": "",
+      "memo": "ㄷㄷ",
+      "transaction_type": "income",
+      "id": "ARiga0bVnb4"
+    },
+    {
+      "date": "2026-04-22",
+      "amount": 1000,
+      "category": "교통",
+      "payment_method": "cash",
+      "shop_name": "ㅂ",
+      "item_name": "ㅂ",
+      "memo": "따릉이",
+      "transaction_type": "expense",
+      "id": "Tv2nEmAU0-8"
+    },
+    {
+      "date": "2026-04-10",
+      "amount": 10000,
+      "category": "상여",
+      "payment_method": "account",
+      "shop_name": "",
+      "item_name": "",
+      "memo": "개꿀",
+      "transaction_type": "income",
+      "id": "zeMjlZ6a8EU"
+    },
+    {
+      "date": "2026-04-10",
+      "amount": 10000,
+      "category": "금융소득",
+      "payment_method": "account",
+      "shop_name": "",
+      "item_name": "",
+      "memo": "개꿀",
+      "transaction_type": "income",
+      "id": "TmziLzBUV1A"
+    },
+    {
+      "date": "2026-04-10",
+      "amount": 10000,
+      "category": "월급",
+      "payment_method": "account",
+      "shop_name": "",
+      "item_name": "",
+      "memo": "ㅇㅇ",
+      "transaction_type": "income",
+      "id": "S-SHOhge8qQ"
+    },
+    {
+      "date": "2026-04-25",
+      "amount": 10000,
+      "category": "용돈",
+      "payment_method": "account",
+      "shop_name": "",
+      "item_name": "",
+      "memo": "ㅇㅇ",
+      "transaction_type": "income",
+      "id": "RCsApArQu_k"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

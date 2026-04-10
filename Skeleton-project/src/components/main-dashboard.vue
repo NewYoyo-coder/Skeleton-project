@@ -21,79 +21,100 @@
     <div class="swipe-hint" :style="{ opacity: dragOffset !== 0 ? 0.9 : 0 }">
       {{ dragOffset > 50 ? '이전 달로' : dragOffset < -50 ? '다음 달로' : '' }}
     </div>
-    <div>
-      <div class="dashboard-wrapper pt-4 pb-2">
-        <div class="container px-4">
-          <h3 class="text-center mb-4 text-dark" style="font-weight: 300">
+    <div class="dashboard-wrapper pt-4 pb-2">
+      <div
+        class="container"
+        style="max-width: 600px; margin-left: auto; margin-right: auto"
+      >
+        <div
+          class="d-flex justify-content-center align-items-center mb-4 gap-4"
+        >
+          <button
+            class="btn btn-link text-dark p-0 text-decoration-none"
+            @click="triggerSwipe(-1)"
+          >
+            <i class="fa-solid fa-chevron-left fs-4"></i>
+          </button>
+
+          <h3
+            class="text-dark mb-0"
+            style="font-weight: 300; min-width: 130px; text-align: center"
+          >
             {{ displayDate }}
           </h3>
 
-          <div class="card border-0 shadow-sm rounded-4 mb-3">
-            <div
-              class="card-body p-4 d-flex justify-content-between align-items-center"
-            >
-              <div>
-                <div class="text-dark fw-bold mb-1" style="font-size: 0.9rem">
-                  순수익
+          <button
+            class="btn btn-link text-dark p-0 text-decoration-none"
+            @click="triggerSwipe(1)"
+          >
+            <i class="fa-solid fa-chevron-right fs-4"></i>
+          </button>
+        </div>
+        <div class="card border-0 shadow-sm rounded-4 mb-3">
+          <div
+            class="card-body p-4 d-flex justify-content-between align-items-center"
+          >
+            <div>
+              <div class="text-dark fw-bold mb-1" style="font-size: 0.9rem">
+                순수익
+              </div>
+              <h2 class="fw-bold mb-0 text-dark">
+                {{ formatNumber(netIncome) }}
+                <span style="font-size: 1.2rem">원</span>
+              </h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body text-center p-3">
+                <div
+                  class="text-primary mb-1"
+                  style="font-size: 0.85rem; font-weight: 600"
+                >
+                  총 수입
                 </div>
-                <h2 class="fw-bold mb-0 text-dark">
-                  {{ formatNumber(netIncome) }}
-                  <span style="font-size: 1.2rem">원</span>
-                </h2>
+                <h5 class="text-primary mb-0">
+                  {{ formatNumber(totalIncome) }}원
+                </h5>
               </div>
             </div>
           </div>
 
-          <div class="row g-3">
-            <div class="col-6">
-              <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body text-center p-3">
-                  <div
-                    class="text-primary mb-1"
-                    style="font-size: 0.85rem; font-weight: 600"
-                  >
-                    총 수입
-                  </div>
-                  <h5 class="text-primary mb-0">
-                    {{ formatNumber(totalIncome) }}원
-                  </h5>
+          <div class="col-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body text-center p-3">
+                <div
+                  class="text-danger mb-1"
+                  style="font-size: 0.85rem; font-weight: 600"
+                >
+                  총 지출
                 </div>
-              </div>
-            </div>
-
-            <div class="col-6">
-              <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body text-center p-3">
-                  <div
-                    class="text-danger mb-1"
-                    style="font-size: 0.85rem; font-weight: 600"
-                  >
-                    총 지출
-                  </div>
-                  <h5 class="text-danger mb-0">
-                    {{ totalExpense > 0 ? '-' : ''
-                    }}{{ formatNumber(totalExpense) }} 원
-                  </h5>
-                </div>
+                <h5 class="text-danger mb-0">
+                  {{ totalExpense > 0 ? '-' : ''
+                  }}{{ formatNumber(totalExpense) }} 원
+                </h5>
               </div>
             </div>
           </div>
         </div>
-        <router-link
-          to="/addTransaction"
-          class="btn btn-dark rounded-circle position-fixed shadow-lg d-flex justify-content-center align-items-center"
-          style="
-            width: 56px;
-            height: 56px;
-            bottom: 30px;
-            right: calc(50% - 280px);
-            z-index: 1030;
-          "
-        >
-          <i class="fa-solid fa-plus fs-4"></i>
-        </router-link>
+        <recentTransaction />
       </div>
-      <div><recentTransaction /></div>
+      <router-link
+        to="/addTransaction"
+        class="btn btn-dark rounded-circle position-fixed shadow-lg d-flex justify-content-center align-items-center"
+        style="
+          width: 56px;
+          height: 56px;
+          bottom: 30px;
+          right: calc(50% - 280px);
+          z-index: 1030;
+        "
+      >
+        <i class="fa-solid fa-plus fs-4"></i>
+      </router-link>
     </div>
   </div>
 </template>
@@ -207,6 +228,24 @@ const changeMonth = (diff) => {
 
   dateStore.setDate(year, month); // Pinia 스토어 업데이트 -> 자동 반응
 };
+
+const triggerSwipe = (diff) => {
+  // 1. 먼저 이펙트부터 확실하게 보여줌
+  // 이전 달(diff: -1)이면 오른쪽으로 밀리는 느낌(150), 다음 달이면 왼쪽(-150)
+  dragOffset.value = diff === -1 ? 150 : -150;
+
+  // 2. 이펙트가 사용자 눈에 인지될 시간을 충분히 줌 (150ms~200ms)
+  setTimeout(() => {
+    // 3. 실제 데이터 변경
+    changeMonth(diff);
+
+    // 4. 데이터 변경 후 바로 오프셋을 0으로 날리지 않고,
+    // 다음 프레임에서 부드럽게 초기화되도록 살짝 지연 (애니메이션 끊김 방지)
+    setTimeout(() => {
+      dragOffset.value = 0;
+    }, 50);
+  }, 200);
+};
 </script>
 
 <style scoped>
@@ -237,9 +276,8 @@ const changeMonth = (diff) => {
   border-radius: 50% 100% 100% 50%;
   z-index: 9999;
   pointer-events: none;
-  transition:
-    opacity 0.2s ease,
-    transform 0.1s linear;
+  /* ✨ transform 삭제하고 opacity만 부드럽게 남김 */
+  transition: opacity 0.2s ease;
 }
 
 .swipe-hint {

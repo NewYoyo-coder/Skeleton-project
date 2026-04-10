@@ -1,41 +1,38 @@
 <template>
-  <div
-    class="mx-auto bg-white min-vh-100 shadow-sm d-flex flex-column"
-    style="max-width: 600px"
-  >
-    <header class="p-4 border-bottom bg-white sticky-top z-3">
+  <div class="mx-auto bg-white min-vh-100 shadow-sm d-flex flex-column mt-2">
+    <header class="p-4 bg-white sticky-top z-3">
       <div class="d-flex justify-content-between align-items-center">
-        <h5 class="fw-bold mb-0">최근 거래</h5>
-        <span class="text-muted small">
-          {{ dateStore.selectedYear }}년 {{ dateStore.selectedMonth }}월
-        </span>
+        <h5 class="fw-bold mb-0">
+          {{ dateStore.selectedMonth }}월의 거래 내역
+        </h5>
       </div>
     </header>
 
-    <div class="px-4 py-3 bg-white border-bottom">
-      <div
-        class="tab-wrapper p-1 bg-light rounded-3 d-flex"
-        style="height: 44px"
-      >
+    <!-- <div class="t-wrapper" style="width: 300px; height: 60px">
+      <button class="t-btn t-single t-push active">단일 버튼 테스트</button>
+    </div> -->
+
+    <div class="px-4 mb-1 text-center">
+      <div class="t-wrapper w-100" style="height: 40px; --t-width: 50%">
+        <div
+          class="t-active-bg"
+          :style="{
+            transform: `translateX(${sortBy === 'date' ? '0' : '100'}%)`,
+          }"
+        ></div>
+
         <button
-          @click="setSort('date')"
-          class="flex-grow-1 border-0 rounded-2 small fw-bold transition-all d-flex align-items-center justify-content-center"
-          :class="
-            sortBy === 'date'
-              ? 'bg-white shadow-sm text-primary'
-              : 'bg-transparent text-secondary'
-          "
+          class="t-btn t-push"
+          :class="{ active: sortBy === 'date' }"
+          @click="sortBy = 'date'"
         >
           최근순
         </button>
+
         <button
-          @click="setSort('amount')"
-          class="flex-grow-1 border-0 rounded-2 small fw-bold transition-all d-flex align-items-center justify-content-center"
-          :class="
-            sortBy === 'amount'
-              ? 'bg-white shadow-sm text-primary'
-              : 'bg-transparent text-secondary'
-          "
+          class="t-btn t-push"
+          :class="{ active: sortBy === 'amount' }"
+          @click="sortBy = 'amount'"
         >
           금액순
         </button>
@@ -44,12 +41,7 @@
 
     <main class="px-3 py-4 flex-grow-1">
       <div v-if="displayedItems && displayedItems.length > 0">
-        <TransitionGroup
-          name="flip-list"
-          tag="div"
-          @before-enter="beforeEnter"
-          @enter="enter"
-        >
+        <TransitionGroup name="flip-list" tag="div" class="main-list-container">
           <div
             v-for="(item, index) in displayedItems"
             :key="item.id"
@@ -80,10 +72,12 @@
                     "
                     style="font-size: 13px; font-weight: 500; padding: 5px 10px"
                   >
-                    {{ item.category_id }}
+                    {{ item.category }}
                   </span>
                   <span class="text-muted" style="font-size: 11px">
-                    {{ item.payment_method }}
+                    {{
+                      PAYMENT_LABEL[item.payment_method] || item.payment_method
+                    }}
                   </span>
                 </div>
 
@@ -131,7 +125,7 @@
           v-if="filteredData.length > 10"
           class="text-center py-3 text-muted small"
         >
-          최근 10건의 내역만 표시됩니다.
+          최근 10건의 내역만 표시됩니다
         </div>
       </div>
 
@@ -143,12 +137,13 @@
     </main>
   </div>
 </template>
+
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useDateStore } from '@/stores/select-date';
 import { useTransactionStore } from '@/stores/transaction';
 import { useRouter } from 'vue-router'; // 추가
-
+import { PAYMENT_LABEL } from '@/constants/payment';
 const router = useRouter();
 
 const dateStore = useDateStore();
@@ -220,63 +215,19 @@ onMounted(async () => {
    절대 지우지 마세요! (레이아웃 깨짐 방지)
 --------------------------------------------------- */
 
-/* 1. 슬라이딩 탭 (Toss 스타일) */
-.tab-wrapper {
-  position: relative;
-  display: flex;
-  background: #f2f4f6;
-  border-radius: 12px;
-  padding: 2px;
-}
-.active-bg {
-  position: absolute;
-  width: calc(50% - 2px);
-  height: calc(100% - 4px);
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.tab-wrapper button {
-  line-height: 1; /* 텍스트 찐빠 방지 핵심 */
-  flex: 1;
-  z-index: 1;
-  border: none;
-  background: none;
-  padding: 12px;
-  font-size: 15px;
-  font-weight: 600;
-  color: #6b7684;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-.tab-wrapper button.on {
-  color: #3182f6;
-}
-
 /* 2. 카드 터치 리플 (간지용) */
 .hover-card {
   position: relative;
   overflow: hidden;
-  transition:
-    background 0.2s ease,
-    transform 0.1s ease;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.03) !important;
+  /* transition에 transform과 background를 모두 포함 */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .hover-card:active {
-  background: #f2f4f6 !important;
-  transform: scale(0.98);
-}
-.hover-card:active::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  height: 100%;
-  background: rgba(49, 130, 246, 0.1);
-  border-radius: 50%;
-  transform: translate(-50%, -50%) scale(0);
-  animation: ripple 0.4s ease-out;
+  background-color: #f8f9fa !important;
+  transform: scale(0.97) translateY(2px);
 }
 @keyframes ripple {
   to {
@@ -286,20 +237,26 @@ onMounted(async () => {
 }
 
 /* 4. Vue 트랜지션 로직 */
+.main-list-container {
+  position: relative; /* 자식인 absolute 카드들의 기준점 */
+  width: 100%;
+}
+.flip-list-leave-active {
+  position: absolute; /* 핵심: 나가는 놈이 자리를 비켜줘야 꿀렁이지 않음 */
+  width: 100%; /* 폭 고정 */
+  z-index: 0;
+  opacity: 0;
+}
 .flip-list-move {
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.slide-left-enter-active,
-.slide-right-enter-active {
-  transition: all 0.4s cubic-bezier(0.5, 0, 0.5, 1.5);
+.flip-list-enter-active {
+  transition: all 0.3s ease-out;
 }
-.slide-left-enter-from {
-  transform: translateY(20px) rotateX(-90deg);
+.flip-list-enter-from {
   opacity: 0;
-}
-.slide-right-enter-from {
-  transform: translateY(-20px) rotateX(90deg);
-  opacity: 0;
+  transform: translateY(10px); /* 살짝만 올라오게 */
 }
 
 /* 폰트 및 기본 웨이트 설정 */
@@ -312,21 +269,6 @@ onMounted(async () => {
   letter-spacing: -0.02em;
 }
 
-.line-height-1 {
-  line-height: 1;
-}
-
-/* 호버/액티브 시 카드 반응 강화 */
-.hover-card {
-  border: 1px solid rgba(0, 0, 0, 0.03) !important;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.hover-card:active {
-  transform: scale(0.97) translateY(2px);
-  background-color: #f8f9fa !important;
-}
-
 /* 600px 이상에서 플로팅 버튼 위치 미세조정 */
 @media (max-width: 650px) {
   .floating-btn {
@@ -334,10 +276,5 @@ onMounted(async () => {
     right: 20px !important;
     transform: none !important;
   }
-}
-
-/* 슬라이딩 탭 전환 애니메이션 */
-.transition-all {
-  transition: all 0.2s ease-in-out;
 }
 </style>

@@ -1,8 +1,7 @@
 <template>
   <div class="min-vh-100 d-flex flex-column">
-    <Header v-if="!isStartPage" />
-
     <main class="container-fluid py-4 flex-grow-1">
+      <Header v-if="!isStartPage" />
       <RouterView />
     </main>
   </div>

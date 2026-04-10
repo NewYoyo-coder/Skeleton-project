@@ -2,6 +2,7 @@
   "user": {
     "name": "",
     "email": "kmj@example.com",
+    "passsword": "1234",
     "currency": "KRW",
     "last_login": "2026-04-08",
     "settings": {
@@ -27122,28 +27123,6 @@
       "id": "yaAmvFhuiwQ"
     },
     {
-      "date": "2026-04-20",
-      "amount": 120000,
-      "category": "월급",
-      "payment_method": "cash",
-      "shop_name": "",
-      "item_name": "",
-      "memo": "ㄷㄷ",
-      "transaction_type": "income",
-      "id": "ARiga0bVnb4"
-    },
-    {
-      "date": "2026-04-22",
-      "amount": 1000,
-      "category": "교통",
-      "payment_method": "cash",
-      "shop_name": "ㅂ",
-      "item_name": "ㅂ",
-      "memo": "따릉이",
-      "transaction_type": "expense",
-      "id": "Tv2nEmAU0-8"
-    },
-    {
       "date": "2026-04-10",
       "amount": 10000,
       "category": "상여",
@@ -27177,26 +27156,48 @@
       "id": "S-SHOhge8qQ"
     },
     {
-      "date": "2026-04-25",
-      "amount": 10000,
-      "category": "용돈",
+      "date": "2026-04-01",
+      "amount": 11000,
+      "category": "집",
       "payment_method": "account",
-      "shop_name": "",
-      "item_name": "",
-      "memo": "ㅇㅇ",
-      "transaction_type": "income",
-      "id": "RCsApArQu_k"
+      "shop_name": "11",
+      "item_name": "22",
+      "memo": "3333",
+      "transaction_type": "expense",
+      "id": "SIyABiQXb6o"
     },
     {
-      "date": "2026-04-26",
-      "amount": 10000,
-      "category": "카페",
+      "date": "2026-01-10",
+      "amount": 5000000,
+      "category": "세금",
       "payment_method": "cash",
-      "shop_name": "11",
-      "item_name": "11",
-      "memo": "22",
+      "shop_name": "국세청",
+      "item_name": "감사",
+      "memo": "ㄷㄷ",
       "transaction_type": "expense",
-      "id": "V8_w5v9lZBU"
+      "id": "D8O0W6XM8M8"
+    },
+    {
+      "date": "2026-04-05",
+      "amount": 1,
+      "category": "음식",
+      "payment_method": "card",
+      "shop_name": "민준상회",
+      "item_name": "음식",
+      "memo": "",
+      "transaction_type": "expense",
+      "id": "CdOHSA7Q7bA"
+    },
+    {
+      "date": "2026-04-10",
+      "amount": 107,
+      "category": "쇼핑",
+      "payment_method": "account",
+      "shop_name": "유경상회",
+      "item_name": "코트",
+      "memo": "1234",
+      "transaction_type": "expense",
+      "id": "JFSzTAOuLrg"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

@@ -35,57 +35,57 @@
         class="container"
         style="max-width: 600px; margin-left: auto; margin-right: auto"
       >
-        <div class="card border-0 shadow-sm rounded-4 mb-3">
-          <div
-            class="card-body p-4 d-flex justify-content-between align-items-center"
-          >
-            <div>
-              <div class="text-dark fw-bold mb-1" style="font-size: 0.9rem">
-                순수익
+        <div class="row g-3 mb-3">
+          <div class="col-7">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div
+                class="card-body py-3 px-4 d-flex flex-column justify-content-center"
+              >
+                <div
+                  class="text-dark fw-bold mb-1"
+                  style="font-size: 0.85rem; opacity: 0.8"
+                >
+                  순수익
+                </div>
+                <h2
+                  class="fw-bold mb-0 text-dark text-nowrap"
+                  style="font-size: 1.5rem"
+                >
+                  {{ formatNumber(netIncome) }}
+                  <span style="font-size: 1rem">원</span>
+                </h2>
               </div>
-              <h2 class="fw-bold mb-0 text-dark">
-                {{ formatNumber(netIncome) }}
-                <span style="font-size: 1.2rem">원</span>
-              </h2>
             </div>
           </div>
-        </div>
 
-        <div class="row g-3">
-          <div class="col-6">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-              <div class="card-body text-center p-3">
-                <div
-                  class="text-primary mb-1"
-                  style="font-size: 0.85rem; font-weight: 600"
-                >
+          <div class="col-5 d-flex flex-column gap-2">
+            <div class="card border-0 shadow-sm rounded-4 flex-grow-1">
+              <div
+                class="card-body py-2 px-3 d-flex flex-column justify-content-center"
+              >
+                <div class="text-primary fw-bold" style="font-size: 0.75rem">
                   총 수입
                 </div>
-                <h5 class="text-primary mb-0">
-                  {{ formatNumber(totalIncome) }}원
-                </h5>
+                <div class="text-primary fw-bold" style="font-size: 0.95rem">
+                  +{{ formatNumber(totalIncome) }}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="col-6">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-              <div class="card-body text-center p-3">
-                <div
-                  class="text-danger mb-1"
-                  style="font-size: 0.85rem; font-weight: 600"
-                >
+            <div class="card border-0 shadow-sm rounded-4 flex-grow-1">
+              <div
+                class="card-body py-2 px-3 d-flex flex-column justify-content-center"
+              >
+                <div class="text-danger fw-bold" style="font-size: 0.75rem">
                   총 지출
                 </div>
-                <h5 class="text-danger mb-0">
-                  {{ totalExpense > 0 ? '-' : ''
-                  }}{{ formatNumber(totalExpense) }} 원
-                </h5>
+                <div class="text-danger fw-bold" style="font-size: 0.95rem">
+                  -{{ formatNumber(totalExpense) }}
+                </div>
               </div>
             </div>
           </div>
         </div>
-
         <recentTransaction />
       </div>
     </div>

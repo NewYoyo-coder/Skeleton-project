@@ -110,19 +110,6 @@
         </div>
         <recentTransaction />
       </div>
-      <router-link
-        to="/addTransaction"
-        class="btn btn-dark rounded-circle position-fixed shadow-lg d-flex justify-content-center align-items-center"
-        style="
-          width: 56px;
-          height: 56px;
-          bottom: 30px;
-          right: max(20px, calc(50% - 280px));
-          z-index: 1030;
-        "
-      >
-        <i class="fa-solid fa-plus fs-4"></i>
-      </router-link>
     </div>
   </div>
 </template>

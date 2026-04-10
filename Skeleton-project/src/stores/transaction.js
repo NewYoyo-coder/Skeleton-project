@@ -20,6 +20,18 @@ export const useTransactionStore = defineStore('transaction', () => {
     }
   }
 
+  // 추가
+  async function addTransaction(newData) {
+    try {
+      const res = await axios.post('/api/transactions', newData);
+      transactions.value.unshift(res.data);
+      return res.data;
+    } catch (error) {
+      console.error('추가 실패:', error);
+      throw error;
+    }
+  }
+
   //수정
   async function updateTransaction(id, data) {
     try {
@@ -48,6 +60,7 @@ export const useTransactionStore = defineStore('transaction', () => {
     transactions,
     getSortedData,
     fetchTransactions,
+    addTransaction,
     updateTransaction,
     deleteTransaction,
   };

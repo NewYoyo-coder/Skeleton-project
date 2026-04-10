@@ -183,7 +183,9 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { useTransactionStore } from '@/stores/transaction.js';
+
+const transactionStore = useTransactionStore();
 
 const router = useRouter();
 const currentType = ref('expense');
@@ -242,9 +244,10 @@ const handleSave = async () => {
   };
 
   try {
-    await axios.post('http://localhost:3000/transactions', newReceipt);
+    await transactionStore.addTransaction(newReceipt);
     router.push('/mainDashboard');
   } catch (error) {
+    alert('저장에 실패했습니다.');
     console.error('Failed to save:', error);
   }
 };

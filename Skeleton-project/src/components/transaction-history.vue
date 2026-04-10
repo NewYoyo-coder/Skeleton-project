@@ -41,7 +41,7 @@
         ]"
         @click="toggleCategory(cat)"
       >
-        {{ cat === '전체' ? '전체' : (CATEGORY_LABEL[cat] ?? cat) }}
+        {{ cat }}
       </button>
     </div>
 
@@ -141,15 +141,27 @@ import TransactionItem from './transaction-item.vue';
 
 const store = useTransactionStore();
 const { transactions } = storeToRefs(store);
+
+//상세 보기 & 페이지네이션 관련
 const selectedId = ref(null);
 const selected = computed(
   () => transactions.value.find((t) => t.id === selectedId.value) ?? null,
 );
 const currentPage = ref(1);
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 5;
 
-const filterFrom = ref('');
-const filterTo = ref('');
+//날짜 계산 로직 추가
+const now = new Date();
+const year = now.getFullYear();
+const month = String(now.getMonth() + 1).padStart(2, '0');
+const day = String(now.getDate()).padStart(2, '0');
+
+const firstDayOfMonth = `${year}-${month}-01`;
+const today = `${year}-${month}-${day}`;
+
+//날짜 초기값 수정
+const filterFrom = ref(firstDayOfMonth); // '' 에서 수정
+const filterTo = ref(today); // '' 에서 수정
 const selectedType = ref(TRANSACTION_TYPE.ALL);
 const selectedCategory = ref('전체');
 const sortOrder = ref('desc');
@@ -171,16 +183,38 @@ function typeButtonClass(value) {
 
 // 💡 수정
 const categoryOptions = computed(() => {
-  const base =
-    selectedType.value === TRANSACTION_TYPE.ALL
-      ? transactions.value
-      : transactions.value.filter(
-          (t) => t.transaction_type === selectedType.value, // DB의 'income'/'expense'와 비교
-        );
-  const cats = [...new Set(base.map((t) => t.category))];
-  return ['전체', ...cats]; //필터 초기화용
-});
+  const INCOME_CATEGORIES = [
+    '월급',
+    '부수입',
+    '용돈',
+    '상여',
+    '금융소득',
+    '기타',
+  ];
+  const EXPENSE_CATEGORIES = [
+    '음식',
+    '카페',
+    '교통',
+    '쇼핑',
+    '집',
+    '세금',
+    '보험',
+    '기타',
+  ];
 
+  // 💡 타입이 '전체'일 때는 카테고리를 안 보여주기 위해 빈 배열 반환
+  if (selectedType.value === TRANSACTION_TYPE.ALL) {
+    return [];
+  }
+
+  // 수입 또는 지출일 때만 해당 리스트 반환
+  const targetList =
+    selectedType.value === TRANSACTION_TYPE.INCOME
+      ? INCOME_CATEGORIES
+      : EXPENSE_CATEGORIES;
+
+  return ['전체', ...targetList];
+});
 //💡 수정
 // 필터링 및 정렬
 const filteredTransactions = computed(() => {
@@ -221,7 +255,7 @@ const pagedTransactions = computed(() => {
   return filteredTransactions.value.slice(start, start + PAGE_SIZE);
 });
 
-//💡 보여줄 페이지 번호 계산 (최대 10개)
+//💡 보여줄 페이지 번호 계산
 const MAX_VISIBLE_PAGES = 10;
 
 const visiblePages = computed(() => {
@@ -261,10 +295,14 @@ function toggleCategory(cat) {
 }
 
 function resetFilter() {
-  filterFrom.value = '';
-  filterTo.value = '';
+  // 초기화 버튼을 눌렀을 때 다시 '이번 달 1일'과 '오늘'로 설정
+  filterFrom.value = firstDayOfMonth;
+  filterTo.value = today;
+
+  // 나머지 필터들도 초기값으로 변경
   selectedType.value = TRANSACTION_TYPE.ALL;
   selectedCategory.value = '전체';
+  sortOrder.value = 'desc';
 }
 
 onMounted(() => {

@@ -166,11 +166,11 @@ const handleSave = async () => {
     date: selectedDate.value,
     amount: finalAmount,
     category: category.value,
-    paymentMethod: paymentMethod.value,
-    shopName: currentType.value === 'expense' ? shopName.value : '',
-    itemName: currentType.value === 'expense' ? itemName.value : '',
+    payment_method: paymentMethod.value,
+    shop_name: currentType.value === 'expense' ? shopName.value : '',
+    item_name: currentType.value === 'expense' ? itemName.value : '',
     memo: memo.value,
-    transactionType: currentType.value,
+    transaction_type: currentType.value,
   };
 
   try {
@@ -270,7 +270,7 @@ input[type='date'] {
 
 .middle-body {
   width: 100%;
-  max-width: 425px;
+  max-width: 600px;
   padding: 10px;
   box-sizing: border-box;
   display: flex;
@@ -307,7 +307,7 @@ select {
   justify-content: center;
   gap: 0;
   width: 100%;
-  max-width: 425px;
+  max-width: 600px;
   margin-bottom: 10px;
 }
 

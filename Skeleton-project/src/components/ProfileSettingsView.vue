@@ -6,7 +6,7 @@
     <div class="container">
       <div
         class="card shadow-sm mx-auto"
-        style="max-width: 420px; background-color: var(--card-bg)"
+        style="max-width: 600px; background-color: var(--card-bg)"
       >
         <div class="card-body p-4">
           <h2 class="h4 mb-4 fw-bold">프로필 & 설정</h2>
@@ -30,6 +30,15 @@
               placeholder="example@mail.com"
             />
           </div>
+          <button
+            class="btn btn-warning w-100 fw-bold py-2 text-white"
+            style="background-color: #f4a261; border: none"
+            @click="saveProfile"
+          >
+            저장하기
+          </button>
+
+          <div class="theme-section m-4" />
 
           <div class="theme-section mb-4 text-start">
             <p class="small fw-bold mb-2">화면 모드</p>
@@ -52,14 +61,6 @@
               </button>
             </div>
           </div>
-
-          <button
-            class="btn btn-warning w-100 fw-bold py-2 text-white"
-            style="background-color: #f4a261; border: none"
-            @click="saveProfile"
-          >
-            저장하기
-          </button>
         </div>
       </div>
     </div>

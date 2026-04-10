@@ -7,9 +7,9 @@
       <div class="mb-4">
         <img
           class="piggy-image fade-slide-in"
-          src="https://cdn-icons-png.flaticon.com/512/216/216687.png"
-          alt="piggy bank"
-          style="width: 100px"
+          src="../assets/logo_transparent.png"
+          alt="사진이 없어요"
+          style="width: 150px"
         />
       </div>
 
@@ -29,44 +29,93 @@
           placeholder="이메일 입력(선택사항)"
           class="form-control form-control-lg fs-6"
         />
-        <button
+        <!-- <button
           type="submit"
           class="btn btn-warning btn-lg text-white fw-bold shadow-sm"
         >
           시작하기
-        </button>
+        </button> -->
+
+        <!-- <div class="d-flex align-items-center gap-2 px-1">
+          <input
+            v-model="autoLogin"
+            type="checkbox"
+            id="auto-login"
+            class="form-check-input"
+          />
+          <label
+            for="auto-login"
+            class="text-secondary small"
+            style="cursor: pointer"
+          >
+            내 정보를 기억할게요
+          </label>
+        </div> -->
+        <div class="t-wrapper" style="width: 300px; height: 60px">
+          <button type="submit" class="t-btn t-single t-push active">
+            시작하기
+          </button>
+        </div>
       </form>
     </div>
   </div>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useUserStore } from '../../src/stores/userStore';
+import { useUserStore } from '@/stores/userStore';
+import { useTransactionStore } from '@/stores/transaction';
 
 const router = useRouter();
 const userStore = useUserStore();
+const transactionStore = useTransactionStore();
 
 const userName = ref('');
 const userEmail = ref('');
+const autoLogin = ref(true);
+
+onMounted(async () => {
+  // 스토어 내부의 user 객체를 바로 확인
+  const savedUser = userStore.user;
+
+  if (savedUser?.name && savedUser?.settings?.auto_login) {
+    try {
+      await transactionStore.fetchTransactions();
+      router.replace('/mainDashboard');
+    } catch (err) {
+      console.error('자동 로그인 실패:', err);
+    }
+  }
+});
 
 const goToHome = async () => {
-  // 1. 유저 정보 먼저 저장
   if (!userName.value.trim()) {
     alert('이름을 입력해주세요.');
     return;
   }
-  userStore.setUserInfo(userName.value, userEmail.value);
 
-  // 2. [핵심] 대시보드 가기 전에 데이터 선로딩
+  // 1. 요청하신 JSON 규격 그대로 생성
+  const userData = {
+    name: userName.value,
+    email: userEmail.value,
+    currency: 'KRW',
+    last_login: new Date().toISOString().split('T')[0],
+    settings: {
+      theme: 'light',
+      auto_login: autoLogin.value,
+    },
+  };
+
+  // 2. 유저 정보 저장 (객체 통째로 전달)
+  userStore.setUserInfo(userData);
+
+  // 3. 데이터 로딩 후 이동
   try {
     await transactionStore.fetchTransactions();
   } catch (err) {
-    console.error('데이터 미리 가져오기 실패:', err);
+    console.error('로딩 에러:', err);
   }
 
-  // 3. 데이터 로딩 완수 후 이동 (이래야 대시보드 가자마자 뜸)
-  // router.push('/home');
   router.push('/mainDashboard');
 };
 </script>

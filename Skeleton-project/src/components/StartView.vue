@@ -35,28 +35,6 @@
           placeholder="비밀번호 입력"
           class="form-control form-control-lg fs-6"
         />
-        <!-- <button
-          type="submit"
-          class="btn btn-warning btn-lg text-white fw-bold shadow-sm"
-        >
-          시작하기
-        </button> -->
-
-        <!-- <div class="d-flex align-items-center gap-2 px-1">
-          <input
-            v-model="autoLogin"
-            type="checkbox"
-            id="auto-login"
-            class="form-check-input"
-          />
-          <label
-            for="auto-login"
-            class="text-secondary small"
-            style="cursor: pointer"
-          >
-            내 정보를 기억할게요
-          </label>
-        </div> -->
         <div class="t-wrapper" style="width: 300px; height: 60px">
           <button type="submit" class="t-btn t-single t-push active">
             시작하기
@@ -78,13 +56,13 @@ const transactionStore = useTransactionStore();
 
 const userName = ref('');
 const userEmail = ref('');
+const userPassword = ref('');
 const autoLogin = ref(true);
 
 onMounted(async () => {
-  // 스토어 내부의 user 객체를 바로 확인
-  const savedUser = userStore.user;
-
-  if (savedUser?.name && savedUser?.settings?.auto_login) {
+  await userStore.fetchUser();
+  // 자동 로그인 체크 (이름이 있고 설정이 true일 때)
+  if (userStore.name && userStore.autoLogin) {
     try {
       await transactionStore.fetchTransactions();
       router.replace('/mainDashboard');
@@ -95,34 +73,31 @@ onMounted(async () => {
 });
 
 const goToHome = async () => {
-  if (!userName.value.trim()) {
-    alert('이름을 입력해주세요.');
+  // 아이디/비번 필수 체크 (고정값이더라도 입력은 받아야 하므로)
+  if (!userEmail.value || !userPassword.value) {
+    alert('아이디와 비밀번호를 입력해주세요.');
     return;
   }
 
-  // 1. 요청하신 JSON 규격 그대로 생성
   const userData = {
-    name: userName.value,
+    name: userName.value || '사용자', // 이름 미입력 시 기본값
     email: userEmail.value,
+    password: userPassword.value, // DB에 함께 저장
     currency: 'KRW',
     last_login: new Date().toISOString().split('T')[0],
     settings: {
-      theme: 'light',
+      theme: userStore.theme,
       auto_login: autoLogin.value,
     },
   };
 
-  // 2. 유저 정보 저장 (객체 통째로 전달)
-  userStore.setUserInfo(userData);
-
-  // 3. 데이터 로딩 후 이동
   try {
+    await userStore.setUserInfo(userData);
     await transactionStore.fetchTransactions();
+    router.push('/mainDashboard');
   } catch (err) {
-    console.error('로딩 에러:', err);
+    alert('저장 실패');
   }
-
-  router.push('/mainDashboard');
 };
 </script>
 <style scoped>

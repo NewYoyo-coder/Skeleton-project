@@ -1,13 +1,12 @@
 {
   "user": {
-    "name": "",
-    "email": "kmj@example.com",
-    "passsword": "1234",
+    "name": "11111",
+    "email": "1111",
     "currency": "KRW",
-    "last_login": "2026-04-08",
+    "last_login": "2026-04-10",
     "settings": {
       "theme": "light",
-      "auto_login": false
+      "auto_login": true
     }
   },
   "categories": {

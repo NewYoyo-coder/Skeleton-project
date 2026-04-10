@@ -66,9 +66,13 @@
             "
           />
         </template>
-        <span v-else @click="startEdit" class="t-push"
-          >{{ Number(transaction.amount).toLocaleString() }}원</span
-        >
+        <span class="editable-value" @click="startEdit">
+          {{
+            transaction.transaction_type === TRANSACTION_TYPE.INCOME
+              ? '+'
+              : '-'
+          }}{{ Number(transaction.amount).toLocaleString() }}원
+        </span>
       </div>
 
       <ul class="list-unstyled d-flex flex-column gap-3 mb-4">
@@ -136,6 +140,53 @@
           </div>
         </li>
 
+        <!-- 카테고리 -->
+        <li
+          class="d-flex justify-content-between align-items-center border-bottom pb-2"
+        >
+          <span class="text-muted flex-shrink-0 me-2">카테고리</span>
+          <select
+            v-if="isEditing"
+            v-model="form.category"
+            class="form-select form-select-sm w-auto"
+          >
+            <option
+              v-for="cat in categoryOptions"
+              :key="cat"
+              :value="CATEGORY_LABEL[cat]"
+            >
+              {{ CATEGORY_LABEL[cat] }}
+            </option>
+          </select>
+          <span v-else class="editable-value" @click="startEdit">{{
+            transaction.category
+          }}</span>
+        </li>
+
+        <!-- 결제수단 -->
+        <li
+          class="d-flex justify-content-between align-items-center border-bottom pb-2"
+        >
+          <span class="text-muted flex-shrink-0 me-2">결제수단</span>
+          <select
+            v-if="isEditing"
+            v-model="form.payment_method"
+            class="form-select form-select-sm w-auto"
+          >
+            <option
+              v-for="method in PAYMENT_METHODS"
+              :key="method"
+              :value="PAYMENT_LABEL[method]"
+            >
+              {{ PAYMENT_LABEL[method] }}
+            </option>
+          </select>
+          <span v-else class="editable-value" @click="startEdit">{{
+            transaction.payment_method
+          }}</span>
+        </li>
+
+        <!-- 지출 전용 필드 -->
         <template v-if="form.transaction_type === TRANSACTION_TYPE.EXPENSE">
           <li class="d-flex justify-content-between align-items-center">
             <span class="text-secondary small">가게명</span>
@@ -247,7 +298,7 @@ const saving = ref(false);
 const deleting = ref(false);
 
 //복사값 들고있음
-const form = reactive({ ...props.transaction });
+const form = reactive({ ...props.transaction }); //...복사값
 
 function startEdit() {
   Object.assign(form, props.transaction);

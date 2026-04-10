@@ -4,12 +4,26 @@
       <Header v-if="!isStartPage" />
       <RouterView />
     </main>
+    <router-link
+      v-if="!isStartPage && !isAddTransaction"
+      to="/addTransaction"
+      class="btn btn-dark rounded-circle position-fixed shadow-lg d-flex justify-content-center align-items-center"
+      style="
+        width: 56px;
+        height: 56px;
+        bottom: 30px;
+        right: max(20px, calc(50% - 280px));
+        z-index: 9999;
+      "
+    >
+      <i class="fa-solid fa-plus fs-4"></i>
+    </router-link>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue';
-import { useRoute, RouterLink, RouterView } from 'vue-router';
+import { useRoute, RouterView } from 'vue-router';
 import Header from '@/sides/header-page.vue';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -17,6 +31,7 @@ import './assets/style.css';
 
 const route = useRoute();
 const isStartPage = computed(() => route.name === 'startPage');
+const isAddTransaction = computed(() => route.path === '/addTransaction');
 </script>
 
 <style>

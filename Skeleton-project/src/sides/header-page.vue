@@ -1,5 +1,5 @@
 <template>
-  <header class="py-3">
+  <header>
     <div
       class="container"
       style="max-width: 600px; margin-left: auto; margin-right: auto"

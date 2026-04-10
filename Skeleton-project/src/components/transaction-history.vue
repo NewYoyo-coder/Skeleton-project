@@ -18,30 +18,55 @@
     </div>
 
     <!-- 타입 필터 -->
-    <div class="d-flex gap-2 mb-3">
-      <button
-        v-for="type in typeOptions"
-        :key="type.value"
-        :class="['btn btn-sm', typeButtonClass(type.value)]"
-        style="flex: 1 1 0%"
-        @click="toggleType(type.value)"
-      >
-        {{ type.label }}
-      </button>
+    <div class="px-0 mb-3 text-center">
+      <div class="t-wrapper w-100" style="height: 40px; --t-width: 33.33%">
+        <div
+          class="t-active-bg"
+          :style="{
+            transform: `translateX(${
+              selectedType === TRANSACTION_TYPE.ALL
+                ? '0'
+                : selectedType === TRANSACTION_TYPE.INCOME
+                  ? '100'
+                  : '200'
+            }%)`,
+          }"
+        ></div>
+        <button
+          v-for="type in typeOptions"
+          :key="type.value"
+          class="t-btn t-push"
+          :class="{ active: selectedType === type.value }"
+          @click="toggleType(type.value)"
+        >
+          {{ type.label }}
+        </button>
+      </div>
     </div>
 
     <!-- 카테고리 필터 -->
-    <div class="d-flex flex-wrap gap-1 mb-3">
+    <div class="d-flex flex-wrap gap-2 mb-3">
       <button
         v-for="cat in categoryOptions"
         :key="cat"
-        :class="[
-          'btn btn-sm rounded-pill px-3',
-          selectedCategory === cat ? 'btn-dark' : 'btn-outline-secondary',
-        ]"
+        class="t-btn t-single t-push"
+        :class="{ 'active-chip': selectedCategory === cat }"
+        style="
+          display: inline-flex;
+          flex: none !important; /* ← 이거 추가 (혼자 있을 때 꽉 차는 것 방지) */
+          min-width: auto;
+          height: 34px;
+          padding: 0 16px;
+          border-radius: 17px;
+          font-size: 13px;
+          transition:
+            background-color 0.3s ease,
+            color 0.3s ease,
+            transform 0.1s ease;
+        "
         @click="toggleCategory(cat)"
       >
-        {{ cat === '전체' ? '전체' : (CATEGORY_LABEL[cat] ?? cat) }}
+        {{ cat }}
       </button>
     </div>
 
@@ -176,28 +201,36 @@ const categoryOptions = computed(() => {
   return ['전체', ...cats];
 });
 
-//필터링 및 정렬
+//필터링 및 정렬 [스크립트 부분]
 const filteredTransactions = computed(() => {
-  return transactions.value
-    .filter((t) => {
-      if (filterFrom.value && t.date < filterFrom.value) return false;
-      if (filterTo.value && t.date > filterTo.value) return false;
-      if (
-        selectedType.value !== 'all' &&
-        t.transaction_type !== selectedType.value
-      )
-        return false;
-      if (
-        selectedCategory.value !== '전체' &&
-        t.category !== selectedCategory.value
-      )
-        return false;
-      return true;
-    })
-    .sort((a, b) => {
-      if (sortOrder.value === 'desc') return a.date < b.date ? 1 : -1;
-      return a.date > b.date ? 1 : -1;
-    });
+  return (
+    transactions.value
+      .filter((t) => {
+        if (filterFrom.value && t.date < filterFrom.value) return false;
+        if (filterTo.value && t.date > filterTo.value) return false;
+
+        // 🚨 여기 수정: 'all' -> TRANSACTION_TYPE.ALL
+        if (
+          selectedType.value !== TRANSACTION_TYPE.ALL &&
+          t.transaction_type !== selectedType.value
+        )
+          return false;
+
+        if (
+          selectedCategory.value !== '전체' &&
+          t.category !== selectedCategory.value
+        )
+          return false;
+
+        return true;
+      })
+      // 🚨 여기 수정: 날짜 정렬 버그(동일 날짜일 때 꼬임) 방지
+      .sort((a, b) => {
+        if (sortOrder.value === 'desc')
+          return new Date(b.date) - new Date(a.date);
+        return new Date(a.date) - new Date(b.date);
+      })
+  );
 });
 
 const totalPages = computed(() =>

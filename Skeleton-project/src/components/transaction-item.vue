@@ -28,13 +28,20 @@
             style="max-width: 220px"
           >
             <span style="font-size: 17px">{{ transaction.shop_name }}</span>
-            <span v-if="transaction.item_name" class="text-muted" style="font-size: 15px">
+            <span
+              v-if="transaction.item_name"
+              class="text-muted"
+              style="font-size: 15px"
+            >
               · {{ transaction.item_name }}</span
             >
           </div>
           <div class="text-muted d-flex gap-2" style="font-size: 13px">
             <span>{{ transaction.date }}</span>
-            <span>{{ transaction.payment_method }}</span>
+            <span class="text-muted">{{
+              PAYMENT_LABEL[transaction.payment_method] ||
+              transaction.payment_method
+            }}</span>
           </div>
           <div
             v-if="transaction.memo"
@@ -63,7 +70,8 @@
 </template>
 
 <script setup>
-import { TRANSACTION_TYPE } from '../constants/transactionType'
+import { TRANSACTION_TYPE } from '../constants/transactionType';
+import { PAYMENT_LABEL } from '@/constants/payment';
 
 defineProps({
   transaction: {
@@ -74,5 +82,4 @@ defineProps({
 
 defineEmits(['click']);
 //부모인 history가 @click로 받음
-
 </script>

@@ -27,17 +27,6 @@ const router = createRouter({
       component: addTransaction,
       props: true,
     },
-
-    {
-      path: "/test1",
-      name: "test1",
-      component: () => import("../../deleted_views/json-test.vue"),
-    },
-    {
-      path: "/test2",
-      name: "test2",
-      component: () => import("../../deleted_views/json-test2.vue"),
-    }
   ],
 });
 export default router;

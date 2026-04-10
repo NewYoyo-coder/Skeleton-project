@@ -29,7 +29,11 @@
               : 'text-bg-danger'
           "
         >
-          {{ transaction.transaction_type === TRANSACTION_TYPE.INCOME ? '수입' : '지출' }}
+          {{
+            transaction.transaction_type === TRANSACTION_TYPE.INCOME
+              ? '수입'
+              : '지출'
+          }}
         </span>
       </template>
 
@@ -37,7 +41,9 @@
       <div
         class="fs-3 fw-bold mb-4"
         :class="
-          form.transaction_type === TRANSACTION_TYPE.INCOME ? 'text-primary' : 'text-danger'
+          form.transaction_type === TRANSACTION_TYPE.INCOME
+            ? 'text-primary'
+            : 'text-danger'
         "
       >
         <template v-if="isEditing">
@@ -50,7 +56,10 @@
         </template>
         <template v-else>
           <span class="editable-value" @click="startEdit">
-            {{ transaction.transaction_type === TRANSACTION_TYPE.INCOME ? '+' : '-'
+            {{
+              transaction.transaction_type === TRANSACTION_TYPE.INCOME
+                ? '+'
+                : '-'
             }}{{ Number(transaction.amount).toLocaleString() }}원
           </span>
         </template>
@@ -84,7 +93,11 @@
             v-model="form.category"
             class="form-select form-select-sm w-auto"
           >
-            <option v-for="cat in categoryOptions" :key="cat" :value="CATEGORY_LABEL[cat]">
+            <option
+              v-for="cat in categoryOptions"
+              :key="cat"
+              :value="CATEGORY_LABEL[cat]"
+            >
               {{ CATEGORY_LABEL[cat] }}
             </option>
           </select>
@@ -103,7 +116,11 @@
             v-model="form.payment_method"
             class="form-select form-select-sm w-auto"
           >
-            <option v-for="method in PAYMENT_METHODS" :key="method" :value="PAYMENT_LABEL[method]">
+            <option
+              v-for="method in PAYMENT_METHODS"
+              :key="method"
+              :value="PAYMENT_LABEL[method]"
+            >
               {{ PAYMENT_LABEL[method] }}
             </option>
           </select>
@@ -223,7 +240,7 @@ const saving = ref(false);
 const deleting = ref(false);
 
 //복사값 들고있음
-const form = reactive({ ...props.transaction });
+const form = reactive({ ...props.transaction }); //...복사값
 
 function startEdit() {
   Object.assign(form, props.transaction);

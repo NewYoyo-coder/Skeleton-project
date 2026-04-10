@@ -28,7 +28,11 @@
             style="max-width: 220px"
           >
             <span style="font-size: 17px">{{ transaction.shop_name }}</span>
-            <span v-if="transaction.item_name" class="text-muted" style="font-size: 15px">
+            <span
+              v-if="transaction.item_name"
+              class="text-muted"
+              style="font-size: 15px"
+            >
               · {{ transaction.item_name }}</span
             >
           </div>
@@ -63,7 +67,7 @@
 </template>
 
 <script setup>
-import { TRANSACTION_TYPE } from '../constants/transactionType'
+import { TRANSACTION_TYPE } from '../constants/transactionType';
 
 defineProps({
   transaction: {
@@ -74,5 +78,4 @@ defineProps({
 
 defineEmits(['click']);
 //부모인 history가 @click로 받음
-
 </script>

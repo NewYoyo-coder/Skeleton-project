@@ -100,13 +100,15 @@
     </p>
 
     <!-- 페이지네이션 -->
+    <!-- 💡 페이지 최대 10개만 보여주도록 -->
     <nav v-if="totalPages > 1" class="mt-4 d-flex justify-content-center">
       <ul class="pagination pagination-sm mb-0">
         <li class="page-item" :class="{ disabled: currentPage === 1 }">
           <button class="page-link" @click="currentPage--">이전</button>
         </li>
+        <!-- visiblePages로 10개만 보이도록 -->
         <li
-          v-for="p in totalPages"
+          v-for="p in visiblePages"
           :key="p"
           class="page-item"
           :class="{ active: currentPage === p }"
@@ -158,6 +160,8 @@ const typeOptions = [
   { value: TRANSACTION_TYPE.EXPENSE, label: '지출' },
 ];
 
+// 💡수정
+// 상수사용
 function typeButtonClass(value) {
   if (selectedType.value !== value) return 'btn-outline-secondary';
   if (value === TRANSACTION_TYPE.INCOME) return 'btn-primary';
@@ -165,33 +169,40 @@ function typeButtonClass(value) {
   return 'btn-dark';
 }
 
+// 💡 수정
 const categoryOptions = computed(() => {
   const base =
     selectedType.value === TRANSACTION_TYPE.ALL
       ? transactions.value
       : transactions.value.filter(
-          (t) => t.transaction_type === selectedType.value,
+          (t) => t.transaction_type === selectedType.value, // DB의 'income'/'expense'와 비교
         );
   const cats = [...new Set(base.map((t) => t.category))];
-  return ['전체', ...cats];
+  return ['전체', ...cats]; //필터 초기화용
 });
 
-//필터링 및 정렬
+//💡 수정
+// 필터링 및 정렬
 const filteredTransactions = computed(() => {
   return transactions.value
     .filter((t) => {
       if (filterFrom.value && t.date < filterFrom.value) return false;
       if (filterTo.value && t.date > filterTo.value) return false;
+
+      // 타입 필터링 (영문 값으로 비교됨)
       if (
-        selectedType.value !== 'all' &&
+        selectedType.value !== TRANSACTION_TYPE.ALL &&
         t.transaction_type !== selectedType.value
       )
         return false;
+
+      // 카테고리 필터링 (DB에 있는 한글문자열 꺼내와서 그대로 비교)
       if (
         selectedCategory.value !== '전체' &&
         t.category !== selectedCategory.value
       )
         return false;
+
       return true;
     })
     .sort((a, b) => {
@@ -200,6 +211,7 @@ const filteredTransactions = computed(() => {
     });
 });
 
+// 페이지네이션 부분
 const totalPages = computed(() =>
   Math.ceil(filteredTransactions.value.length / PAGE_SIZE),
 );
@@ -207,6 +219,32 @@ const totalPages = computed(() =>
 const pagedTransactions = computed(() => {
   const start = (currentPage.value - 1) * PAGE_SIZE;
   return filteredTransactions.value.slice(start, start + PAGE_SIZE);
+});
+
+//💡 보여줄 페이지 번호 계산 (최대 10개)
+const MAX_VISIBLE_PAGES = 10;
+
+const visiblePages = computed(() => {
+  //현재 페이지를 중심으로 표시할 시작 페이지 계산
+  let startPage = Math.max(
+    1,
+    currentPage.value - Math.floor(MAX_VISIBLE_PAGES / 2),
+  );
+  let endPage = startPage + MAX_VISIBLE_PAGES - 1;
+
+  //끝 페이지가 전체 페이지 수를 넘어가면 조정
+  if (endPage > totalPages.value) {
+    endPage = totalPages.value;
+    startPage = Math.max(1, endPage - MAX_VISIBLE_PAGES + 1);
+  }
+
+  //시작부터 끝 페이지까지의 배열 생성
+  const pages = [];
+  for (let i = startPage; i <= endPage; i++) {
+    pages.push(i);
+  }
+
+  return pages;
 });
 
 watch([filterFrom, filterTo, selectedType, selectedCategory], () => {

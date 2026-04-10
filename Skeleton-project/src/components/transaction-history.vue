@@ -125,19 +125,22 @@
     </p>
 
     <!-- 페이지네이션 -->
+    <!-- visiblePages로 10개만 보이도록 -->
     <nav v-if="totalPages > 1" class="mt-4 d-flex justify-content-center">
       <ul class="pagination pagination-sm mb-0">
         <li class="page-item" :class="{ disabled: currentPage === 1 }">
           <button class="page-link" @click="currentPage--">이전</button>
         </li>
+
         <li
-          v-for="p in totalPages"
+          v-for="p in visiblePages"
           :key="p"
           class="page-item"
           :class="{ active: currentPage === p }"
         >
           <button class="page-link" @click="currentPage = p">{{ p }}</button>
         </li>
+
         <li class="page-item" :class="{ disabled: currentPage === totalPages }">
           <button class="page-link" @click="currentPage++">다음</button>
         </li>
@@ -226,9 +229,10 @@ const filteredTransactions = computed(() => {
       })
       // 🚨 여기 수정: 날짜 정렬 버그(동일 날짜일 때 꼬임) 방지
       .sort((a, b) => {
-        if (sortOrder.value === 'desc')
-          return new Date(b.date) - new Date(a.date);
-        return new Date(a.date) - new Date(b.date);
+        const dateDiff = new Date(b.date) - new Date(a.date);
+        if (dateDiff !== 0)
+          return sortOrder.value === 'desc' ? dateDiff : -dateDiff;
+        return b.id - a.id; // 날짜 같으면 ID순으로 고정 (데이터 흔들림 방지)
       })
   );
 });
@@ -236,6 +240,32 @@ const filteredTransactions = computed(() => {
 const totalPages = computed(() =>
   Math.ceil(filteredTransactions.value.length / PAGE_SIZE),
 );
+
+//💡 보여줄 페이지 번호 계산 (최대 10개)
+const MAX_VISIBLE_PAGES = 10;
+
+const visiblePages = computed(() => {
+  //현재 페이지를 중심으로 표시할 시작 페이지 계산
+  let startPage = Math.max(
+    1,
+    currentPage.value - Math.floor(MAX_VISIBLE_PAGES / 2),
+  );
+  let endPage = startPage + MAX_VISIBLE_PAGES - 1;
+
+  //끝 페이지가 전체 페이지 수를 넘어가면 조정
+  if (endPage > totalPages.value) {
+    endPage = totalPages.value;
+    startPage = Math.max(1, endPage - MAX_VISIBLE_PAGES + 1);
+  }
+
+  //시작부터 끝 페이지까지의 배열 생성
+  const pages = [];
+  for (let i = startPage; i <= endPage; i++) {
+    pages.push(i);
+  }
+
+  return pages;
+});
 
 const pagedTransactions = computed(() => {
   const start = (currentPage.value - 1) * PAGE_SIZE;

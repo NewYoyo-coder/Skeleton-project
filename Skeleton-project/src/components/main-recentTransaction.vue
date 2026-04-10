@@ -176,9 +176,8 @@ const filteredData = computed(() => {
 
   return sortBy.value === 'date'
     ? [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date))
-    : [...filtered].sort((a, b) => b.amount - a.amount);
+    : [...filtered].sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount)); // 절대값 기준 내림차순 정렬
 });
-
 // 메인에 보여줄 10개만 추출
 const displayedItems = computed(() => filteredData.value.slice(0, 10));
 

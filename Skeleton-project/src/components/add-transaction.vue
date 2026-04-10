@@ -1,31 +1,32 @@
 <template>
   <div class="transaction-wrapper bg-light min-vh-100 py-4">
     <div class="container-600 mx-auto px-3">
-      <div class="btn-group w-100 mb-4 shadow-sm bg-white p-1 rounded-3">
+      <div
+        class="t-wrapper w-100 mb-4 shadow-sm"
+        style="height: 44px; --t-width: 50%"
+      >
+        <div
+          class="t-active-bg"
+          :style="{
+            transform: `translateX(${currentType === 'income' ? '0' : '100'}%)`,
+          }"
+        ></div>
+
         <button
-          class="btn btn-sm rounded-2 transition-all"
-          :class="
-            currentType === 'income'
-              ? 'btn-primary text-white'
-              : 'btn-light text-secondary'
-          "
+          class="t-btn t-push"
+          :class="{ 'active-income': currentType === 'income' }"
           @click="currentType = 'income'"
         >
           수입
         </button>
         <button
-          class="btn btn-sm rounded-2 transition-all"
-          :class="
-            currentType === 'expense'
-              ? 'btn-danger text-white'
-              : 'btn-light text-secondary'
-          "
+          class="t-btn t-push"
+          :class="{ 'active-expense': currentType === 'expense' }"
           @click="currentType = 'expense'"
         >
           지출
         </button>
       </div>
-
       <h5 class="fw-bold text-center mb-4">
         {{ currentType === 'expense' ? '지출' : '수입' }} 추가
       </h5>
@@ -50,34 +51,41 @@
               <label class="small fw-bold text-secondary mb-2 d-block"
                 >수단</label
               >
-              <div class="d-flex justify-content-between">
-                <label class="small cursor-pointer"
-                  ><input
-                    type="radio"
-                    v-model="paymentMethod"
-                    value="cash"
-                    class="me-1"
-                  />
-                  현금</label
+              <div
+                class="t-wrapper w-100 mt-1"
+                style="height: 36px; --t-width: 33.33%"
+              >
+                <div
+                  class="t-active-bg"
+                  :style="{
+                    transform: `translateX(${paymentMethod === 'cash' ? '0' : paymentMethod === 'account' ? '100' : '200'}%)`,
+                  }"
+                ></div>
+
+                <button
+                  class="t-btn t-push"
+                  style="font-size: 13px"
+                  :class="{ active: paymentMethod === 'cash' }"
+                  @click="paymentMethod = 'cash'"
                 >
-                <label class="small cursor-pointer"
-                  ><input
-                    type="radio"
-                    v-model="paymentMethod"
-                    value="account"
-                    class="me-1"
-                  />
-                  계좌</label
+                  현금
+                </button>
+                <button
+                  class="t-btn t-push"
+                  style="font-size: 13px"
+                  :class="{ active: paymentMethod === 'account' }"
+                  @click="paymentMethod = 'account'"
                 >
-                <label class="small cursor-pointer"
-                  ><input
-                    type="radio"
-                    v-model="paymentMethod"
-                    value="card"
-                    class="me-1"
-                  />
-                  카드</label
+                  계좌
+                </button>
+                <button
+                  class="t-btn t-push"
+                  style="font-size: 13px"
+                  :class="{ active: paymentMethod === 'card' }"
+                  @click="paymentMethod = 'card'"
                 >
+                  카드
+                </button>
               </div>
             </div>
           </div>
@@ -158,11 +166,16 @@
         </div>
       </div>
 
-      <div class="row g-2">
+      <div class="row g-2 mt-2">
         <div class="col-8">
           <button
             @click="handleSave"
-            class="btn btn-sm btn-dark w-100 py-3 rounded-4 fw-bold shadow-sm"
+            class="t-btn t-push w-100 py-3 rounded-4 fw-bold"
+            :style="{
+              background:
+                currentType === 'income' ? 'var(--t-blue)' : '#f04452',
+              color: '#fff',
+            }"
           >
             추가하기
           </button>
@@ -170,7 +183,8 @@
         <div class="col-4">
           <button
             @click="handleCancel"
-            class="btn btn-sm btn-outline-secondary w-100 py-3 rounded-4 fw-bold"
+            class="t-btn t-single t-push w-100 py-3 rounded-4 fw-bold"
+            style="color: var(--t-sub)"
           >
             취소
           </button>
@@ -184,8 +198,10 @@
 import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { useTransactionStore } from '@/stores/transaction'; // 1. 스토어 임포트
 
 const router = useRouter();
+const transactionStore = useTransactionStore(); // 2. 스토어 인스턴스 생성
 const currentType = ref('expense');
 
 const selectedDate = ref(new Date().toISOString().split('T')[0]);
@@ -242,7 +258,22 @@ const handleSave = async () => {
   };
 
   try {
-    await axios.post('http://localhost:3000/transactions', newReceipt);
+    // 3. 서버에 저장
+    const response = await axios.post(
+      'http://localhost:3000/transactions',
+      newReceipt,
+    );
+
+    // 4. [중요] Pinia 스토어 동기화
+    // 서버에서 다시 전체를 불러오거나(fetch), 생성된 데이터를 스토어 배열에 직접 푸시(push)
+    if (response.status === 201) {
+      // 가장 확실한 방법: 스토어의 fetch 함수를 재호출하여 최신화
+      await transactionStore.fetchTransactions();
+
+      // 만약 fetch 함수가 없다면 스토어의 state에 직접 접근 (추천하진 않음)
+      // transactionStore.transactions.unshift(response.data);
+    }
+
     router.push('/mainDashboard');
   } catch (error) {
     console.error('Failed to save:', error);
@@ -272,136 +303,7 @@ const handleCancel = () => {
   outline: none;
 }
 
-.radio-group {
-  display: flex;
-  justify-content: space-between;
-  gap: 2px;
-  margin-top: 5px;
-}
-
-.radio-group label {
-  font-size: 0.9rem;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-}
-
-.radio-group input[type='radio'] {
-  margin-right: 4px;
-}
-
-.transaction-container {
-  min-height: 100vh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: Arial, sans-serif;
-}
-
-.middle-body {
-  width: 100%;
-  max-width: 600px;
-  padding: 10px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-h2 {
-  text-align: center;
-  font-weight: bold;
-  margin-bottom: 0px;
-  color: #333;
-}
-
-.form-group {
-  padding: 10px;
-  background-color: white;
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
-}
-
-input,
-select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  box-sizing: border-box;
-  margin-top: 8px;
-}
-
-.type-selector {
-  display: flex;
-  justify-content: center;
-  gap: 0;
-  width: 100%;
-  max-width: 600px;
-  margin-bottom: 10px;
-}
-
-.type-selector button {
-  flex: 1;
-  padding: 12px;
-  border: 1px solid #ddd;
-  cursor: pointer;
-  background-color: white;
-  font-weight: bold;
-  color: #777;
-}
-
-.type-selector button.active-income {
-  background-color: #4d70ff;
-  color: white;
-  border-color: #4d70ff;
-}
-
-.type-selector button.active-expense {
-  background-color: #ff4d4d;
-  color: white;
-  border-color: #ff4d4d;
-}
-.button-group {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.btn {
-  padding: 12px 20px;
-  border: none;
-  cursor: pointer;
-  border-radius: 10px;
-  font-weight: bold;
-}
-
-.btn-submit {
-  background-color: #2070fc;
-  color: white;
-}
-.btn-cancel {
-  background-color: #f44336;
-  color: white;
-}
-
-.optional-section {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.radio-group {
-  display: flex;
-  gap: 20px;
-  margin-top: 10px;
-}
-
-.radio-group label {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
+.small-date {
   font-size: 0.95rem;
 }
 
@@ -432,5 +334,13 @@ input[type='number'] {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+/* 변경할 부분: <style scoped> 맨 아래 추가 */
+.t-btn.active-income {
+  color: var(--t-blue) !important;
+}
+.t-btn.active-expense {
+  color: #f04452 !important; /* 토스 레드 */
 }
 </style>

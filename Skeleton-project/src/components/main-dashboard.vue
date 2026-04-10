@@ -19,7 +19,15 @@
       }"
     ></div>
     <div class="swipe-hint" :style="{ opacity: dragOffset !== 0 ? 0.9 : 0 }">
-      {{ dragOffset > 50 ? '이전 달로' : dragOffset < -50 ? '다음 달로' : '' }}
+      {{
+        dragOffset > 50
+          ? '이전 달로'
+          : dragOffset < -50
+            ? isFuture
+              ? '이동 불가'
+              : '다음 달로'
+            : ''
+      }}
     </div>
     <div class="dashboard-wrapper pt-4 pb-2">
       <div
@@ -109,7 +117,7 @@
           width: 56px;
           height: 56px;
           bottom: 30px;
-          right: calc(50% - 280px);
+          right: max(20px, calc(50% - 280px));
           z-index: 1030;
         "
       >
@@ -209,8 +217,18 @@ const onTouch = (e) => {
   dragOffset.value = e.touches[0].pageX - startX.value;
 };
 const endTouch = () => {
-  if (dragOffset.value > 70) changeMonth(-1);
-  else if (dragOffset.value < -70) changeMonth(1);
+  const today = new Date();
+  const isFuture =
+    year.value > today.getFullYear() ||
+    (year.value === today.getFullYear() && month.value >= today.getMonth());
+
+  if (dragOffset.value > 70) {
+    changeMonth(-1);
+  } else if (dragOffset.value < -70) {
+    // 미래가 아닐 때만 다음 달로 이동
+    if (!isFuture) changeMonth(1);
+  }
+
   dragOffset.value = 0;
 };
 

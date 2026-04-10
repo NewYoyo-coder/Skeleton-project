@@ -122,10 +122,10 @@
         </TransitionGroup>
 
         <div
-          v-if="filteredData.length > 10"
+          v-if="filteredData.length > 5"
           class="text-center py-3 text-muted small"
         >
-          최근 10건의 내역만 표시됩니다
+          최근 5건의 내역만 표시됩니다
         </div>
       </div>
 
@@ -179,7 +179,7 @@ const filteredData = computed(() => {
     : [...filtered].sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount)); // 절대값 기준 내림차순 정렬
 });
 // 메인에 보여줄 10개만 추출
-const displayedItems = computed(() => filteredData.value.slice(0, 10));
+const displayedItems = computed(() => filteredData.value.slice(0, 5));
 
 // --- 촤라락 애니메이션 훅 복구 ---
 const beforeEnter = (el) => {

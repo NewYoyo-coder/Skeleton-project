@@ -1,6 +1,9 @@
 <template>
   <header class="py-3">
-    <div class="container">
+    <div
+      class="container"
+      style="max-width: 600px; margin-left: auto; margin-right: auto"
+    >
       <nav
         class="d-flex align-items-center flex-nowrap text-nowrap overflow-x-auto"
       >

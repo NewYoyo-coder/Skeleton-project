@@ -68,13 +68,13 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useUserStore } from '../../src/stores/userStore';
 
 const userStore = useUserStore();
 
-const editName = ref(userStore.name);
-const editEmail = ref(userStore.email);
+const editName = ref(userStore.name ?? '');
+const editEmail = ref(userStore.email ?? '');
 
 watch(
   () => [userStore.name, userStore.email],
@@ -83,6 +83,11 @@ watch(
     editEmail.value = newEmail;
   },
 );
+
+onMounted(() => {
+  editName.value = userStore.name || '';
+  editEmail.value = userStore.email || '';
+});
 
 const saveProfile = () => {
   if (!editName.value.trim() || !editEmail.value.trim()) {

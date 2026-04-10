@@ -20,13 +20,19 @@
         <input
           v-model="userName"
           type="text"
-          placeholder="이름 입력"
+          placeholder="이름 입력 (선택사항)"
           class="form-control form-control-lg fs-6"
         />
         <input
           v-model="userEmail"
-          type="email"
-          placeholder="이메일 입력(선택사항)"
+          type="id"
+          placeholder="아이디 입력"
+          class="form-control form-control-lg fs-6"
+        />
+        <input
+          v-model="userPassword"
+          type="password"
+          placeholder="비밀번호 입력"
           class="form-control form-control-lg fs-6"
         />
         <!-- <button

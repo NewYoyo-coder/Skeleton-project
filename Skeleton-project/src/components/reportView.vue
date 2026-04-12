@@ -39,8 +39,8 @@
 
 <script setup>
 import { ref } from 'vue';
-import ReportCalendar from '@/sides/report-Calendar.vue';
-import ReportChart from '@/sides/report-Chart.vue';
+import ReportCalendar from '@/sides/report-calendar.vue';
+import ReportChart from '@/sides/report-chart.vue';
 
 const currentTab = ref('calendar'); // 'calendar' or 'chart'
 </script>

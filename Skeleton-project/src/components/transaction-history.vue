@@ -73,7 +73,7 @@
     <!-- 정렬 -->
     <div class="d-flex justify-content-end align-items-center gap-2 mb-2">
       <div class="d-flex justify-content-end align-items-center gap-2 mb-2">
-        <!-- <button
+        <button
           class="t-btn t-single t-push"
           style="
             height: 32px;
@@ -83,8 +83,8 @@
           "
           @click="resetFilter"
         >
-          날짜 구간 초기화 버튼
-        </button> -->
+          초기화
+        </button>
 
         <button
           class="t-btn t-single t-push fw-bold"
@@ -171,23 +171,39 @@
     </p>
 
     <!-- 페이지네이션 -->
-    <!-- 💡 페이지 최대 10개만 보여주도록 -->
+    <!-- 💡 페이지 최대 개수만 보여주도록 -->
     <nav v-if="totalPages > 1" class="mt-4 d-flex justify-content-center">
-      <ul class="pagination pagination-sm mb-0">
+      <ul class="pagination pagination-sm mb-0 custom-pagination">
         <li class="page-item" :class="{ disabled: currentPage === 1 }">
-          <button class="page-link" @click="currentPage--">이전</button>
+          <button
+            class="page-link border-0 rounded-circle mx-1"
+            @click="currentPage--"
+          >
+            <i class="bi bi-chevron-left"></i>
+          </button>
         </li>
-        <!-- visiblePages로 10개만 보이도록 -->
+
         <li
           v-for="p in visiblePages"
           :key="p"
           class="page-item"
           :class="{ active: currentPage === p }"
         >
-          <button class="page-link" @click="currentPage = p">{{ p }}</button>
+          <button
+            class="page-link border-0 rounded-circle mx-1"
+            @click="currentPage = p"
+          >
+            {{ p }}
+          </button>
         </li>
+
         <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-          <button class="page-link" @click="currentPage++">다음</button>
+          <button
+            class="page-link border-0 rounded-circle mx-1"
+            @click="currentPage++"
+          >
+            <i class="bi bi-chevron-right"></i>
+          </button>
         </li>
       </ul>
     </nav>
@@ -325,7 +341,7 @@ const pagedTransactions = computed(() => {
 });
 
 //💡 보여줄 페이지 번호 계산
-const MAX_VISIBLE_PAGES = 10;
+const MAX_VISIBLE_PAGES = 8;
 
 const visiblePages = computed(() => {
   //현재 페이지를 중심으로 표시할 시작 페이지 계산
@@ -423,5 +439,33 @@ onMounted(() => {
 .flip-list-leave-to {
   opacity: 0;
   transform: translateY(10px);
+}
+
+/* 페이지네이션 커스텀 스타일 */
+.custom-pagination .page-link {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  color: #adb5bd; /* 비활성 색상 */
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.custom-pagination .page-item.active .page-link {
+  background-color: #3182f6 !important; /* 토스 블루 스타일 */
+  color: white !important;
+  box-shadow: 0 4px 10px rgba(49, 130, 246, 0.2);
+}
+
+.custom-pagination .page-item.disabled .page-link {
+  opacity: 0.3;
+}
+
+.custom-pagination .page-link:hover:not(.disabled) {
+  background-color: #f1f3f5;
 }
 </style>

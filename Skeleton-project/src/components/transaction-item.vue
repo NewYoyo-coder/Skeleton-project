@@ -5,19 +5,19 @@
   >
     <div class="d-flex align-items-center gap-3 overflow-hidden">
       <div
-        class="text-center border-end pe-3 text-secondary"
-        style="min-width: 45px"
+        class="text-center border-end pe-2 text-secondary"
+        style="min-width: 40px"
       >
         <div style="font-size: 10px; text-transform: uppercase">
           {{ getDayName(transaction.date) }}
         </div>
         <div class="fw-bold text-dark fs-5 line-height-1">
-          {{ transaction.date ? transaction.date.split('-')[2] : '' }}
+          {{ transaction.date ? transaction.date.split("-")[2] : "" }}
         </div>
       </div>
 
       <div class="overflow-hidden">
-        <div class="d-flex align-items-center gap-2 mb-1">
+        <div class="d-flex align-items-center gap-2 mb-2">
           <span
             class="badge rounded-pill"
             :class="
@@ -25,7 +25,7 @@
                 ? 'text-bg-primary'
                 : 'text-bg-danger'
             "
-            style="font-size: 13px; font-weight: 500; padding: 5px 10px"
+            style="font-size: 13px; font-weight: 400; padding: 5px 10px"
           >
             {{ transaction.category }}
           </span>
@@ -62,7 +62,7 @@
             : 'text-danger'
         "
       >
-        {{ transaction.transaction_type === TRANSACTION_TYPE.INCOME ? '+' : '-'
+        {{ transaction.transaction_type === TRANSACTION_TYPE.INCOME ? "+" : "-"
         }}{{ transaction.amount.toLocaleString() }}
         <small style="font-size: 0.7em">원</small>
       </div>
@@ -78,8 +78,8 @@
 </template>
 
 <script setup>
-import { TRANSACTION_TYPE } from '../constants/transactionType';
-import { PAYMENT_LABEL } from '@/constants/payment';
+import { TRANSACTION_TYPE } from "../constants/transactionType";
+import { PAYMENT_LABEL } from "@/constants/payment";
 
 defineProps({
   transaction: {
@@ -88,12 +88,12 @@ defineProps({
   },
 });
 
-defineEmits(['click']);
+defineEmits(["click"]);
 
 // 요일 구하는 함수 추가
 function getDayName(dateString) {
-  if (!dateString) return '';
-  const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  if (!dateString) return "";
+  const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
   const date = new Date(dateString);
   return days[date.getDay()];
 }

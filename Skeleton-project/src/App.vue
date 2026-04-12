@@ -1,23 +1,24 @@
 <template>
-  <div class="min-vh-100 d-flex flex-column">
-    <main class="container-fluid py-2 flex-grow-1">
+  <div class="d-flex flex-column">
+    <main class="container-fluid py-2">
       <Header v-if="!isStartPage" />
       <RouterView />
     </main>
     <router-link
       v-if="!isStartPage && !isAddTransaction"
       to="/addTransaction"
-      class="btn btn-dark rounded-circle position-fixed shadow-lg d-flex justify-content-center align-items-center"
+      class="btn btn-dark rounded-circle position-fixed shadow-lg d-flex justify-content-center align-items-center opacity-75"
       style="
         width: 56px;
         height: 56px;
-        bottom: 30px;
+        bottom: 80px;
         right: max(20px, calc(50% - 280px));
         z-index: 9999;
       "
     >
       <i class="fa-solid fa-plus fs-4"></i>
     </router-link>
+    <Navigation />
   </div>
 </template>
 
@@ -25,6 +26,7 @@
 import { computed } from 'vue';
 import { useRoute, RouterView } from 'vue-router';
 import Header from '@/sides/header-page.vue';
+import Navigation from '@/sides/TheNavigator.vue';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './assets/style.css';
@@ -81,8 +83,8 @@ html {
 
 /* 3. 버튼: 높이와 너비를 래퍼에 꽉 채우고 텍스트를 정중앙 배치 */
 .t-btn {
-  flex: 1 1 0; /* 버튼 개수에 상관없이 1:1:1 비율 유지 */
-  height: 100%; /* 래퍼 높이 꽉 채우기 */
+  flex: 1 1 0;
+  height: 100%;
   position: relative;
   z-index: 2;
   display: flex;
@@ -90,19 +92,29 @@ html {
   justify-content: center;
   border: none;
   background: none;
-  padding: 0 10px; /* 좌우 최소 여백만 유지 */
+  padding: 0 10px;
   font-size: 15px;
   font-weight: 600;
   color: var(--t-sub);
-  transition: color 0.2s ease;
+
+  /* 1. 지우지 말고 유지해야 하는 것들 */
+  flex-shrink: 0;
+  backface-visibility: hidden;
+  transform-origin: center;
+  will-change: background-color, color;
+
+  /* 2. '통합 속성 */
+  transition:
+    background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.1s ease,
+    box-shadow 0.25s ease;
+
   cursor: pointer;
   white-space: nowrap;
   outline: none !important;
   -webkit-tap-highlight-color: transparent;
   text-decoration: none;
-  flex-shrink: 0; /* 버튼이 찌그러지며 너비 변하는 것 방지 */
-  backface-visibility: hidden; /* 애니메이션 시 미세한 떨림 방지 */
-  transform-origin: center;
 }
 
 .t-btn.active {
@@ -112,7 +124,10 @@ html {
 /* 4. 물리 피드백 (쫀득한 클릭) */
 .t-push:active {
   transform: scale(0.96); /* 높이/너비 상관없이 비율로 축소 */
-  background-color: rgba(0, 0, 0, 0.02) !important;
+  background-image: linear-gradient(
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.05)
+  ) !important;
   transition: transform 0.1s ease;
 }
 
@@ -138,11 +153,19 @@ button:focus {
 }
 
 /* 선택된 상태 (토스 블루로 부드럽게 전환) */
+/* 2. 활성화 상태: 깜박임 방지를 위해 !important 남발 자제 및 부드러운 전환 */
 .active-chip {
   background-color: var(--t-blue) !important;
   color: #ffffff !important;
-  /* 그림자도 파란색 계열로 살짝 넣으면 더 입체적임 */
-  box-shadow: 0 4px 12px rgba(49, 130, 246, 0.2) !important;
+  box-shadow: 0 4px 12px rgba(49, 130, 246, 0.25) !important;
   border-color: transparent !important;
+  /* 텍스트 렌더링 깨짐 방지 */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 3. 정렬 버튼 그룹 애니메이션 끊김 방지 */
+.t-push {
+  backface-visibility: hidden;
+  transform: translateZ(0); /* 하드웨어 가속 */
 }
 </style>

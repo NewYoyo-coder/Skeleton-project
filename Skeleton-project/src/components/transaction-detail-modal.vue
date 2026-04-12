@@ -9,7 +9,7 @@
     @click.self="$emit('close')"
   >
     <div
-      class="bg-white rounded-5 p-4 position-relative shadow-lg"
+      class="bg-white rounded-4 p-4 position-relative shadow-lg"
       style="width: 360px; border: 1px solid rgba(0, 0, 0, 0.05)"
     >
       <button

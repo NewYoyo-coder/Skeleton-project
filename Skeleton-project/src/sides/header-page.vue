@@ -1,10 +1,10 @@
 <template>
-  <header class="pb-3 order-bottom bg-white">
+  <header class="pb-2 border-bottom bg-white">
     <div
       class="container d-flex align-items-center justify-content-between"
       style="max-width: 600px; margin-left: auto; margin-right: auto"
     >
-      <div style="width: 80px">
+      <div>
         <router-link
           to="/mainDashboard"
           class="text-decoration-none d-flex align-items-center"
@@ -12,7 +12,7 @@
           <img
             src="@/assets/logo_transparent.png"
             alt="가계부 로고"
-            style="height: 60px; width: auto; object-fit: contain"
+            style="height: 40px; width: auto; object-fit: contain"
           />
         </router-link>
       </div>
@@ -27,51 +27,43 @@
 
         <h5
           class="text-dark mb-0 fw-bold"
+          @click="openDateModal"
           style="
             min-width: 80px;
             text-align: center;
             letter-spacing: 0.5px;
             cursor: pointer;
           "
-          data-bs-toggle="modal"
-          data-bs-target="#monthSelectModal"
         >
           {{ displayDate }}
         </h5>
 
-        <div
-          class="modal fade"
-          id="monthSelectModal"
-          tabindex="-1"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content text-dark">
-              <div class="modal-header">
-                <h5 class="modal-title">조회 월 선택</h5>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
-              </div>
-              <div class="modal-body">
-                <input type="month" class="form-control" v-model="tempDate" />
-              </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-primary w-100"
-                  data-bs-dismiss="modal"
-                  @click="applyDate"
-                >
-                  확인
-                </button>
-              </div>
+        <!-- <div class="modal-dialog modal-dialog-centered modal-sm">
+          <div class="modal-content text-dark">
+            <div class="modal-header">
+              <h5 class="modal-title">조회 월 선택</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <input type="month" class="form-control" v-model="tempDate" />
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-primary w-100"
+                data-bs-dismiss="modal"
+                @click="applyDate"
+              >
+                확인
+              </button>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <button
           class="btn btn-link p-0 text-decoration-none text-dark"
@@ -100,12 +92,20 @@
         </router-link>
       </div>
     </div>
+
+    <Teleport to="body">
+      <div class="modal fade" ref="modalRef" tabindex="-1">
+        <Picker />
+      </div>
+    </Teleport>
   </header>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useDateStore } from '@/stores/select-date.js';
+import Picker from '../sides/header-datePicker.vue';
+import { Modal } from 'bootstrap';
 
 const dateStore = useDateStore();
 const tempDate = ref(
@@ -126,10 +126,10 @@ const applyDate = () => {
 };
 
 const displayDate = computed(() => {
-  const y = dateStore.selectedYear;
-  const m = dateStore.selectedMonth;
-  const mm = m < 10 ? `0${m}` : m;
-  return `${y}. ${mm}`;
+  const yy = String(dateStore.selectedYear).slice(-2);
+  const mm = String(dateStore.selectedMonth).padStart(2, '0');
+
+  return `${yy}. ${mm}`;
 });
 
 const isFutureMonth = computed(() => {
@@ -165,6 +165,27 @@ const handleNextMonth = () => {
   if (!isFutureMonth.value) {
     changeMonth(1);
   }
+};
+
+// 1. ref 연결
+const modalRef = ref(null);
+let bsModal = null;
+
+// 2. onMounted에서 ref.value로 꽂기
+onMounted(() => {
+  if (modalRef.value) {
+    bsModal = new Modal(modalRef.value, {
+      focus: false, // Bootstrap 포커스 가로채기 방지 (안전빵)
+    });
+  }
+});
+
+// 3. 모달 열기 함수
+const openDateModal = () => {
+  if (!bsModal && modalRef.value) {
+    bsModal = new Modal(modalRef.value, { focus: false });
+  }
+  bsModal?.show();
 };
 </script>
 

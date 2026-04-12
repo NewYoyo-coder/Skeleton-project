@@ -1,16 +1,16 @@
 <template>
-  <div class="mx-auto bg-white min-vh-100 shadow-sm d-flex flex-column mt-2">
-    <header class="p-4 bg-white sticky-top z-3">
-      <div class="d-flex justify-content-between align-items-center">
-        <h5 class="fw-bold mb-0">최근 거래 내역</h5>
-      </div>
+  <div class="mx-auto mt-2 bg-white shadow-sm d-flex flex-column rounded-4">
+    <header class="p-2 bg-white sticky-top z-2 rounded-4">
+      <!-- <div class="d-flex justify-content-between align-items-center">
+        거래 내역 요약
+      </div> -->
     </header>
 
     <!-- <div class="t-wrapper" style="width: 300px; height: 60px">
       <button class="t-btn t-single t-push active">단일 버튼 테스트</button>
     </div> -->
 
-    <div class="px-4 mb-1 text-center">
+    <div class="px-2 mb-2 text-center">
       <div class="t-wrapper w-100" style="height: 40px; --t-width: 50%">
         <div
           class="t-active-bg"
@@ -32,35 +32,52 @@
           :class="{ active: sortBy === 'amount' }"
           @click="sortBy = 'amount'"
         >
-          금액순
+          큰 금액순
         </button>
       </div>
     </div>
 
-    <main class="px-3 py-4 flex-grow-1">
+    <main class="px-2">
       <div v-if="displayedItems && displayedItems.length > 0">
         <TransitionGroup name="flip-list" tag="div" class="main-list-container">
-          <div
-            v-for="(item, index) in displayedItems"
-            :key="item.id"
-            :data-index="index"
-            class="hover-card p-3 mb-2 rounded-4 border-0 shadow-sm bg-white d-flex align-items-center justify-content-between"
-          >
-            <div class="d-flex align-items-center gap-3 overflow-hidden">
-              <div
-                class="text-center border-end pe-3 text-secondary"
-                style="min-width: 45px"
-              >
-                <div style="font-size: 10px; text-transform: uppercase">
-                  {{ getDayName(item.date) }}
-                </div>
-                <div class="fw-bold text-dark fs-5 line-height-1">
-                  {{ item.date.split('-')[2] }}
-                </div>
-              </div>
+          <template v-for="(item, index) in displayedItems" :key="item.id">
+            <div
+              v-if="item.isDivider"
+              class="d-flex align-items-center my-2 w-50 px-1"
+            >
+              <span class="fw-bold text-dark me-2" style="font-size: 14px">{{
+                item.label
+              }}</span>
+              <div class="flex-grow-1 border-bottom opacity-10"></div>
+            </div>
 
-              <div class="overflow-hidden">
-                <div class="d-flex align-items-center gap-2 mb-1">
+            <div v-else-if="item.isMessage" class="px-1 mb-3">
+              <p
+                class="text-secondary m-0"
+                style="font-size: 12px; letter-spacing: -0.5px"
+              >
+                {{ item.text }}
+              </p>
+            </div>
+
+            <div
+              v-else
+              :data-index="index"
+              class="hover-card p-1 mb-2 rounded-4 border-0 shadow-sm bg-white d-flex align-items-center justify-content-between"
+            >
+              <div class="d-flex align-items-center gap-2 overflow-hidden">
+                <div
+                  v-if="item.date"
+                  class="text-center border-end pe-2 text-secondary"
+                  style="min-width: 45px"
+                >
+                  <div style="font-size: 10px">{{ getDayName(item.date) }}</div>
+                  <div class="fw-bold text-dark fs-5">
+                    {{ item.date.split('-')[2] }}
+                  </div>
+                </div>
+
+                <div class="overflow-hidden">
                   <span
                     class="badge rounded-pill"
                     :class="
@@ -68,69 +85,61 @@
                         ? 'text-bg-primary'
                         : 'text-bg-danger'
                     "
-                    style="font-size: 13px; font-weight: 500; padding: 5px 10px"
+                    style="font-size: 12px; padding: 4px 10px"
                   >
                     {{ item.category }}
                   </span>
-                  <span class="text-muted" style="font-size: 11px">
-                    {{
-                      PAYMENT_LABEL[item.payment_method] || item.payment_method
-                    }}
-                  </span>
                 </div>
+              </div>
 
+              <div class="text-end m-2">
                 <div
-                  class="fw-bold text-dark text-truncate fs-6"
-                  style="letter-spacing: -0.5px"
+                  class="fw-bold fs-5"
+                  :class="
+                    item.transaction_type === 'income'
+                      ? 'text-primary'
+                      : 'text-danger'
+                  "
                 >
-                  {{ item.shop_name }}
-                  <span
-                    v-if="item.item_name"
-                    class="fw-normal text-secondary opacity-75"
-                    style="font-size: 13px"
-                  >
-                    · {{ item.item_name }}
-                  </span>
+                  {{ item.transaction_type === 'income' ? '+' : '-'
+                  }}{{ item.amount.toLocaleString() }}
+                  <small style="font-size: 0.7em">원</small>
                 </div>
               </div>
             </div>
-
-            <div class="text-end ms-2">
-              <div
-                class="fw-bold fs-5"
-                :class="
-                  item.transaction_type === 'income'
-                    ? 'text-primary'
-                    : 'text-danger'
-                "
-              >
-                {{ item.transaction_type === 'income' ? '+' : '-'
-                }}{{ item.amount.toLocaleString() }}
-                <small style="font-size: 0.7em">원</small>
-              </div>
-              <div
-                v-if="item.memo"
-                class="text-muted text-truncate italic small"
-                style="max-width: 100px"
-              >
-                {{ item.memo }}
-              </div>
-            </div>
-          </div>
+          </template>
         </TransitionGroup>
 
+        <div v-if="filteredData.length > 5" class="mt-3 mb-2 text-center">
+          <p class="mt-1 mb-1 text-muted opacity-50" style="font-size: 11px">
+            간단하게 {{ transactionCount }}건의 내역만 요약해 드렸어요
+          </p>
+          <router-link
+            to="/transactionHistory"
+            class="btn btn-link text-decoration-none d-inline-flex align-items-center gap-2 py-2 px-4 rounded-pill transition-all"
+            style="
+              background: rgba(0, 0, 0, 0.03);
+              color: #666;
+              font-size: 12px;
+              font-weight: 800;
+            "
+          >
+            <span>전체 내역 보러가기 →</span>
+          </router-link>
+        </div>
+
         <div
-          v-if="filteredData.length > 5"
-          class="text-center py-3 text-muted small"
+          v-else-if="transactionCount > 0"
+          class="text-center py-4 text-muted small opacity-50"
         >
-          최근 5건의 내역만 표시됩니다
+          이번 달 기록은 이게 전부에요!
         </div>
       </div>
 
       <div v-else class="text-center mt-5 py-5 opacity-50">
         <div class="display-1 mb-3">🧾</div>
-        <p class="fw-bold">이달의 내역이 비어있어요</p>
-        <small class="text-muted">새로운 결제 내역을 추가해보세요</small>
+        <p class="fw-bold">기록이 하나도 없네요</p>
+        <small>수입이나 지출을 추가해보세요</small>
       </div>
     </main>
   </div>
@@ -142,6 +151,7 @@ import { useDateStore } from '@/stores/select-date';
 import { useTransactionStore } from '@/stores/transaction';
 import { useRouter } from 'vue-router'; // 추가
 import { PAYMENT_LABEL } from '@/constants/payment';
+
 const router = useRouter();
 
 const dateStore = useDateStore();
@@ -153,6 +163,7 @@ const sortBy = ref('date');
 
 // 요일 계산 헬퍼
 const getDayName = (dateString) => {
+  if (!dateString) return ''; // 방어 코드 추가
   const date = new Date(dateString);
   const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
   return days[date.getDay()];
@@ -175,7 +186,119 @@ const filteredData = computed(() => {
       ); // 절대값 기준 내림차순 정렬
 });
 // 메인에 보여줄 5개만 추출
-const displayedItems = computed(() => filteredData.value.slice(0, 5));
+const displayedItems = computed(() => {
+  const all = [...transactionStore.transactions];
+  if (all.length === 0) return [];
+
+  const selYear = dateStore.selectedYear;
+  const selMonth = dateStore.selectedMonth;
+  const result = [];
+  let count = 0;
+
+  let currY = selYear;
+  let currM = selMonth;
+  let attempts = 0;
+
+  // 1. 최근순 정렬 로직 (날짜 역순)
+  if (sortBy.value === 'date') {
+    const sortedAll = [...all].sort(
+      (a, b) => new Date(b.date) - new Date(a.date),
+    );
+
+    while (count < 7 && attempts < 12) {
+      const monthData = sortedAll.filter((t) => {
+        const d = new Date(t.date);
+        return d.getFullYear() === currY && d.getMonth() + 1 === currM;
+      });
+
+      if (monthData.length > 0) {
+        result.push({
+          id: `div-${currY}-${currM}`,
+          isDivider: true,
+          label: `${currM}월`,
+        });
+
+        if (attempts === 0 && monthData.length < 5) {
+          result.push({
+            id: 'msg-only',
+            isMessage: true,
+            text: '이번 달은 이게 전부에요!',
+          });
+        }
+
+        for (const item of monthData) {
+          // ✅ 이번 달은 7개, 과거 달 보충은 총합 5개까지
+          if (attempts === 0) {
+            if (count >= 7) break;
+          } else {
+            if (count >= 5) break;
+          }
+
+          result.push(item);
+          count++;
+        }
+      }
+      // 💡 이번 달에서 5개 이상 채웠다면 굳이 과거 달로 안 넘어감
+      if (count >= 5) break;
+
+      currM--;
+      if (currM === 0) {
+        currM = 12;
+        currY--;
+      }
+      attempts++;
+    }
+  }
+
+  // 2. 큰 금액순 정렬 로직 (절대값 역순)
+  else {
+    while (count < 7 && attempts < 12) {
+      const monthData = all
+        .filter((t) => {
+          const d = new Date(t.date);
+          return d.getFullYear() === currY && d.getMonth() + 1 === currM;
+        })
+        .sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount));
+
+      if (monthData.length > 0) {
+        result.push({
+          id: `div-amt-${currY}-${currM}`,
+          isDivider: true,
+          label: `${currM}월의 큰 금액`,
+        });
+
+        for (const item of monthData) {
+          // ✅ 여기도 최근순과 동일하게 '이번 달 7개' 로직 적용
+          if (attempts === 0) {
+            if (count >= 7) break;
+          } else {
+            if (count >= 5) break;
+          }
+
+          result.push(item);
+          count++;
+        }
+      }
+      if (count >= 5) break;
+
+      currM--;
+      if (currM === 0) {
+        currM = 12;
+        currY--;
+      }
+      attempts++;
+    }
+  }
+
+  return result;
+});
+
+// 실제 렌더링된 거래 내역(아이템)의 개수만 체크
+const transactionCount = computed(() => {
+  return displayedItems.value.filter(
+    (item) => !item.isDivider && !item.isMessage,
+  ).length;
+});
 
 // --- 촤라락 애니메이션 훅 복구 ---
 const beforeEnter = (el) => {

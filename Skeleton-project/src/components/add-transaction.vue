@@ -1,5 +1,5 @@
 <template>
-  <div class="transaction-wrapper bg-light min-vh-100 py-4">
+  <div class="transaction-wrapper bg-light py-4">
     <div class="container-600 mx-auto px-3">
       <div
         class="t-wrapper w-100 mb-4 shadow-sm"
@@ -27,9 +27,9 @@
           지출
         </button>
       </div>
-      <h5 class="fw-bold text-center mb-4">
+      <!-- <h5 class="fw-bold text-center mb-4">
         {{ currentType === 'expense' ? '지출' : '수입' }} 추가
-      </h5>
+      </h5> -->
 
       <div class="d-flex flex-column gap-3 mb-4">
         <div class="row g-2">
@@ -126,7 +126,7 @@
         <transition name="fade">
           <div
             v-if="currentType === 'expense'"
-            class="form-card p-3 shadow-sm rounded-4 bg-white border-dashed"
+            class="form-card p-3 shadow-sm rounded-4 bg-white"
           >
             <div class="row g-3">
               <div class="col-6 border-end">
@@ -177,7 +177,7 @@
               color: '#fff',
             }"
           >
-            추가하기
+            {{ currentType === 'expense' ? '지출' : '수입' }} 추가하기
           </button>
         </div>
         <div class="col-4">
@@ -186,7 +186,7 @@
             class="t-btn t-single t-push w-100 py-3 rounded-4 fw-bold"
             style="color: var(--t-sub)"
           >
-            취소
+            돌아가기
           </button>
         </div>
       </div>
@@ -270,7 +270,17 @@ const handleSave = async () => {
 };
 
 const handleCancel = () => {
-  router.push('/mainDashboard');
+  // 입력된 내용이 하나라도 있으면 확인 창 띄우기
+  const hasInput =
+    amount.value || category.value || shopName.value || memo.value;
+
+  if (hasInput) {
+    if (confirm('작성 중인 내용이 저장되지 않아요. 돌아갈까요?')) {
+      router.back(); // push 대신 back()을 써야 사용자가 이전에 있던 맥락으로 정확히 돌아감
+    }
+  } else {
+    router.back();
+  }
 };
 </script>
 
@@ -309,7 +319,7 @@ input::-webkit-outer-spin-button {
 
 /* For Firefox */
 input[type='number'] {
-  -moz-appearance: textfield;
+  /* -moz-appearance: textfield; */
 }
 
 .fade-enter-active,

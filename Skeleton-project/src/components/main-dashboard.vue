@@ -1,6 +1,6 @@
 <template>
   <div
-    class="position-relative min-vh-100 bg-light custom-font overflow-hidden"
+    class="position-relative bg-light custom-font overflow-hidden"
     style="user-select: none"
     @mousedown="startDrag"
     @mousemove="onDrag"
@@ -24,13 +24,13 @@
           ? '이전 달로'
           : dragOffset < -50
             ? isFutureMonth
-              ? '이동 불가'
+              ? '아직 없네요'
               : '다음 달로'
             : ''
       }}
     </div>
 
-    <div class="dashboard-wrapper pt-4 pb-2">
+    <div class="dashboard-wrapper pt-2 pb-2">
       <div
         class="container"
         style="max-width: 600px; margin-left: auto; margin-right: auto"
@@ -166,8 +166,17 @@ const isFutureMonth = computed(() => {
 });
 
 const startDrag = (e) => {
+  // 모달 안쪽을 누른 거면 무시 (이벤트 간섭 방지)
+  if (e.target.closest('.modal')) return;
+
   isDragging.value = true;
   startX.value = e.pageX;
+};
+const startTouch = (e) => {
+  // 모달 안쪽을 누른 거면 무시
+  if (e.target.closest('.modal')) return;
+
+  startX.value = e.touches[0].pageX;
 };
 const onDrag = (e) => {
   if (!isDragging.value) return;
@@ -182,10 +191,6 @@ const endDrag = () => {
   }
   isDragging.value = false;
   dragOffset.value = 0;
-};
-
-const startTouch = (e) => {
-  startX.value = e.touches[0].pageX;
 };
 const onTouch = (e) => {
   dragOffset.value = e.touches[0].pageX - startX.value;

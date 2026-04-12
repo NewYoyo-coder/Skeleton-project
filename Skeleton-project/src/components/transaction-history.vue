@@ -1,6 +1,6 @@
 <template>
   <div class="container py-4 bg-white" style="max-width: 600px">
-    <h5 class="fw-bold mb-4 text-center">거래내역</h5>
+    <!-- <h5 class="fw-bold mb-4 text-center">거래내역</h5> -->
 
     <!-- 날짜 필터 -->
     <div class="d-flex align-items-center gap-2 mb-3">
@@ -73,7 +73,7 @@
     <!-- 정렬 -->
     <div class="d-flex justify-content-end align-items-center gap-2 mb-2">
       <div class="d-flex justify-content-end align-items-center gap-2 mb-2">
-        <button
+        <!-- <button
           class="t-btn t-single t-push"
           style="
             height: 32px;
@@ -83,21 +83,67 @@
           "
           @click="resetFilter"
         >
-          초기화
-        </button>
+          날짜 구간 초기화 버튼
+        </button> -->
 
         <button
           class="t-btn t-single t-push fw-bold"
+          :class="{ 'active-chip': sortBy === 'date' }"
           style="
             height: 32px;
             padding: 0 14px;
             border-radius: 16px;
             font-size: 13px;
-            color: var(--t-blue) !important;
+            min-width: 100px;
           "
-          @click="sortOrder = sortOrder === 'desc' ? 'asc' : 'desc'"
+          @click="
+            () => {
+              if (sortBy === 'date')
+                sortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
+              else {
+                sortBy = 'date';
+                sortOrder = 'desc';
+              }
+            }
+          "
         >
-          {{ sortOrder === 'desc' ? '최신순 ↓' : '오래된순 ↑' }}
+          {{
+            sortBy === 'date'
+              ? sortOrder === 'desc'
+                ? '최신순 ↓'
+                : '오래된순 ↑'
+              : '날짜순'
+          }}
+        </button>
+
+        <button
+          class="t-btn t-single t-push fw-bold"
+          :class="{ 'active-chip': sortBy === 'amount' }"
+          style="
+            height: 32px;
+            padding: 0 14px;
+            border-radius: 16px;
+            font-size: 13px;
+            min-width: 120px;
+          "
+          @click="
+            () => {
+              if (sortBy === 'amount')
+                sortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
+              else {
+                sortBy = 'amount';
+                sortOrder = 'desc';
+              }
+            }
+          "
+        >
+          {{
+            sortBy === 'amount'
+              ? sortOrder === 'desc'
+                ? '금액높은순 ↓'
+                : '금액낮은순 ↑'
+              : '금액순'
+          }}
         </button>
       </div>
     </div>
@@ -190,6 +236,7 @@ const filterTo = ref(today); // '' 에서 수정
 const selectedType = ref(TRANSACTION_TYPE.ALL);
 const selectedCategory = ref('전체');
 const sortOrder = ref('desc');
+const sortBy = ref('date');
 
 const typeOptions = [
   { value: TRANSACTION_TYPE.ALL, label: '전체' },
@@ -250,7 +297,19 @@ const filteredTransactions = computed(() => {
       return true;
     })
     .sort((a, b) => {
-      if (sortOrder.value === 'desc') return a.date < b.date ? 1 : -1;
+      const isDesc = sortOrder.value === 'desc';
+
+      if (sortBy.value === 'amount') {
+        // 1차: 금액 정렬
+        if (a.amount !== b.amount) {
+          return isDesc ? b.amount - a.amount : a.amount - b.amount;
+        }
+        // 2차: 금액이 같으면 무조건 최신순 (이게 진정한 동시성 고려)
+        return a.date < b.date ? 1 : -1;
+      }
+
+      // 날짜 정렬 (기본)
+      if (isDesc) return a.date < b.date ? 1 : -1;
       return a.date > b.date ? 1 : -1;
     });
 });
@@ -313,12 +372,14 @@ function resetFilter() {
   selectedType.value = TRANSACTION_TYPE.ALL;
   selectedCategory.value = '전체';
   sortOrder.value = 'desc';
+  sortBy.value = 'date';
 }
 
 onMounted(() => {
   store.fetchTransactions();
 });
 </script>
+
 <style scoped>
 /* 카드 터치 쫀득한 효과 */
 .hover-card {

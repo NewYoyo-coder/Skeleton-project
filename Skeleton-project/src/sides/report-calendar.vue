@@ -1,6 +1,6 @@
 <template>
   <div class="calendar-container p-3">
-    <div class="cal-grid mb-4">
+    <div class="cal-grid mb-2">
       <div
         class="text-center small text-muted fw-bold pb-2"
         v-for="d in ['일', '월', '화', '수', '목', '금', '토']"

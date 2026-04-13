@@ -1,420 +1,350 @@
 <template>
-  <div class="transaction-container">
-    <div class="type-selector">
-      <button
-        :class="{ 'active-income': currentType === 'income' }"
-        @click="currentType = 'income'"
+  <div class="transaction-wrapper bg-light py-4">
+    <div class="container-600 mx-auto px-3">
+      <div
+        class="t-wrapper w-100 mb-4 shadow-sm"
+        style="height: 44px; --t-width: 50%"
       >
-        수입
-      </button>
-      <button
-        :class="{ 'active-expense': currentType === 'expense' }"
-        @click="currentType = 'expense'"
-      >
-        지출
-      </button>
-    </div>
-    <div class="middle-body">
-      <h2>{{ currentType === 'expense' ? '지출' : '수입' }} 추가</h2>
+        <div
+          class="t-active-bg"
+          :style="{
+            transform: `translateX(${currentType === 'income' ? '0' : '100'}%)`,
+          }"
+        ></div>
 
-      <div class="top-row-container">
-        <div class="form-group date-card">
-          <label class="mb-2 fw-bold text-secondary">날짜</label>
-          <input type="date" v-model="selectedDate" required />
-        </div>
+        <button
+          class="t-btn t-push"
+          :class="{ 'active-income': currentType === 'income' }"
+          @click="currentType = 'income'"
+        >
+          수입
+        </button>
+        <button
+          class="t-btn t-push"
+          :class="{ 'active-expense': currentType === 'expense' }"
+          @click="currentType = 'expense'"
+        >
+          지출
+        </button>
+      </div>
+      <!-- <h5 class="fw-bold text-center mb-4">
+        {{ currentType === 'expense' ? '지출' : '수입' }} 추가
+      </h5> -->
 
-        <div class="form-group payment-card">
-          <label class="mb-2 fw-bold text-secondary">수단</label>
-          <div class="radio-group">
-            <label
-              ><input type="radio" v-model="paymentMethod" value="cash" />
-              현금</label
-            >
-            <label
-              ><input type="radio" v-model="paymentMethod" value="account" />
-              계좌</label
-            >
-            <label
-              ><input type="radio" v-model="paymentMethod" value="card" />
-              카드</label
-            >
+      <div class="d-flex flex-column gap-3 mb-4">
+        <div class="row g-2">
+          <div class="col-5">
+            <div class="form-card p-3 shadow-sm rounded-4 bg-white h-100">
+              <label class="small fw-bold text-secondary mb-2 d-block"
+                >날짜</label
+              >
+              <input
+                type="date"
+                v-model="selectedDate"
+                class="border-0 w-100 outline-none small-date"
+                required
+              />
+            </div>
+          </div>
+          <div class="col-7">
+            <div class="form-card p-3 shadow-sm rounded-4 bg-white h-100">
+              <label class="small fw-bold text-secondary mb-2 d-block"
+                >수단</label
+              >
+              <div
+                class="t-wrapper w-100 mt-1"
+                style="height: 38px; --t-width: 33.33%"
+              >
+                <div
+                  class="t-active-bg"
+                  :style="{
+                    transform: `translateX(${paymentMethod === 'cash' ? '0' : paymentMethod === 'account' ? '100' : '200'}%)`,
+                  }"
+                ></div>
+
+                <button
+                  class="t-btn t-push"
+                  :class="{ active: paymentMethod === 'cash' }"
+                  @click="paymentMethod = 'cash'"
+                >
+                  현금
+                </button>
+                <button
+                  class="t-btn t-push"
+                  :class="{ active: paymentMethod === 'account' }"
+                  @click="paymentMethod = 'account'"
+                >
+                  계좌
+                </button>
+                <button
+                  class="t-btn t-push"
+                  :class="{ active: paymentMethod === 'card' }"
+                  @click="paymentMethod = 'card'"
+                >
+                  카드
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label class="mb-2 fw-bold text-secondary">금액</label>
-        <div class="input-wrapper">
+        <div class="form-card p-3 shadow-sm rounded-4 bg-white">
+          <label class="small fw-bold text-secondary mb-2 d-block">금액</label>
+          <div
+            class="d-flex align-items-center justify-content-end position-relative"
+          >
+            <input
+              v-model="displayAmount"
+              type="text"
+              placeholder="0"
+              class="border-0 text-end fw-bold w-100 amount-display px-4"
+              :class="currentType === 'income' ? 'text-primary' : 'text-danger'"
+              @input="handleAmountInput"
+            />
+            <span class="position-absolute end-0 fw-bold">원</span>
+          </div>
+        </div>
+
+        <div class="form-card p-3 shadow-sm rounded-4 bg-white">
+          <label class="small fw-bold text-secondary mb-3 d-block"
+            >카테고리</label
+          >
+          <div class="d-flex flex-wrap gap-2">
+            <button
+              v-for="cat in categories"
+              :key="cat"
+              @click="category = cat"
+              class="t-btn t-single t-push px-3 py-2 rounded-pill border-0 small fw-bold"
+              :class="{ 'active-chip': category === cat }"
+              style="
+                font-size: 13px;
+                min-width: fit-content; /* 🚀 글자 길이에 딱 맞게 */
+                white-space: nowrap; /* 🚀 글자 절대 줄바꿈 금지 */
+                flex-shrink: 0; /* 🚀 좁아져도 찌그러지지 않게 */
+              "
+            >
+              {{ cat }}
+            </button>
+          </div>
+        </div>
+
+        <transition name="fade">
+          <div
+            v-if="currentType === 'expense'"
+            class="form-card p-3 shadow-sm rounded-4 bg-white"
+          >
+            <div class="row g-3">
+              <div class="col-6 border-end">
+                <label class="small fw-bold text-secondary d-block"
+                  >가게 이름</label
+                >
+                <input
+                  v-model="shopName"
+                  type="text"
+                  placeholder="가게명"
+                  class="border-0 w-100 small py-1"
+                />
+              </div>
+              <div class="col-6">
+                <label class="small fw-bold text-secondary d-block"
+                  >상품명</label
+                >
+                <input
+                  v-model="itemName"
+                  type="text"
+                  placeholder="상품명"
+                  class="border-0 w-100 small py-1"
+                />
+              </div>
+            </div>
+          </div>
+        </transition>
+
+        <div class="form-card p-3 shadow-sm rounded-4 bg-white">
+          <label class="small fw-bold text-secondary mb-2 d-block">메모</label>
           <input
-            v-model="displayAmount"
+            v-model="memo"
             type="text"
-            placeholder="0"
-            class="amount-input"
-            @input="handleAmountInput"
+            placeholder="메모를 입력하세요"
+            class="border-0 w-100 small"
           />
-          <span class="unit">원</span>
         </div>
       </div>
 
-      <div class="form-group">
-        <label class="mb-2 fw-bold text-secondary">카테고리</label>
-        <select v-model="category">
-          <option disabled value="">카테고리를 선택하세요</option>
-          <option v-for="cat in categories" :key="cat" :value="cat">
-            {{ cat }}
-          </option>
-        </select>
-      </div>
-
-      <div v-if="currentType === 'expense'" class="optional-section">
-        <div class="form-group combined-card">
-          <div class="input-half">
-            <label class="mb-1 fw-bold text-secondary">가계 이름 (선택)</label>
-            <input
-              v-model="shopName"
-              type="text"
-              placeholder="가계명"
-              class="clean-input"
-            />
-          </div>
-
-          <div class="divider"></div>
-
-          <div class="input-half">
-            <label class="mb-1 fw-bold text-secondary">상품명 (선택)</label>
-            <input
-              v-model="itemName"
-              type="text"
-              placeholder="상품명"
-              class="clean-input"
-            />
-          </div>
+      <div class="row g-2 mt-2">
+        <div class="col-8">
+          <button
+            @click="handleSave"
+            class="t-btn t-push w-100 py-3 rounded-4 fw-bold"
+            :style="{
+              background:
+                currentType === 'income' ? 'var(--t-blue)' : '#f04452',
+              color: '#fff',
+            }"
+          >
+            {{ currentType === "expense" ? "지출" : "수입" }} 추가하기
+          </button>
         </div>
-      </div>
-
-      <div class="memo form-group">
-        <label class="fw-bold text-secondary">메모</label><br />
-        <input v-model="memo" type="text" />
-      </div>
-
-      <div class="button-group">
-        <button @click="handleSave" class="btn-submit btn btn-success">
-          추가
-        </button>
-        <button @click="handleCancel" class="btn-cancel btn btn-danger">
-          취소
-        </button>
+        <div class="col-4">
+          <button
+            @click="handleCancel"
+            class="t-btn t-single t-push w-100 py-3 rounded-4 fw-bold"
+            style="color: var(--t-sub)"
+          >
+            돌아가기
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
-import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { ref, computed, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useTransactionStore } from "@/stores/transaction.js";
 
 const router = useRouter();
-const currentType = ref('expense');
+const transactionStore = useTransactionStore(); // 2. 스토어 인스턴스 생성
+const currentType = ref("expense");
 
-const selectedDate = ref(new Date().toISOString().split('T')[0]);
+const selectedDate = ref(new Date().toISOString().split("T")[0]);
 const amount = ref(null);
-const displayAmount = ref('');
+const displayAmount = ref("");
 const handleAmountInput = (e) => {
-  let value = e.target.value.replace(/[^0-9]/g, '');
+  let value = e.target.value.replace(/[^0-9]/g, "");
   amount.value = value ? parseInt(value) : null;
-  displayAmount.value = value ? Number(value).toLocaleString() : '';
+  displayAmount.value = value ? Number(value).toLocaleString() : "";
 };
 
-const category = ref('');
-const paymentMethod = ref('card');
+const category = ref("");
+const paymentMethod = ref("card");
 
-const shopName = ref('');
-const itemName = ref('');
-const memo = ref('');
+const shopName = ref("");
+const itemName = ref("");
+const memo = ref("");
 
 const categories = computed(() => {
-  return currentType.value === 'expense'
+  return currentType.value === "expense"
     ? [
-        '음식',
-        '카페',
-        '교통',
-        '쇼핑',
-        '건강',
-        '집',
-        '세금',
-        '보험',
-        '기타 지출',
+        "음식",
+        "카페",
+        "교통",
+        "쇼핑",
+        "건강",
+        "집",
+        "세금",
+        "보험",
+        "기타 지출",
       ]
-    : ['월급', '부수입', '용돈', '상여', '금융소득', '기타 수입'];
+    : ["월급", "부수입", "용돈", "상여", "금융소득", "기타 수입"];
 });
 
 watch(currentType, () => {
-  category.value = '';
+  category.value = "";
 });
 
 const handleSave = async () => {
   if (!amount.value || !category.value || !selectedDate.value)
-    return alert('모든 항목을 입력해 주세요');
+    return notify.error("모든 항목을 입력해 주세요");
+  const today = new Date().toISOString().split("T")[0]; // 오늘 날짜 (YYYY-MM-DD)
+  if (selectedDate.value > today) {
+    return notify.error("미래 날짜는 선택할 수 없습니다.");
+  }
 
-  const finalAmount =
-    currentType.value === 'expense'
-      ? -Math.abs(amount.value)
-      : Math.abs(amount.value);
+  const finalAmount = Math.abs(amount.value);
 
   const newReceipt = {
     date: selectedDate.value,
     amount: finalAmount,
     category: category.value,
-    paymentMethod: paymentMethod.value,
-    shopName: currentType.value === 'expense' ? shopName.value : '',
-    itemName: currentType.value === 'expense' ? itemName.value : '',
+    payment_method: paymentMethod.value,
+    shop_name: currentType.value === "expense" ? shopName.value : "",
+    item_name: currentType.value === "expense" ? itemName.value : "",
     memo: memo.value,
-    transactionType: currentType.value,
+    transaction_type: currentType.value,
   };
 
   try {
-    await axios.post('http://localhost:3000/transactions', newReceipt);
-    router.push('/mainDashboard');
+    await transactionStore.addTransaction(newReceipt);
+    router.push("/mainDashboard");
   } catch (error) {
-    console.error('Failed to save:', error);
+    notify.error("저장에 실패했습니다.");
+    console.error("Failed to save:", error);
   }
 };
 
 const handleCancel = () => {
-  router.push('/mainDashboard');
+  // 입력된 내용이 하나라도 있으면 확인 창 띄우기
+  const hasInput =
+    amount.value || category.value || shopName.value || memo.value;
+
+  if (hasInput) {
+    if (confirm("작성 중인 내용이 저장되지 않아요. 돌아갈까요?")) {
+      router.back(); // push 대신 back()을 써야 사용자가 이전에 있던 맥락으로 정확히 돌아감
+    }
+  } else {
+    router.back();
+  }
 };
 </script>
 
 <style scoped>
-.combined-card {
-  display: flex;
-  align-items: flex-start;
-  padding: 15px;
-  background-color: white;
-  border-radius: 20px;
-  gap: 15px;
+.container-600 {
+  max-width: 600px;
 }
 
-.input-half {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+.transition-all {
+  transition: all 0.2s ease;
 }
 
-.divider {
-  width: 1px;
-  background-color: #eee;
-  align-self: stretch;
-  margin: 5px 0;
+.form-card {
+  transition: transform 0.1s ease;
 }
 
-label {
-  font-size: 0.85rem;
-  color: #333;
-}
-
-.top-row-container {
-  display: flex;
-  gap: 10px;
-  width: 100%;
-}
-
-.date-card {
-  flex: 0 0 35%;
-  padding: 15px;
-  background-color: white;
-  border-radius: 15px;
-}
-
-.payment-card {
-  flex: 1;
-  padding: 15px;
-  background-color: white;
-  border-radius: 15px;
-}
-
-input[type='date'] {
-  width: 100%;
-  border: none;
-  font-size: 0.85rem;
+.amount-display {
+  font-size: 1.5rem;
   outline: none;
 }
 
-.radio-group {
-  display: flex;
-  justify-content: space-between;
-  gap: 2px;
-  margin-top: 5px;
-}
-
-.radio-group label {
-  font-size: 0.9rem;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-}
-
-.radio-group input[type='radio'] {
-  margin-right: 4px;
-}
-
-.transaction-container {
-  min-height: 100vh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: Arial, sans-serif;
-}
-
-.middle-body {
-  width: 100%;
-  max-width: 425px;
-  padding: 10px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-h2 {
-  text-align: center;
-  font-weight: bold;
-  margin-bottom: 0px;
-  color: #333;
-}
-
-.form-group {
-  padding: 10px;
-  background-color: white;
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
-}
-
-input,
-select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  box-sizing: border-box;
-  margin-top: 8px;
-}
-
-.type-selector {
-  display: flex;
-  justify-content: center;
-  gap: 0;
-  width: 100%;
-  max-width: 425px;
-  margin-bottom: 10px;
-}
-
-.type-selector button {
-  flex: 1;
-  padding: 12px;
-  border: 1px solid #ddd;
-  cursor: pointer;
-  background-color: white;
-  font-weight: bold;
-  color: #777;
-}
-
-.type-selector button.active-income {
-  background-color: #4d70ff;
-  color: white;
-  border-color: #4d70ff;
-}
-
-.type-selector button.active-expense {
-  background-color: #ff4d4d;
-  color: white;
-  border-color: #ff4d4d;
-}
-.button-group {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.btn {
-  padding: 12px 20px;
-  border: none;
-  cursor: pointer;
-  border-radius: 10px;
-  font-weight: bold;
-}
-
-.btn-submit {
-  background-color: #2070fc;
-  color: white;
-}
-.btn-cancel {
-  background-color: #f44336;
-  color: white;
-}
-
-.optional-section {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.radio-group {
-  display: flex;
-  gap: 20px;
-  margin-top: 10px;
-}
-
-.radio-group label {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
+.small-date {
   font-size: 0.95rem;
-  color: #333;
-}
-.radio-group input {
-  width: auto;
-  margin: 0 8px 0 0;
-  cursor: pointer;
-  accent-color: #2c3e50;
 }
 
-.input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
+.border-dashed {
+  border: 1px dashed #e0e0e0;
 }
 
-.amount-input {
-  width: 100%;
-  padding: 10px 40px 10px 10px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  box-sizing: border-box;
-  font-size: 1rem;
-}
-
-.unit {
-  position: absolute;
-  right: 15px;
-  font-weight: bold;
-  color: #333;
-  pointer-events: none;
-  top: 50%;
-  transform: translateY(-25%);
-  font-size: 1rem;
-  line-height: 1;
-}
-
-/* For Chrome, Safari, Edge, and Opera */
-input::-webkit-inner-spin-button {
+/* Chrome/Safari removal of arrows */
+input::-webkit-inner-spin-button,
+input::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
 /* For Firefox */
-input[type='number'] {
-  -moz-appearance: textfield;
+input[type="number"] {
+  /* -moz-appearance: textfield; */
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* 변경할 부분: <style scoped> 맨 아래 추가 */
+.t-btn.active-income {
+  color: var(--t-blue) !important;
+}
+.t-btn.active-expense {
+  color: #f04452 !important; /* 토스 레드 */
 }
 </style>

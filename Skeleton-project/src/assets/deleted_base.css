@@ -84,3 +84,20 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* ... 상단 변수들은 그대로 유지 ... */
+
+/* 💡 기존 @media (prefers-color-scheme: dark) 부분을 아래처럼 변경하세요 */
+html.dark {
+  --color-background: var(--vt-c-black);
+  --color-background-soft: var(--vt-c-black-soft);
+  --color-background-mute: var(--vt-c-black-mute);
+
+  --color-border: var(--vt-c-divider-dark-2);
+  --color-border-hover: var(--vt-c-divider-dark-1);
+
+  --color-heading: var(--vt-c-text-dark-1);
+  --color-text: var(--vt-c-text-dark-2);
+}
+
+/* ... 하단의 body 등 나머지 스타일은 그대로 유지 ... */

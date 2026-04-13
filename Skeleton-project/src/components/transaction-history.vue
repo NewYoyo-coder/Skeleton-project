@@ -603,7 +603,6 @@ function typeButtonClass(value) {
   return "btn-dark";
 }
 
-// 💡 수정
 // 💡 💡 💡 categories.js 사용
 const categoryOptions = computed(() => {
   // 1. 전체 타입일 때는 카테고리 칩을 숨기거나 비움
@@ -623,8 +622,13 @@ const categoryOptions = computed(() => {
 
   // 3. 상수에 정의된 순서대로, 데이터가 존재하는 카테고리만 한글 라벨로 추출
   const filteredLabels = CATEGORIES[selectedType.value]
-    .map((key) => CATEGORY_LABEL[key]) // 영문 키를 한글 라벨로 변환
-    .filter((label) => availableCategoriesInData.has(label)); // 실제 데이터에 있는 것만 남김
+    .map((key) => CATEGORY_LABEL[key])
+    .filter((label) => {
+      // 💡 핵심: DB 카테고리('기타 지출') 중에 현재 라벨('기타')을 포함하는 것이 하나라도 있는지 검사
+      return Array.from(availableCategoriesInData).some((dbCategory) =>
+        dbCategory.includes(label),
+      );
+    });
 
   return ["전체", ...filteredLabels];
 });

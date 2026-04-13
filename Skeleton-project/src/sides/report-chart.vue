@@ -87,15 +87,19 @@
     </div>
 
     <div
-      class="bg-white rounded-4 p-2 shadow-sm border flex-grow-1 d-flex flex-column min-h-0 mb-1"
+      class="bg-white rounded-4 p-2 shadow-sm border flex-shrink-0 d-flex flex-column mb-1"
+      style="height: 200px; min-height: 0"
     >
       <div
-        class="text-center fw-bold text-dark mb-1"
-        style="font-size: 0.85rem"
+        class="text-center fw-bold text-dark mb-0"
+        style="font-size: 0.8rem; line-height: 1.2"
       >
         수입 vs 지출 대결
       </div>
-      <div class="flex-grow-1 position-relative" style="min-height: 0">
+      <div
+        class="flex-grow-1 position-relative"
+        style="min-height: 0; margin-top: -5px"
+      >
         <apexchart
           type="bar"
           height="100%"

@@ -97,6 +97,8 @@ import { useDateStore } from "@/stores/select-date.js";
 import { useTransactionStore } from "@/stores/transaction"; // 💡 에러 방지: 누락된 store 임포트 추가
 import recentTransaction from "./main-recentTransaction.vue";
 import { useRouter, useRoute } from "vue-router";
+import { useUserStore } from "@/stores/userStore.js"; // 💡 누락된 임포트
+const userStore = useUserStore(); // 💡 정의 추가
 
 const dateStore = useDateStore();
 const transactionStore = useTransactionStore(); // 💡 추가
@@ -183,8 +185,17 @@ const validateAndFixQuery = () => {
 // --------------------------------------------------------
 const fetchTransactions = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/transactions");
-    transactions.value = response.data.filter((tx) => {
+    const res = await fetch(
+      window.location.hostname === "localhost"
+        ? "http://localhost:3000/transactions"
+        : "/transaction_db.json",
+    );
+
+    const data = await res.json(); // 1. 필수: json 변환
+    const allData = data.transactions || data; // 2. 필수: 배포/로컬 분기 대응
+
+    // 3. 수정 포인트: response.data 대신 allData 사용
+    transactions.value = allData.filter((tx) => {
       const txDate = new Date(tx.date);
       return (
         txDate.getFullYear() === dateStore.selectedYear &&

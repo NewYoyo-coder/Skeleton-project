@@ -152,8 +152,19 @@ const saveProfile = async () => {
 };
 
 const handleLogout = () => {
-  if (notify.success("로그아웃 하시겠습니까?")) {
+  // 1. 사용자에게 진짜 나갈 건지 물어봄
+  if (confirm("로그아웃 하시겠습니까?")) {
+    // 2. 브라우저 저장 데이터 삭제
     localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("user_backup"); // 저장된 유저 백업도 삭제 추천
+
+    // 3. Pinia 스토어 상태 초기화 (중요: 다른 사람이 로그인했을 때 이전 데이터 보임 방지)
+    if (userStore.reset) {
+      userStore.reset();
+    }
+
+    // 4. 알림 띄우고 페이지 이동
+    // notify.success("로그아웃 되었습니다."); // 필요시 사용
     router.replace("/");
   }
 };

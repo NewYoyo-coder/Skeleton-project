@@ -35,6 +35,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "../../src/stores/userStore";
+import axios from "axios"; // 👈 이게 빠지면 빌드 때 터집니다.
 
 const router = useRouter();
 const userStore = useUserStore();

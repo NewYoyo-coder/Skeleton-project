@@ -74,13 +74,13 @@
             <div class="content">
               <div class="shop-name">{{ item.shop_name }}</div>
               <div class="sub-info">
-                {{ item.date.split('-')[2] }}일 · {{ item.category_id }}
+                {{ item.date.split("-")[2] }}일 · {{ item.category_id }}
               </div>
             </div>
           </div>
           <div class="item-right">
             <div :class="['price', item.transaction_type]">
-              {{ item.transaction_type === 'income' ? '+' : ''
+              {{ item.transaction_type === "income" ? "+" : ""
               }}{{ item.amount.toLocaleString() }}
             </div>
           </div>
@@ -93,20 +93,20 @@
     </main>
 
     <div class="swipe-hint" :style="{ opacity: dragOffset !== 0 ? 0.5 : 0 }">
-      {{ dragOffset > 50 ? '이전 달로' : dragOffset < -50 ? '다음 달로' : '' }}
+      {{ dragOffset > 50 ? "이전 달로" : dragOffset < -50 ? "다음 달로" : "" }}
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, nextTick } from 'vue';
+import { ref, computed, onMounted, watch, nextTick } from "vue";
 
 const allTransactions = ref([]);
 const displayedItems = ref([]);
-const sortBy = ref('date');
+const sortBy = ref("date");
 const currentMonth = ref(4);
 const currentYear = ref(2026);
-const slideDir = ref('slide-right');
+const slideDir = ref("slide-right");
 
 // 무한 스크롤 관련
 const page = ref(1);
@@ -150,7 +150,7 @@ const endTouch = () => {
 };
 
 const changeMonth = (diff) => {
-  slideDir.value = diff > 0 ? 'slide-left' : 'slide-right';
+  slideDir.value = diff > 0 ? "slide-left" : "slide-right";
   currentMonth.value += diff;
   if (currentMonth.value > 12) {
     currentMonth.value = 1;
@@ -163,7 +163,11 @@ const changeMonth = (diff) => {
 };
 
 const loadData = async () => {
-  const res = await fetch('http://localhost:3000/transactions');
+  const res = await fetch(
+    window.location.hostname === "localhost"
+      ? "http://localhost:3000/transactions"
+      : "/transaction_db.json",
+  );
   const data = await res.json();
   allTransactions.value = Array.isArray(data) ? data : data.transactions;
   resetAndFetch();
@@ -171,10 +175,10 @@ const loadData = async () => {
 
 const filteredData = computed(() => {
   let filtered = allTransactions.value.filter((item) => {
-    const [y, m] = item.date.split('-').map(Number);
+    const [y, m] = item.date.split("-").map(Number);
     return y === currentYear.value && m === currentMonth.value;
   });
-  return sortBy.value === 'date'
+  return sortBy.value === "date"
     ? [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date))
     : [...filtered].sort((a, b) => b.amount - a.amount);
 });
@@ -219,38 +223,38 @@ onMounted(() => {
 });
 
 const getRandomIcon = (cat) => {
-  const icons = { food: '🍕', cafe: '☕', salary: '💰' };
-  return icons[cat] || '💸';
+  const icons = { food: "🍕", cafe: "☕", salary: "💰" };
+  return icons[cat] || "💸";
 };
 
 const monthlyIncome = computed(() =>
   filteredData.value
-    .filter((i) => i.transaction_type === 'income')
+    .filter((i) => i.transaction_type === "income")
     .reduce((acc, cur) => acc + cur.amount, 0),
 );
 const monthlyExpense = computed(() =>
   filteredData.value
-    .filter((i) => i.transaction_type === 'expense')
+    .filter((i) => i.transaction_type === "expense")
     .reduce((acc, cur) => acc + cur.amount, 0),
 );
 const beforeEnter = (el) => {
   el.style.opacity = 0;
-  el.style.transform = 'translateY(30px) scale(0.9)';
+  el.style.transform = "translateY(30px) scale(0.9)";
 };
 
 const enter = (el, done) => {
   const index = el.dataset.index % perPage;
   setTimeout(() => {
-    el.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    el.style.transition = "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
     el.style.opacity = 1;
-    el.style.transform = 'translateY(0) scale(1)';
+    el.style.transform = "translateY(0) scale(1)";
     done();
   }, index * 60); // 0.06초 간격으로 순차적 실행 (파도 효과)
 };
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap");
 
 /* 1. 컨테이너 & 기본 폰트 설정 */
 .flat-container {
@@ -262,7 +266,7 @@ const enter = (el, done) => {
   overflow-x: hidden;
   user-select: none;
   font-family:
-    'Pretendard',
+    "Pretendard",
     -apple-system,
     sans-serif;
   color: #191f28; /* 토스 표준 텍스트 컬러 */
@@ -485,7 +489,7 @@ const enter = (el, done) => {
   overflow: hidden;
 }
 .hover-card:active::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;

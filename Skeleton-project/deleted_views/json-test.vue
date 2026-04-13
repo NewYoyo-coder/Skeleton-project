@@ -29,8 +29,8 @@
       <div v-for="item in items" :key="item.id" class="wide-card">
         <div class="card-left">
           <div class="date-box">
-            <span class="day">{{ item.date.split('-')[2] }}</span>
-            <span class="month">{{ item.date.split('-')[1] }}월</span>
+            <span class="day">{{ item.date.split("-")[2] }}</span>
+            <span class="month">{{ item.date.split("-")[1] }}월</span>
           </div>
           <div class="info-group">
             <h4 class="shop">{{ item.shop_name }}</h4>
@@ -44,7 +44,7 @@
 
         <div class="card-right">
           <div :class="['amount', item.transaction_type]">
-            {{ item.transaction_type === 'income' ? '+' : '-'
+            {{ item.transaction_type === "income" ? "+" : "-"
             }}{{ item.amount.toLocaleString() }}원
           </div>
           <p v-if="item.memo" class="memo">"{{ item.memo }}"</p>
@@ -55,7 +55,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted } from "vue";
 
 const items = ref([]);
 const loading = ref(true);
@@ -63,13 +63,13 @@ const loading = ref(true);
 // 통계 계산 (computed)
 const totalIncome = computed(() =>
   items.value
-    .filter((i) => i.transaction_type === 'income')
+    .filter((i) => i.transaction_type === "income")
     .reduce((acc, cur) => acc + cur.amount, 0),
 );
 
 const totalExpense = computed(() =>
   items.value
-    .filter((i) => i.transaction_type === 'expense')
+    .filter((i) => i.transaction_type === "expense")
     .reduce((acc, cur) => acc + cur.amount, 0),
 );
 
@@ -78,11 +78,15 @@ const totalBalance = computed(() => totalIncome.value - totalExpense.value);
 const loadData = async () => {
   try {
     // transaction_db.json 서버 연결
-    const res = await fetch('http://localhost:3000/transactions');
+    const res = await fetch(
+      window.location.hostname === "localhost"
+        ? "http://localhost:3000/transactions"
+        : "/transaction_db.json",
+    );
     const data = await res.json();
     items.value = Array.isArray(data) ? data : data.transactions;
   } catch (e) {
-    console.error('데이터 로드 실패', e);
+    console.error("데이터 로드 실패", e);
   } finally {
     loading.value = false;
   }
@@ -93,14 +97,14 @@ onMounted(loadData);
 
 <style scoped>
 /* 폰트 및 기본 설정 */
-@import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap");
 
 .kmj-light-container {
   background: #f0f7ff;
   min-height: 100vh;
   padding: 40px 5%;
   color: #1e293b;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   box-sizing: border-box;
 }
 

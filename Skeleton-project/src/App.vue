@@ -2,20 +2,23 @@
   <div class="toaster-layer">
     <Toaster position="top-center" :offset="40" richColors />
   </div>
-  <div>
+
+  <div v-if="isInitialized">
     <div
       id="app-container"
       style="
         max-width: 600px;
         width: 100%;
-        margin-left: auto;
-        margin-right: auto;
+        margin: 0 auto;
         background: transparent;
       "
     >
       <Header v-if="!isStartPage" />
+
       <RouterView />
+
       <main class="flex-grow-1 p-0"></main>
+
       <router-link
         v-if="!isStartPage && !isAddTransaction"
         to="/addTransaction"
@@ -30,34 +33,53 @@
       >
         <i class="fa-solid fa-plus fs-4"></i>
       </router-link>
+
       <Navigation v-if="!isStartPage" />
     </div>
   </div>
+
+  <div v-else class="initial-loading"></div>
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { ref, computed, onMounted } from "vue"; // onMounted는 한 번만 임포트
 import { useRoute, RouterView } from "vue-router";
 import Header from "@/sides/header-page.vue";
 import Navigation from "@/sides/TheNavigator.vue";
-import { onMounted } from "vue";
-import { useUserStore } from "@/stores/userStore";
+import { useUserStore } from "@/stores/userStore"; // 파일명 userStore.js 맞는지 재확인!
+import { useTransactionStore } from "@/stores/transaction"; // 트랜잭션도 필요하면 추가
 import { Toaster } from "vue-sonner";
-import { notify } from "@/utils/overlay";
 
+const isInitialized = ref(false); // 💡 초기화 상태값 추가
 const userStore = useUserStore();
+const transactionStore = useTransactionStore(); // 추가
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./assets/style.css";
 
 const route = useRoute();
 const isStartPage = computed(() => route.name === "start");
-const isAddTransaction = computed(() => route.path === "/addTransaction");
 
-onMounted(() => {
-  // 💡 새로고침 시 스토어가 가진 theme 값(localStorage에서 읽어온 값)을
-  // 실제 HTML의 data-theme 속성에 다시 박아넣습니다.
-  document.documentElement.setAttribute("data-theme", userStore.theme);
+onMounted(async () => {
+  try {
+    // 1. 유저 정보 및 테마를 최우선으로 복구 (localStorage + JSON)
+    await userStore.fetchUser();
+
+    // 2. 테마를 즉시 HTML에 적용 (번쩍임 방지)
+    document.documentElement.setAttribute("data-theme", userStore.theme);
+
+    // 3. 나머지 트랜잭션 데이터 복구
+    if (transactionStore.fetchTransactions) {
+      await transactionStore.fetchTransactions();
+    }
+
+    console.log("초기화 완료");
+  } catch (err) {
+    console.error("초기 로딩 에러:", err);
+  } finally {
+    // 4. [핵심] 모든 준비가 끝나면 화면을 보여줌
+    isInitialized.value = true;
+  }
 });
 </script>
 
@@ -225,5 +247,12 @@ body {
 button:focus {
   outline: none !important;
   box-shadow: none !important;
+}
+
+/* 💡 로딩 중 배경색 (사용자 테마에 맞춰 흰색/검은색 중 선택) */
+.initial-loading {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--t-bg, #f2f4f6);
 }
 </style>

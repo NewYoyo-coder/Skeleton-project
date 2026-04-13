@@ -648,12 +648,16 @@ const filteredTransactions = computed(() => {
       )
         return false;
 
-      // 카테고리 필터링 (DB에 있는 한글문자열 꺼내와서 그대로 비교)
-      if (
-        selectedCategory.value !== "전체" &&
-        t.category !== selectedCategory.value
-      )
-        return false;
+      // 🚀 카테고리 필터링 (기타 예외 처리 완벽 적용)
+      if (selectedCategory.value !== "전체") {
+        if (selectedCategory.value === "기타") {
+          // '기타' 칩을 누르면 DB의 '기타 수입', '기타 지출' 모두 허용
+          if (!t.category.includes("기타")) return false;
+        } else {
+          // 나머지는 글자가 100% 똑같아야 허용
+          if (t.category !== selectedCategory.value) return false;
+        }
+      }
 
       return true;
     })
@@ -665,7 +669,7 @@ const filteredTransactions = computed(() => {
         if (a.amount !== b.amount) {
           return isDesc ? b.amount - a.amount : a.amount - b.amount;
         }
-        // 2차: 금액이 같으면 무조건 최신순 (이게 진정한 동시성 고려)
+        // 2차: 금액이 같으면 무조건 최신순
         return a.date < b.date ? 1 : -1;
       }
 

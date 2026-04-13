@@ -1,15 +1,14 @@
 # 💰 Skeleton-Project: Smart Ledger Architecture
-> **"단순한 기록을 넘어, 당신의 금융 흐름을 통제하다."**
+> **"단순한 기록을 넘어, 당신의 금융 UX를 통제하다."**
 > KB IT's Your Life 7기 29회차 2조 (전공반) - 지능형 가계부 솔루션 프로젝트
-
-<img width="2979" height="1967" alt="Fram323242423vg3423232e 2" src="https://github.com/user-attachments/assets/5b33ddf5-423a-45b9-9c4b-00a7d50f6733" />
-
-
+  
+<img width="2979" height="1967" alt="Fram323242423vg3423232e 2" src="https://github.com/user-attachments/assets/01fe8996-cb15-4c9f-98a4-aecec03f1c30" />
+    
 🔗 **Live Demo (배포 버전):** [https://kbskeleton.vercel.app](https://kbskeleton.vercel.app)
 🗓 **개발 기간:** 2026.04.07 ~ 2026.04.13
 
 ## 💡 The Vision (프로젝트 비전)
-본 프로젝트는 부트캠프 고급 과정을 수료하며 진행된 엔터프라이즈급 스켈레톤 아키텍처입니다. **"모바일 네이티브 앱 수준의 쫀득한 조작감"**, **"데이터 기반의 즉각적인 시각화"**, 그리고 **"예외 상황을 완벽히 차단하는 철통 방어 로직"**을 목표로, 사용자 경험(UX)과 개발 경험(DX) 모두를 만족시키는 가계부 서비스를 완성했습니다.
+본 프로젝트는 부트캠프 과정을 수료하며 진행된 스켈레톤 아키텍처입니다. **"모바일 네이티브 앱 수준의 쫀득한 조작감"**, **"데이터 기반의 즉각적인 시각화"**, 그리고 **"예외 상황을 완벽히 차단하는 철통 방어 로직"**을 목표로, 사용자 경험(UX)과 개발 경험(DX) 모두를 만족시키는 가계부 서비스를 완성했습니다.
 
 ---
 

@@ -5,7 +5,7 @@
   >
     <div class="gnb-container d-flex align-items-center justify-content-around">
       <router-link
-        to="/mainDashboard"
+        :to="{ path: '/mainDashboard', query: route.query }"
         class="gnb-item d-flex flex-column align-items-center"
         active-class="active"
       >
@@ -14,7 +14,7 @@
       </router-link>
 
       <router-link
-        to="/transactionHistory"
+        :to="{ path: '/transactionHistory', query: route.query }"
         class="gnb-item d-flex flex-column align-items-center"
         active-class="active"
       >
@@ -23,7 +23,7 @@
       </router-link>
 
       <router-link
-        to="/report"
+        :to="{ path: '/report', query: route.query }"
         class="gnb-item d-flex flex-column align-items-center"
         active-class="active"
       >
@@ -32,7 +32,7 @@
       </router-link>
 
       <router-link
-        to="/settings"
+        :to="{ path: '/settings', query: route.query }"
         class="gnb-item d-flex flex-column align-items-center"
         active-class="active"
       >
@@ -42,9 +42,11 @@
     </div>
   </nav>
 </template>
-
 <script setup>
-// 부트스트랩 아이콘 CDN 추가 필요 (index.html에)
+import { useRoute } from "vue-router";
+const route = useRoute();
+
+// 💡 팁: 부트스트랩 아이콘은 index.html에 추가되어 있어야 합니다.
 </script>
 
 <style scoped>
@@ -59,40 +61,44 @@ main {
   padding-bottom: 90px !important; /* 네비바 높이 + 알파 */
 }
 
-/* 🗓️ GNB 래퍼 (유리 질감) */
+/* 🗓️ GNB 래퍼 (그라데이션 투명도 조절) */
 .gnb-wrapper {
-  padding: 0 16px 12px; /* 좌우 하단 여백 */
+  padding: 0 16px 12px;
+  /* 배경 그라데이션이 다크모드일 때도 자연스럽게 변수 처리 */
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.95) 40%
+    transparent 0%,
+    var(--bg) 40% /* 💡 흰색 대신 테마 배경색 변수 사용 */
   );
 }
 
-/* GNB 컨테이너 */
+/* GNB 컨테이너 (핵심) */
 .gnb-container {
   height: 64px;
-  background: rgba(255, 255, 255, 0.85); /* 투명도 */
-  backdrop-filter: blur(12px); /* 유리 질감 핵심 */
+  /* 💡 다크모드에서는 var(--card-bg)가 적용되도록 수정 */
+  background: var(--card-bg);
+  opacity: 0.9; /* 투명도 살짝 유지 */
+  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-radius: 32px; /* 둥근 카드 형태 */
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08); /* 세련된 그림자 */
+  border-radius: 32px;
+  /* 💡 보더 색상도 변수 처리 */
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow); /* 💡 정의한 묵직한 다크 그림자 상속 */
   position: relative;
 }
 
-/* 네비 아이템 공통 */
+/* 네비 아이템 (비활성화 상태) */
 .gnb-item {
   text-decoration: none;
-  color: #a0a0a0; /* 비활성화 색상 */
-  width: 50px;
+  color: var(--text); /* 💡 회색(#a0a0a0) 대신 변수 사용 */
+  opacity: 0.6; /* 비활성화는 불투명도로 조절하는 게 다크모드에서 더 예쁨 */
   transition: all 0.2s ease;
-  position: relative;
 }
 
-/* 활성화 상태 색상 */
+/* 활성화 상태 */
 .gnb-item.active {
-  color: #3182f6; /* 토스 블루 */
+  color: var(--accent); /* 💡 토스블루 대신 포인트 컬러 변수 사용 */
+  opacity: 1;
 }
 
 /* 작은 글씨 스타일 */

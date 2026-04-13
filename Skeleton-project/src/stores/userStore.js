@@ -1,66 +1,89 @@
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
-import axios from 'axios';
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
+import axios from "axios";
 
-export const useUserStore = defineStore('user', () => {
-  const name = ref('');
-  const email = ref(''); // email 대신 id로 통일
-  const theme = ref('light');
-  const autoLogin = ref(true);
-  const isDarkMode = computed(() => theme.value === 'dark');
+export const useUserStore = defineStore("user", () => {
+  const name = ref("");
+  const email = ref("");
+  const password = ref(""); // 💡 JSON의 password와 매칭
 
-  // DB에서 정보 가져오기
+  const getInitialTheme = () => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) return savedTheme;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  };
+
+  const theme = ref(getInitialTheme());
+  const isDarkMode = computed(() => theme.value === "dark");
+
+  const setTheme = (newTheme) => {
+    theme.value = newTheme;
+    localStorage.setItem("theme", newTheme);
+    document.documentElement.setAttribute("data-theme", newTheme);
+  };
+
   const fetchUser = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/user');
+      const res = await axios.get("http://localhost:3000/user");
       const data = res.data;
       name.value = data.name;
       email.value = data.email;
-      theme.value = data.settings?.theme || 'light';
-      autoLogin.value = data.settings?.auto_login ?? true;
-      setTheme(theme.value);
+      password.value = data.password; // 💡 오타 교정된 password 읽기
     } catch (err) {
-      console.error('유저 로드 실패:', err);
+      console.error("유저 로드 실패:", err);
     }
   };
 
-  // DB에 덮어쓰기 (PUT)
   const setUserInfo = async (userData) => {
     try {
-      const res = await axios.put('http://localhost:3000/user', userData);
+      const res = await axios.put("http://localhost:3000/user", userData);
       name.value = res.data.name;
       email.value = res.data.email;
-      theme.value = res.data.settings.theme;
-      autoLogin.value = res.data.settings.auto_login;
+      password.value = res.data.password;
+      // 💡 settings가 없을 경우를 대비한 안전장치
+      if (res.data.settings?.theme) {
+        setTheme(res.data.settings.theme);
+      }
     } catch (err) {
-      console.error('유저 저장 실패:', err);
+      console.error("유저 저장 실패:", err);
       throw err;
     }
   };
 
-  // userStore.js 내부의 updateProfile 예시
   const updateProfile = async (newName, newEmail) => {
     const userData = {
       name: newName,
       email: newEmail,
-      currency: 'KRW', // 기본값 혹은 기존값
-      last_login: new Date().toISOString().split('T')[0],
+      password: password.value, // 💡 기존 비번 유지 필수!
+      currency: "KRW",
+      last_login: new Date().toISOString().split("T")[0],
       settings: {
-        theme: theme.value, // 현재 스토어의 theme ref
-        auto_login: autoLogin.value,
+        theme: theme.value, // 💡 현재 테마 설정 유지 필수!
       },
     };
-    // 기존에 만든 setUserInfo(userData)를 호출하여 서버에 PUT
     await setUserInfo(userData);
   };
 
-  const setTheme = (newTheme) => {
-    theme.value = newTheme;
-    document.documentElement.setAttribute('data-theme', newTheme);
+  // 💡 리셋 함수 (아까 에러 났던 거 방지용)
+  const reset = () => {
+    name.value = "";
+    email.value = "";
+    password.value = "";
+    setTheme("light");
   };
 
   return {
-    name, email, theme, autoLogin,
-    isDarkMode, setUserInfo, setTheme, fetchUser, updateProfile
+    name,
+    email,
+    password, // 💡 이거 누락됐었음! 추가 완료
+    theme,
+    isDarkMode,
+    setUserInfo,
+    setTheme,
+    fetchUser,
+    updateProfile,
+    reset,
   };
 });

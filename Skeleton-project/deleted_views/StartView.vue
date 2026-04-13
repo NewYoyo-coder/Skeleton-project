@@ -32,24 +32,24 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { useUserStore } from '../../src/stores/userStore';
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useUserStore } from "../../src/stores/userStore";
 
 const router = useRouter();
 const userStore = useUserStore();
 
-const userName = ref('');
-const userEmail = ref('');
+const userName = ref("");
+const userEmail = ref("");
 
 const goToHome = () => {
   if (!userName.value.trim() || !userEmail.value.trim()) {
-    alert('이름과 이메일을 모두 입력해주세요.');
+    notify.error("이름과 이메일을 모두 입력해주세요.");
     return;
   }
 
   userStore.setUserInfo(userName.value, userEmail.value);
-  router.push('/home');
+  router.push("/home");
 };
 </script>
 

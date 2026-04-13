@@ -53,7 +53,7 @@
               >
               <div
                 class="t-wrapper w-100 mt-1"
-                style="height: 36px; --t-width: 33.33%"
+                style="height: 38px; --t-width: 33.33%"
               >
                 <div
                   class="t-active-bg"
@@ -64,7 +64,6 @@
 
                 <button
                   class="t-btn t-push"
-                  style="font-size: 13px"
                   :class="{ active: paymentMethod === 'cash' }"
                   @click="paymentMethod = 'cash'"
                 >
@@ -72,7 +71,6 @@
                 </button>
                 <button
                   class="t-btn t-push"
-                  style="font-size: 13px"
                   :class="{ active: paymentMethod === 'account' }"
                   @click="paymentMethod = 'account'"
                 >
@@ -80,7 +78,6 @@
                 </button>
                 <button
                   class="t-btn t-push"
-                  style="font-size: 13px"
                   :class="{ active: paymentMethod === 'card' }"
                   @click="paymentMethod = 'card'"
                 >
@@ -109,18 +106,26 @@
         </div>
 
         <div class="form-card p-3 shadow-sm rounded-4 bg-white">
-          <label class="small fw-bold text-secondary mb-2 d-block"
+          <label class="small fw-bold text-secondary mb-3 d-block"
             >카테고리</label
           >
-          <select
-            v-model="category"
-            class="form-select border-0 bg-transparent px-0"
-          >
-            <option disabled value="">카테고리를 선택하세요</option>
-            <option v-for="cat in categories" :key="cat" :value="cat">
+          <div class="d-flex flex-wrap gap-2">
+            <button
+              v-for="cat in categories"
+              :key="cat"
+              @click="category = cat"
+              class="t-btn t-single t-push px-3 py-2 rounded-pill border-0 small fw-bold"
+              :class="{ 'active-chip': category === cat }"
+              style="
+                font-size: 13px;
+                min-width: fit-content; /* 🚀 글자 길이에 딱 맞게 */
+                white-space: nowrap; /* 🚀 글자 절대 줄바꿈 금지 */
+                flex-shrink: 0; /* 🚀 좁아져도 찌그러지지 않게 */
+              "
+            >
               {{ cat }}
-            </option>
-          </select>
+            </button>
+          </div>
         </div>
 
         <transition name="fade">
@@ -177,7 +182,7 @@
               color: '#fff',
             }"
           >
-            {{ currentType === 'expense' ? '지출' : '수입' }} 추가하기
+            {{ currentType === "expense" ? "지출" : "수입" }} 추가하기
           </button>
         </div>
         <div class="col-4">
@@ -195,56 +200,56 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
-import { useRouter } from 'vue-router';
-import { useTransactionStore } from '@/stores/transaction.js';
+import { ref, computed, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useTransactionStore } from "@/stores/transaction.js";
 
 const router = useRouter();
 const transactionStore = useTransactionStore(); // 2. 스토어 인스턴스 생성
-const currentType = ref('expense');
+const currentType = ref("expense");
 
-const selectedDate = ref(new Date().toISOString().split('T')[0]);
+const selectedDate = ref(new Date().toISOString().split("T")[0]);
 const amount = ref(null);
-const displayAmount = ref('');
+const displayAmount = ref("");
 const handleAmountInput = (e) => {
-  let value = e.target.value.replace(/[^0-9]/g, '');
+  let value = e.target.value.replace(/[^0-9]/g, "");
   amount.value = value ? parseInt(value) : null;
-  displayAmount.value = value ? Number(value).toLocaleString() : '';
+  displayAmount.value = value ? Number(value).toLocaleString() : "";
 };
 
-const category = ref('');
-const paymentMethod = ref('card');
+const category = ref("");
+const paymentMethod = ref("card");
 
-const shopName = ref('');
-const itemName = ref('');
-const memo = ref('');
+const shopName = ref("");
+const itemName = ref("");
+const memo = ref("");
 
 const categories = computed(() => {
-  return currentType.value === 'expense'
+  return currentType.value === "expense"
     ? [
-        '음식',
-        '카페',
-        '교통',
-        '쇼핑',
-        '건강',
-        '집',
-        '세금',
-        '보험',
-        '기타 지출',
+        "음식",
+        "카페",
+        "교통",
+        "쇼핑",
+        "건강",
+        "집",
+        "세금",
+        "보험",
+        "기타 지출",
       ]
-    : ['월급', '부수입', '용돈', '상여', '금융소득', '기타 수입'];
+    : ["월급", "부수입", "용돈", "상여", "금융소득", "기타 수입"];
 });
 
 watch(currentType, () => {
-  category.value = '';
+  category.value = "";
 });
 
 const handleSave = async () => {
   if (!amount.value || !category.value || !selectedDate.value)
-    return alert('모든 항목을 입력해 주세요');
-  const today = new Date().toISOString().split('T')[0]; // 오늘 날짜 (YYYY-MM-DD)
+    return notify.error("모든 항목을 입력해 주세요");
+  const today = new Date().toISOString().split("T")[0]; // 오늘 날짜 (YYYY-MM-DD)
   if (selectedDate.value > today) {
-    return alert('미래 날짜는 선택할 수 없습니다.');
+    return notify.error("미래 날짜는 선택할 수 없습니다.");
   }
 
   const finalAmount = Math.abs(amount.value);
@@ -254,18 +259,18 @@ const handleSave = async () => {
     amount: finalAmount,
     category: category.value,
     payment_method: paymentMethod.value,
-    shop_name: currentType.value === 'expense' ? shopName.value : '',
-    item_name: currentType.value === 'expense' ? itemName.value : '',
+    shop_name: currentType.value === "expense" ? shopName.value : "",
+    item_name: currentType.value === "expense" ? itemName.value : "",
     memo: memo.value,
     transaction_type: currentType.value,
   };
 
   try {
     await transactionStore.addTransaction(newReceipt);
-    router.push('/mainDashboard');
+    router.push("/mainDashboard");
   } catch (error) {
-    alert('저장에 실패했습니다.');
-    console.error('Failed to save:', error);
+    notify.error("저장에 실패했습니다.");
+    console.error("Failed to save:", error);
   }
 };
 
@@ -275,7 +280,7 @@ const handleCancel = () => {
     amount.value || category.value || shopName.value || memo.value;
 
   if (hasInput) {
-    if (confirm('작성 중인 내용이 저장되지 않아요. 돌아갈까요?')) {
+    if (confirm("작성 중인 내용이 저장되지 않아요. 돌아갈까요?")) {
       router.back(); // push 대신 back()을 써야 사용자가 이전에 있던 맥락으로 정확히 돌아감
     }
   } else {
@@ -318,7 +323,7 @@ input::-webkit-outer-spin-button {
 }
 
 /* For Firefox */
-input[type='number'] {
+input[type="number"] {
   /* -moz-appearance: textfield; */
 }
 

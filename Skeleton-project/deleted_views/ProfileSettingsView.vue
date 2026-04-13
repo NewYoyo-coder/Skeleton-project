@@ -29,9 +29,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import TopNav from '../components/TopNav.vue';
-import { useUserStore } from '../../src/stores/userStore';
+import { ref } from "vue";
+import TopNav from "../components/TopNav.vue";
+import { useUserStore } from "../../src/stores/userStore";
 
 const userStore = useUserStore();
 
@@ -40,12 +40,12 @@ const editEmail = ref(userStore.email);
 
 const saveProfile = () => {
   if (!editName.value.trim() || !editEmail.value.trim()) {
-    alert('이름과 이메일을 입력해주세요.');
+    notify.error("이름과 이메일을 입력해주세요.");
     return;
   }
 
   userStore.updateProfile(editName.value, editEmail.value);
-  alert('저장되었습니다.');
+  notify.success("저장되었습니다.");
 };
 
 const changeTheme = (theme) => {

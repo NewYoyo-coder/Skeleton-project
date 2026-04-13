@@ -1,10 +1,7 @@
 <template>
-  <div
-    class="container bg-white p-0 d-flex flex-column shadow-sm dashboard-wrapper"
-    style="max-width: 600px"
-  >
+  <div class="container d-flex flex-column shadow-sm dashboard-wrapper px-3">
     <div
-      class="header-section p-4 bg-white z-3 border-bottom"
+      class="header-section p-4 bg-white z-2 border-bottom"
       :class="{ 'header-hidden': !showHeader }"
     >
       <div class="d-flex align-items-center gap-2 mb-3">
@@ -20,7 +17,78 @@
           class="form-control form-control-sm flex-fill"
         />
       </div>
-      <div class="d-flex align-items-center gap-2 mt-3">
+
+      <div
+        class="t-wrapper w-100 mb-3 shadow-sm"
+        style="height: 40px; --t-width: 33.33%"
+      >
+        <div
+          class="t-active-bg"
+          :style="{
+            transform: `translateX(${
+              selectedType === TRANSACTION_TYPE.ALL
+                ? '0'
+                : selectedType === TRANSACTION_TYPE.INCOME
+                  ? '100'
+                  : '200'
+            }%)`,
+          }"
+        ></div>
+        <button
+          class="t-btn t-push fw-bold"
+          :class="{ active: selectedType === TRANSACTION_TYPE.ALL }"
+          @click="toggleType(TRANSACTION_TYPE.ALL)"
+        >
+          전체
+        </button>
+        <button
+          class="t-btn t-push fw-bold"
+          :class="{
+            'active text-primary': selectedType === TRANSACTION_TYPE.INCOME,
+          }"
+          @click="toggleType(TRANSACTION_TYPE.INCOME)"
+        >
+          수입
+        </button>
+        <button
+          class="t-btn t-push fw-bold"
+          :class="{
+            'active text-danger': selectedType === TRANSACTION_TYPE.EXPENSE,
+          }"
+          @click="toggleType(TRANSACTION_TYPE.EXPENSE)"
+        >
+          지출
+        </button>
+      </div>
+
+      <div
+        v-if="categoryOptions.length > 0"
+        class="d-flex flex-nowrap overflow-auto gap-2 mb-3 pb-1"
+        style="
+          white-space: nowrap;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+        "
+      >
+        <button
+          v-for="cat in categoryOptions"
+          :key="cat"
+          class="t-btn t-single t-push flex-shrink-0 fw-bold shadow-sm"
+          :class="{ 'active-chip': selectedCategory === cat }"
+          style="
+            height: 34px;
+            padding: 0 16px;
+            border-radius: 17px;
+            font-size: 13px;
+            min-width: fit-content;
+          "
+          @click="toggleCategory(cat)"
+        >
+          {{ cat }}
+        </button>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
         <button
           class="t-btn t-push me-auto d-flex align-items-center gap-1 shadow-sm"
           :class="
@@ -30,9 +98,9 @@
           "
           style="
             height: 36px;
-            padding: 0 14px;
+            padding: 0 12px;
             border-radius: 18px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 800;
           "
           @click="toggleInfiniteMode"
@@ -41,19 +109,7 @@
             class="bi fs-5"
             :class="isInfinite ? 'bi-infinity' : 'bi-book'"
           ></i>
-          {{ isInfinite ? "무한 스크롤" : "페이징 보기" }}
-        </button>
-        <button
-          class="t-btn t-single t-push"
-          style="
-            height: 32px;
-            padding: 0 10px;
-            border-radius: 16px;
-            font-size: 12px;
-          "
-          @click="resetFilter"
-        >
-          초기화
+          {{ isInfinite ? "무한" : "페이징" }}
         </button>
 
         <button
@@ -70,11 +126,12 @@
           {{
             sortBy === "amount"
               ? sortOrder === "desc"
-                ? "금액 ↓"
-                : "금액 ↑"
+                ? "금액↓"
+                : "금액↑"
               : "금액순"
           }}
         </button>
+
         <button
           class="t-btn t-single t-push fw-bold"
           :class="{ 'active-chip': sortBy === 'date' }"
@@ -89,14 +146,13 @@
           {{
             sortBy === "date"
               ? sortOrder === "desc"
-                ? "최신 ↓"
-                : "과거 ↑"
+                ? "최신↓"
+                : "과거↑"
               : "날짜순"
           }}
         </button>
       </div>
     </div>
-
     <Transition name="fade">
       <div
         v-if="isInfinite && showFloatingBadge"
@@ -141,20 +197,17 @@
     </div>
     <div
       ref="scrollAreaRef"
-      class="scroll-area flex-grow-1 px-4"
+      class="scroll-area flex-grow-1 px-2"
       :class="isInfinite ? 'overflow-auto' : 'overflow-hidden'"
       @scroll="handleScroll"
     >
-      <div v-if="isLoading" class="d-flex justify-content-center py-5 my-5">
-        <div class="ios-spinner"></div>
-      </div>
-      <Transition name="fade" mode="out-in">
+      <Transition name="page-slide">
         <div :key="isInfinite ? 'inf' : currentPage" class="pb-5">
           <template v-for="group in groupedTransactions" :key="group.id">
             <div class="month-group mb-2" :data-month="group.label">
               <div
                 v-if="group.label"
-                class="month-divider-static py-1 mb-0 border-bottom"
+                class="month-divider-static py-1 mb-1 border-bottom"
               >
                 <span class="fw-bold text-dark px-2" style="font-size: 12px">{{
                   group.label
@@ -173,25 +226,44 @@
           </template>
 
           <div
+            v-if="isInfinite && infiniteLimit < filteredTransactions.length"
+            class="d-flex justify-content-center align-items-center py-4 opacity-50"
+          >
+            <div
+              class="spinner-border spinner-border-sm text-primary"
+              role="status"
+            ></div>
+            <span class="ms-2 small fw-bold">내역을 더 가져오고 있어요...</span>
+            <div ref="loadMoreRef" style="height: 10px; width: 10px"></div>
+          </div>
+
+          <div
             v-if="
-              isInfinite &&
-              filteredTransactions.length > 0 &&
-              infiniteLimit >= filteredTransactions.length
+              (isInfinite &&
+                filteredTransactions.length > 0 &&
+                infiniteLimit >= filteredTransactions.length) ||
+              (!isInfinite &&
+                currentPage === totalPages &&
+                filteredTransactions.length > 0)
             "
-            class="text-center text-muted my-5 py-4 border-top border-dashed"
+            class="text-center text-muted my-2 py-2"
           >
             <i class="bi bi-check-circle d-block mb-2 fs-4"></i>
-            <span class="fw-bold opacity-50"
-              >기간 내 모든 내역을 다 불러왔어요!</span
-            >
+            <span class="fw-bold opacity-50">
+              {{
+                isInfinite
+                  ? "기간 내 모든 내역을 다 불러왔어요!"
+                  : "해당 기간의 마지막 내역이에요!"
+              }}
+            </span>
           </div>
 
           <div
             v-if="filteredTransactions.length === 0"
-            class="text-center text-muted mt-5 py-5"
+            class="text-center text-muted mt-2 py-2"
           >
-            <i class="bi bi-emoji-frown fs-2 d-block mb-2"></i>
-            해당 기간의 거래내역이 없습니다.
+            <i class="bi fs-2 d-block mb-2"></i>
+            해당 기간의 거래내역이 없네요...
           </div>
         </div>
       </Transition>
@@ -201,8 +273,16 @@
       v-if="!isInfinite && totalPages > 1"
       class="bg-white border-top py-3 d-flex justify-content-center shadow-lg z-3"
     >
-      <ul class="pagination pagination-sm mb-0 custom-pagination">
-        <li class="page-item" :class="{ disabled: currentPage === 1 }">
+      <TransitionGroup
+        tag="ul"
+        name="num-slide"
+        class="pagination pagination-sm mb-0 custom-pagination"
+      >
+        <li
+          class="page-item"
+          :class="{ disabled: currentPage === 1 }"
+          key="prev"
+        >
           <button
             class="page-link border-0 rounded-circle mx-1"
             @click="currentPage--"
@@ -210,6 +290,7 @@
             <i class="bi bi-chevron-left"></i>
           </button>
         </li>
+
         <li
           v-for="p in visiblePages"
           :key="p"
@@ -223,7 +304,12 @@
             {{ p }}
           </button>
         </li>
-        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+
+        <li
+          class="page-item"
+          :class="{ disabled: currentPage === totalPages }"
+          key="next"
+        >
           <button
             class="page-link border-0 rounded-circle mx-1"
             @click="currentPage++"
@@ -231,22 +317,33 @@
             <i class="bi bi-chevron-right"></i>
           </button>
         </li>
-      </ul>
+      </TransitionGroup>
     </nav>
+    <TransactionDetailModal
+      v-if="selected"
+      v-model:show="selectedId"
+      :transaction="selected"
+      @close="selectedId = null"
+      @update="store.fetchTransactions"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted, nextTick } from "vue";
 import { storeToRefs } from "pinia";
 import TransactionDetailModal from "./transaction-detail-modal.vue";
 import TransactionItem from "./transaction-item.vue";
 import { TRANSACTION_TYPE } from "../constants/transactionType";
 import { CATEGORY_LABEL, CATEGORIES } from "../constants/categories";
 import { useTransactionStore } from "../stores/transaction";
+import { useRouter, useRoute } from "vue-router"; // 💡 추가: 라우터 임포트
 
 const store = useTransactionStore();
 const { transactions } = storeToRefs(store);
+
+const router = useRouter(); // 💡 라우터 객체
+const route = useRoute(); // 💡 현재 주소 정보
 
 //상세 보기 & 페이지네이션 관련
 const selectedId = ref(null);
@@ -267,13 +364,13 @@ const day = String(now.getDate()).padStart(2, "0");
 const firstDayOfMonth = `${year}-${month}-01`;
 const today = `${year}-${month}-${day}`;
 
-//날짜 초기값 수정
-const filterFrom = ref(firstDayOfMonth); // '' 에서 수정
-const filterTo = ref(today); // '' 에서 수정
-const selectedType = ref(TRANSACTION_TYPE.ALL);
-const selectedCategory = ref("전체");
-const sortOrder = ref("desc");
-const sortBy = ref("date");
+// 💡 수정: 초기값을 route.query에서 먼저 찾고, 없으면 기본값 세팅
+const filterFrom = ref(route.query.from || firstDayOfMonth);
+const filterTo = ref(route.query.to || today);
+const selectedType = ref(route.query.type || TRANSACTION_TYPE.ALL);
+const selectedCategory = ref(route.query.category || "전체");
+const sortBy = ref(route.query.sortBy || "date");
+const sortOrder = ref(route.query.sortOrder || "desc");
 
 // 무한스크롤 & 헤더 관련 상태
 const isInfinite = ref(false);
@@ -286,21 +383,40 @@ const scrollAreaRef = ref(null);
 const scrollProgress = ref(0);
 
 const isLoading = ref(false);
+
 // 🔄 [핵심] 무한 <-> 페이징 전환 함수
 function toggleInfiniteMode() {
   isLoading.value = true;
 
-  // 0.2초 뒤에 모드 전환 및 로딩 종료
+  // 💡 전환 전, 현재 보고 있던 대략적인 위치(비율) 저장
+  const scrollRatio = scrollAreaRef.value
+    ? scrollAreaRef.value.scrollTop / scrollAreaRef.value.scrollHeight
+    : 0;
+
   setTimeout(() => {
     if (isInfinite.value) {
+      // 무한 -> 페이징
       const syncPage = Math.ceil(infiniteLimit.value / PAGE_SIZE);
       currentPage.value = Math.min(syncPage, totalPages.value || 1);
       isInfinite.value = false;
     } else {
-      infiniteLimit.value = currentPage.value * PAGE_SIZE;
+      // 페이징 -> 무한
+      // 💡 핵심: 현재 페이지까지의 데이터를 '포함'해서 리밋을 설정
+      infiniteLimit.value = Math.max(
+        infiniteLimit.value,
+        currentPage.value * PAGE_SIZE,
+      );
       isInfinite.value = true;
     }
-    isLoading.value = false;
+
+    // 💡 렌더링 후 이전 위치로 스크롤 복구 (자석 효과)
+    nextTick(() => {
+      if (scrollAreaRef.value) {
+        scrollAreaRef.value.scrollTop =
+          scrollAreaRef.value.scrollHeight * scrollRatio;
+      }
+      isLoading.value = false;
+    });
   }, 200);
 }
 
@@ -365,18 +481,28 @@ function handleScroll(e) {
   if (visibleMonth) currentViewingMonth.value = visibleMonth;
   showFloatingBadge.value = !isDividerInView && currentScrollY > 100;
 
-  // 💡 5. [핵심] 정직한 프로그레스 계산 (전체 데이터 대비 현재 위치)
+  // 💡 5. [보정] 진짜 예측형 프로그레스 계산
   if (scrollHeight > clientHeight) {
-    const totalCount = filteredTransactions.value.length;
-    const currentLoadedCount = infiniteLimit.value;
+    const totalCount = filteredTransactions.value.length; // 전체 데이터 (예: 100)
+    if (totalCount === 0) return;
 
-    // 현재 불러온 영역 내에서의 스크롤 비율 (0 ~ 1)
-    const currentAreaRatio = currentScrollY / (scrollHeight - clientHeight);
+    // 현재 화면 상단에 걸린 아이템이 전체 중 대략 몇 번째인지 추정
+    // 1. 현재 로드된 리스트 내에서의 스크롤 비율 (0 ~ 1)
+    const scrollPercent = currentScrollY / (scrollHeight - clientHeight);
 
-    // 전체 리스트 중 현재 영역이 차지하는 비중을 반영하여 최종 % 계산
-    // 예: 전체 100개 중 20개만 로드됐다면, 게이지는 최대 20%까지만 참
-    const totalRatio = (currentLoadedCount / totalCount) * currentAreaRatio;
-    scrollProgress.value = totalRatio * 100;
+    // 2. 현재 로드된 개수(infiniteLimit) 중 어디쯤 있는지 계산
+    const currentItemIndex = infiniteLimit.value * scrollPercent;
+
+    // 3. 전체 개수 대비 최종 위치 % (이게 진짜 정직한 진행률)
+    // + (clientHeight / scrollHeight)를 살짝 보정해주면 바닥 닿을 때 더 정확함
+    let progress = (currentItemIndex / totalCount) * 100;
+
+    // 4. 마지막 데이터라면 강제로 100% 찍어주기
+    if (infiniteLimit.value >= totalCount && scrollPercent > 0.98) {
+      progress = 100;
+    }
+
+    scrollProgress.value = Math.min(progress, 100);
   }
 }
 
@@ -409,8 +535,9 @@ function scrollToBottom() {
   }
 }
 
-// 타입이나 정렬 바뀌면 무한스크롤 리밋 초기화
+// 💡 교체: 필터가 바뀔 때마다 URL을 replace로 조용히 갈아끼움
 watch(
+  // 💡 여기에 currentPage를 추가해야 페이지 번호 클릭 시 로직이 작동합니다.
   [
     filterFrom,
     filterTo,
@@ -418,16 +545,49 @@ watch(
     selectedCategory,
     sortBy,
     sortOrder,
-    selectedType,
+    currentPage,
   ],
-  () => {
-    currentPage.value = 1;
-    infiniteLimit.value = 10;
-    showHeader.value = true;
-    lastScrollY = 0;
+  (
+    [newFrom, newTo, newType, newCat, newSortBy, newSortOrder, newPage],
+    [oldFrom, oldTo, oldType, oldCat, oldSortBy, oldSortOrder, oldPage],
+  ) => {
+    // 1. 필터(날짜, 카테고리 등)가 바뀌었을 때만 페이지를 1로 리셋
+    // 💡 페이지 번호만 바꾼 건데 1로 돌아가면 안 되니까 '이전 값'과 비교 로직 추가
+    const isFilterChanged =
+      newFrom !== oldFrom ||
+      newTo !== oldTo ||
+      newType !== oldType ||
+      newCat !== oldCat ||
+      newSortBy !== oldSortBy ||
+      newSortOrder !== oldSortOrder;
+
+    if (isFilterChanged) {
+      currentPage.value = 1;
+      infiniteLimit.value = 10;
+      showHeader.value = true;
+      lastScrollY = 0;
+    }
+
+    // 2. URL 파라미터 업데이트 (currentPage 포함)
+    router.replace({
+      query: {
+        from: newFrom,
+        to: newTo,
+        type: newType,
+        category: newCat,
+        sortBy: newSortBy,
+        sortOrder: newSortOrder,
+        page: newPage, // 💡 주소창에도 현재 페이지 반영
+      },
+    });
+
+    // 3. 🚨 [핵심] 페이지 번호든 필터든 바뀌면 즉시 스크롤 상단 고정
+    // 💡 0.1초만 늦어도 슬라이드 애니메이션 꼬이니까 즉시 실행
+    if (scrollAreaRef.value) {
+      scrollAreaRef.value.scrollTop = 0;
+    }
   },
 );
-
 const typeOptions = [
   { value: TRANSACTION_TYPE.ALL, label: "전체" },
   { value: TRANSACTION_TYPE.INCOME, label: "수입" },
@@ -446,10 +606,11 @@ function typeButtonClass(value) {
 // 💡 수정
 // 💡 💡 💡 categories.js 사용
 const categoryOptions = computed(() => {
+  // 1. 전체 타입일 때는 카테고리 칩을 숨기거나 비움
   if (selectedType.value === TRANSACTION_TYPE.ALL) return [];
 
-  // 1. 현재 선택된 날짜와 타입에 해당하는 실제 데이터 중, 존재하는 카테고리 키값만 추출
-  const availableKeys = new Set(
+  // 2. 현재 필터링된 데이터(날짜/타입 기준)에서 실제로 존재하는 카테고리들만 수집
+  const availableCategoriesInData = new Set(
     transactions.value
       .filter(
         (t) =>
@@ -457,15 +618,15 @@ const categoryOptions = computed(() => {
           (!filterFrom.value || t.date >= filterFrom.value) &&
           (!filterTo.value || t.date <= filterTo.value),
       )
-      .map((t) => t.category),
+      .map((t) => t.category), // DB에 저장된 '음식', '월급' 등 한글값
   );
 
-  // 2. 원래 상수 배열 순서를 유지하면서, 존재하는 키만 한글로 변환
-  const koreanLabels = CATEGORIES[selectedType.value]
-    .filter((key) => availableKeys.has(key))
-    .map((key) => CATEGORY_LABEL[key]);
+  // 3. 상수에 정의된 순서대로, 데이터가 존재하는 카테고리만 한글 라벨로 추출
+  const filteredLabels = CATEGORIES[selectedType.value]
+    .map((key) => CATEGORY_LABEL[key]) // 영문 키를 한글 라벨로 변환
+    .filter((label) => availableCategoriesInData.has(label)); // 실제 데이터에 있는 것만 남김
 
-  return ["전체", ...koreanLabels];
+  return ["전체", ...filteredLabels];
 });
 
 //💡 수정
@@ -511,9 +672,14 @@ const filteredTransactions = computed(() => {
 });
 
 // 페이지네이션 부분
-const totalPages = computed(() =>
-  Math.ceil(filteredTransactions.value.length / PAGE_SIZE),
-);
+const totalPages = computed(() => {
+  const count = filteredTransactions.value.length;
+  if (count === 0) return 1;
+
+  const basePages = Math.ceil(count / PAGE_SIZE);
+  // 데이터 개수가 딱 페이지 사이즈의 배수라면, 안내 문구를 보여줄 빈 페이지 하나를 추가
+  return count % PAGE_SIZE === 0 ? basePages + 1 : basePages;
+});
 
 const pagedTransactions = computed(() => {
   const start = (currentPage.value - 1) * PAGE_SIZE;
@@ -609,7 +775,29 @@ function resetFilter() {
   sortBy.value = "date";
 }
 
+const loadMoreRef = ref(null);
 onMounted(() => {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      // 💡 말뚝이 화면에 들어왔고, 로딩 중이 아닐 때만 실행
+      if (entries[0].isIntersecting && !isLoading.value) {
+        if (infiniteLimit.value < filteredTransactions.value.length) {
+          isLoading.value = true;
+
+          // 💡 쌀먹 포인트: 한 번에 20개씩 팍팍 붙여서 연산 횟수 줄이기
+          infiniteLimit.value += 20;
+
+          // 브라우저가 렌더링할 시간을 준 뒤 로딩 해제
+          nextTick(() => {
+            isLoading.value = false;
+          });
+        }
+      }
+    },
+    { threshold: 0.1 },
+  ); // 말뚝이 10%만 보여도 즉시 실행
+
+  if (loadMoreRef.value) observer.observe(loadMoreRef.value);
   store.fetchTransactions();
 });
 </script>
@@ -673,6 +861,13 @@ onMounted(() => {
   transition: all 0.2s;
 }
 
+/* 하단 번호표 클릭 시 파란 테두리(아웃라인) 강제 제거 */
+.custom-pagination .page-link:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  background-color: transparent; /* 클릭 순간 배경색 튀는 거 방지 */
+}
+
 .custom-pagination .page-item.active .page-link {
   background-color: #3182f6 !important; /* 토스 블루 스타일 */
   color: white !important;
@@ -701,7 +896,9 @@ onMounted(() => {
 
 /* 💡 헤더 섹션 투명 블러 적용 */
 .header-section {
-  background: rgba(255, 255, 255, 0.9) !important;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  margin: 3px;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   transition:
@@ -820,10 +1017,53 @@ onMounted(() => {
   bottom: 40px; /* 하단에서 살짝 띄움 */
 }
 
+/* 🚀 페이지 전환 슬라이드 애니메이션 */
+.page-slide-enter-active {
+  /* 💡 들어오는 놈은 absolute 주지 마세요! 그래야 제자리를 잡습니다 */
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page-slide-leave-active {
+  /* 💡 나가는 놈만 absolute로 빼서 공간을 비워줘야 합니다 */
+  position: absolute;
+  width: 100%;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page-slide-enter-from {
+  opacity: 0;
+  transform: translateX(10px);
+}
+
+.page-slide-leave-to {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+/* 🚀 페이지 번호 숫자 전용 트랜지션 */
+.num-slide-move {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.num-slide-enter-active,
+.num-slide-leave-active {
+  transition: all 0.3s ease;
+}
+
+.num-slide-enter-from {
+  opacity: 0;
+  transform: translateX(50px);
+}
+
+.num-slide-leave-to {
+  opacity: 0;
+  transform: translateX(-50px);
+  position: absolute; /* 💡 나가는 숫자가 자리를 비워줘야 번호가 안 꼬임 */
+}
 /* 🍏 iOS 스타일 미니멀 스피너 */
 .ios-spinner {
-  width: 24px;
-  height: 24px;
+  width: 48px;
+  height: 48px;
   border: 2px solid rgba(0, 0, 0, 0.1);
   border-top-color: #3182f6; /* 토스 블루 */
   border-radius: 50%;
@@ -839,5 +1079,12 @@ onMounted(() => {
 /* 로딩 중일 때 리스트가 튀어 오르지 않게 고정 */
 .fade-enter-active {
   transition: opacity 0.3s ease-out;
+}
+
+/* 거래내역 아이템 내부의 텍스트 한 줄 처리 */
+.text-muted {
+  white-space: nowrap; /* 💡 줄바꿈 절대 금지 */
+  text-overflow: ellipsis; /* 💡 넘치면 '...' 표시 */
+  max-width: 100%; /* 💡 부모 너비를 넘지 않도록 제한 */
 }
 </style>

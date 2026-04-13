@@ -1,65 +1,117 @@
 <template>
-  <div
-    class="profile-page min-vh-100 py-5"
-    style="background-color: var(--bg-color); color: var(--text-color)"
-  >
-    <div class="container">
+  <div class="profile-page h-100 d-flex align-items-center">
+    <div class="container px-3 py-2">
       <div
-        class="card shadow-sm mx-auto"
-        style="max-width: 600px; background-color: var(--card-bg)"
+        class="card shadow-sm mx-auto border-0 rounded-4 overflow-hidden p-4 custom-card"
       >
-        <div class="card-body p-4">
-          <h2 class="h4 mb-4 fw-bold">프로필 & 설정</h2>
+        <h2 class="h4 mb-4 fw-bold text-h">프로필 & 설정</h2>
 
-          <div class="customProfile mb-3 text-start">
-            <label class="form-label small fw-bold">이름</label>
+        <div class="mb-4">
+          <div
+            class="mb-4 p-3 rounded-4 transition-all"
+            :style="{
+              backgroundColor: isPasswordCorrect
+                ? 'rgba(49, 130, 246, 0.15)'
+                : 'rgba(150, 150, 150, 0.1)',
+              backdropFilter: 'blur(10px)',
+              border: isPasswordCorrect
+                ? '1px solid rgba(49, 130, 246, 0.2)'
+                : '1px solid rgba(150, 150, 150, 0.1)',
+            }"
+          >
+            <label
+              class="form-label small fw-bold"
+              :class="isPasswordCorrect ? 'text-primary' : 'text-danger'"
+            >
+              본인 인증 {{ isPasswordCorrect ? "✅" : "🔒" }}
+            </label>
+            <input
+              v-model="confirmPassword"
+              type="password"
+              class="form-control form-control-lg border-0 shadow-none"
+              style="
+                background-color: rgba(255, 255, 255, 0.05) !important;
+                color: inherit;
+              "
+              placeholder="기존 비밀번호 입력"
+            />
+          </div>
+
+          <div class="mb-2 text-start px-1">
+            <label
+              class="form-label small fw-bold mb-1"
+              :class="{ 'opacity-50': !isPasswordCorrect }"
+              >이름</label
+            >
             <input
               v-model="editName"
               type="text"
-              class="form-control form-control-lg"
-              placeholder="이름을 입력하세요"
+              class="form-control form-control-lg border-0"
+              :readonly="!isPasswordCorrect"
+              :placeholder="isPasswordCorrect ? '이름 입력' : '잠겨있음'"
             />
           </div>
 
-          <div class="customProfile mb-3 text-start">
-            <label class="form-label small fw-bold">이메일</label>
+          <div class="mb-3 text-start px-1">
+            <label
+              class="form-label small fw-bold mb-1"
+              :class="{ 'opacity-50': !isPasswordCorrect }"
+              >이메일</label
+            >
             <input
               v-model="editEmail"
               type="email"
-              class="form-control form-control-lg"
-              placeholder="example@mail.com"
+              class="form-control form-control-lg border-0 bg-light-subtle"
+              :readonly="!isPasswordCorrect"
+              :placeholder="isPasswordCorrect ? '이메일 입력' : '잠겨있음'"
             />
           </div>
-          <button
-            class="btn btn-warning w-100 fw-bold py-2 text-white"
-            style="background-color: #f4a261; border: none"
-            @click="saveProfile"
-          >
-            저장하기
-          </button>
+        </div>
 
-          <div class="theme-section m-4" />
+        <button
+          class="t-btn t-push w-100 py-3 mb-3 rounded-4 fw-bold"
+          :class="
+            isPasswordCorrect
+              ? 'active-chip'
+              : 'bg-secondary opacity-50 text-white'
+          "
+          :disabled="!isPasswordCorrect"
+          @click="saveProfile"
+        >
+          설정 저장하기
+        </button>
 
-          <div class="theme-section mb-4 text-start">
-            <p class="small fw-bold mb-2">화면 모드</p>
-            <div class="btn-group w-100 theme-btn-group" role="group">
-              <button
-                type="button"
-                class="btn btn-outline-secondary"
-                :class="{ active: userStore.theme === 'light' }"
-                @click="changeTheme('light')"
-              >
-                ☀️ 라이트
-              </button>
-              <button
-                type="button"
-                class="btn btn-outline-secondary"
-                :class="{ active: userStore.theme === 'dark' }"
-                @click="changeTheme('dark')"
-              >
-                🌙 다크
-              </button>
-            </div>
+        <button
+          class="btn w-100 d-flex justify-content-between align-items-center py-2 px-1 border-top logout-row mb-3"
+          @click="handleLogout"
+        >
+          <span class="fw-medium text-secondary small">로그아웃</span>
+          <i class="fa-solid fa-chevron-right text-secondary small"></i>
+        </button>
+
+        <div class="text-start">
+          <p class="small fw-bold mb-2">화면 모드</p>
+          <div class="t-wrapper w-100" style="height: 40px; --t-width: 50%">
+            <div
+              class="t-active-bg"
+              :style="{
+                transform: `translateX(${userStore.theme === 'light' ? '0' : '100'}%)`,
+              }"
+            ></div>
+            <button
+              class="t-btn t-push"
+              :class="{ active: userStore.theme === 'light' }"
+              @click="userStore.setTheme('light')"
+            >
+              ☀️ 라이트
+            </button>
+            <button
+              class="t-btn t-push"
+              :class="{ active: userStore.theme === 'dark' }"
+              @click="userStore.setTheme('dark')"
+            >
+              🌙 다크
+            </button>
           </div>
         </div>
       </div>
@@ -68,110 +120,81 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
-import { useUserStore } from '../../src/stores/userStore';
+import { ref, computed, onMounted } from "vue";
+import { useUserStore } from "@/stores/userStore";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const userStore = useUserStore();
 
-const editName = ref('');
-const editEmail = ref('');
+const editName = ref("");
+const editEmail = ref("");
+const confirmPassword = ref("");
 
-// 데이터 동기화 함수
-const syncData = () => {
-  editName.value = userStore.name || '';
-  editEmail.value = userStore.email || '';
-};
+// 💡 쫀득 로직: 비밀번호 실시간 검증
+const isPasswordCorrect = computed(
+  () =>
+    confirmPassword.value === userStore.password &&
+    confirmPassword.value.length > 0,
+);
 
 onMounted(async () => {
-  // 1. 최신 서버 데이터 로드
   await userStore.fetchUser();
-  syncData();
+  editName.value = userStore.name;
+  editEmail.value = userStore.email;
 });
 
-// 스토어 값이 변경될 때 입력 필드 동기화 (예: 다른 곳에서 변경 시)
-watch(() => [userStore.name, userStore.email], syncData);
-
 const saveProfile = async () => {
-  if (!editName.value.trim() || !editEmail.value.trim()) {
-    alert('이름과 이메일을 입력해주세요.');
-    return;
-  }
-
-  try {
-    // 2. 스토어의 updateProfile 호출 (내부적으로 axios.put 실행)
-    await userStore.updateProfile(editName.value, editEmail.value);
-    alert('저장되었습니다.');
-  } catch (err) {
-    alert('저장 중 오류가 발생했습니다.');
-  }
+  if (!isPasswordCorrect.value) return;
+  await userStore.updateProfile(editName.value, editEmail.value);
+  confirmPassword.value = "";
+  notify.success("수정 완료!");
 };
 
-const changeTheme = async (theme) => {
-  // 3. 테마 변경 시에도 서버에 즉시 저장하고 싶다면 아래와 같이 처리
-  const userData = {
-    name: userStore.name,
-    email: userStore.email,
-    currency: 'KRW', // 기존 값 유지
-    last_login: new Date().toISOString().split('T')[0],
-    settings: {
-      theme: theme,
-      auto_login: userStore.autoLogin,
-    },
-  };
-
-  try {
-    await userStore.setUserInfo(userData);
-  } catch (err) {
-    console.error('테마 저장 실패:', err);
+const handleLogout = () => {
+  if (notify.success("로그아웃 하시겠습니까?")) {
+    localStorage.removeItem("isLoggedIn");
+    router.replace("/");
   }
 };
 </script>
 
 <style scoped>
-/* 1. 컨테이너: 배경색이 가장 넓으므로 여기서 흐름을 잡아줌 */
 .profile-page {
-  transition:
-    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: var(--bg);
+  color: var(--text);
+  overflow: hidden; /* 페이지 자체 스크롤 방지 */
+  height: 100vh;
 }
 
-/* 2. 카드 및 내부 요소: 배경, 테두리, 그림자 일괄 트랜지션 */
-.card,
-.form-control,
-.btn,
-.form-label {
-  transition:
-    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+.custom-card {
+  background-color: var(--card-bg) !important;
+  max-width: 450px;
+  max-height: 95vh; /* 카드가 화면을 넘지 않게 조절 */
+  overflow-y: auto; /* 내용이 넘치면 카드 안에서만 스크롤 */
 }
 
-/* 3. 카드 디테일 */
-.card {
-  border: none;
-  border-radius: 1rem;
+/* 카드 내부 스크롤바 숨기기 (토스 감성) */
+.custom-card::-webkit-scrollbar {
+  display: none;
 }
 
-/* 4. 입력창 포커스: 테마 전환과 별개로 부드러운 반응 */
-.form-control:focus {
-  border-color: #f4a261;
-  box-shadow: 0 0 0 0.25rem rgba(244, 162, 97, 0.25);
+.form-control {
+  background-color: rgba(150, 150, 150, 0.1) !important;
+  color: var(--text-h) !important;
+  font-size: 0.95rem;
 }
 
-/* 5. 버튼 쫀득한 클릭 효과 */
-.btn-group .btn {
-  cursor: pointer;
+.logout-row {
+  border-color: var(--border) !important;
+  transition: all 0.2s;
 }
 
-.btn-group .btn:active {
-  transform: scale(0.96);
-  transition: transform 0.1s ease !important; /* 클릭 반응은 빨라야 함 */
+.logout-row:active {
+  background-color: rgba(150, 150, 150, 0.1);
 }
 
-/* 6. 레이블 배경 (기존 요청사항 유지) */
-[data-theme='dark'] .form-label {
-  background-color: var(--border) !important;
-  transition: background-color 0.4s ease;
+[data-theme="dark"] .text-h {
+  color: #ffffff !important;
 }
 </style>

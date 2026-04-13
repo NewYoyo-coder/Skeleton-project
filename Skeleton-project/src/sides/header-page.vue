@@ -1,10 +1,10 @@
 <template>
-  <header class="pb-2 border-bottom bg-white">
+  <header class="w-100 px-3 mt-3">
     <div
-      class="container d-flex align-items-center justify-content-between"
-      style="max-width: 600px; margin-left: auto; margin-right: auto"
+      class="d-flex align-items-center justify-content-between mx-auto bg-white border-bottom rounded-4 px-2"
+      style="max-width: 600px; height: 50px"
     >
-      <div>
+      <div class="d-flex align-items-center h-100" style="width: 100px">
         <router-link
           to="/mainDashboard"
           class="text-decoration-none d-flex align-items-center"
@@ -12,122 +12,114 @@
           <img
             src="@/assets/logo_transparent.png"
             alt="가계부 로고"
-            style="height: 40px; width: auto; object-fit: contain"
+            style="height: 32px; width: auto; object-fit: contain"
           />
         </router-link>
       </div>
 
-      <div class="d-flex justify-content-center align-items-center gap-3">
-        <button
-          class="btn btn-link text-dark p-0 text-decoration-none"
-          @click="changeMonth(-1)"
-        >
-          <i class="fa-solid fa-chevron-left fs-5"></i>
-        </button>
-
-        <h5
-          class="text-dark mb-0 fw-bold"
-          @click="openDateModal"
-          style="
-            min-width: 80px;
-            text-align: center;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-          "
-        >
-          {{ displayDate }}
-        </h5>
-
-        <!-- <div class="modal-dialog modal-dialog-centered modal-sm">
-          <div class="modal-content text-dark">
-            <div class="modal-header">
-              <h5 class="modal-title">조회 월 선택</h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body">
-              <input type="month" class="form-control" v-model="tempDate" />
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-primary w-100"
-                data-bs-dismiss="modal"
-                @click="applyDate"
-              >
-                확인
-              </button>
-            </div>
-          </div>
-        </div> -->
-
-        <button
-          class="btn btn-link p-0 text-decoration-none text-dark"
-          @click="handleNextMonth"
-          :style="{ visibility: isFutureMonth ? 'hidden' : 'visible' }"
-        >
-          <i class="fa-solid fa-chevron-right fs-5"></i>
-        </button>
-      </div>
-
       <div
-        class="d-flex align-items-center justify-content-end gap-3"
-        style="width: 80px"
+        class="d-flex justify-content-center align-items-center gap-2 flex-grow-1 bg-transparent"
       >
-        <router-link
-          to="/transactionHistory"
-          class="text-black text-decoration-none fs-6"
-        >
-          내역
-        </router-link>
-        <router-link
-          to="/profileSettings"
-          class="text-black text-decoration-none"
-        >
-          <i class="fa-solid fa-gear fs-5"></i>
-        </router-link>
-      </div>
-    </div>
+        <template v-if="isMainPage">
+          <div style="width: 32px; height: 32px">
+            <button
+              class="t-btn t-push t-single p-0 d-flex align-items-center justify-content-center w-100 h-100"
+              style="border-radius: 10px"
+              @click="changeMonth(-1)"
+            >
+              <i class="fa-solid fa-chevron-left" style="font-size: 1rem"></i>
+            </button>
+          </div>
 
-    <Teleport to="body">
-      <div class="modal fade" ref="modalRef" tabindex="-1">
-        <Picker />
+          <div
+            class="t-push t-single d-flex align-items-center justify-content-center px-3"
+            style="
+              height: 36px;
+              min-width: 110px;
+              cursor: pointer;
+              border-radius: 12px;
+              background-color: rgba(255, 255, 255, 0.05);
+            "
+            @click.stop="openDateModal"
+          >
+            <h5
+              class="text-dark mb-0 fw-bold"
+              style="font-size: 1.1rem; line-height: 1; pointer-events: none"
+            >
+              {{ displayDate }}
+            </h5>
+          </div>
+
+          <div style="width: 32px; height: 32px">
+            <button
+              class="t-btn t-push t-single p-0 d-flex align-items-center justify-content-center w-100 h-100"
+              style="border-radius: 10px"
+              :disabled="isFutureMonth"
+              :class="{ 'opacity-25': isFutureMonth }"
+              @click="handleNextMonth"
+            >
+              <i class="fa-solid fa-chevron-right" style="font-size: 1rem"></i>
+            </button>
+          </div>
+        </template>
+
+        <template v-else>
+          <h5
+            class="text-dark mb-0 fw-bold animate-fade"
+            style="font-size: 1.1rem"
+          >
+            {{ pageTitle }}
+          </h5>
+        </template>
       </div>
-    </Teleport>
+
+      <div style="width: 100px"></div>
+    </div>
+    <Picker ref="modalRef" id="dateModal" />
   </header>
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
-import { useDateStore } from '@/stores/select-date.js';
-import Picker from '../sides/header-datePicker.vue';
-import { Modal } from 'bootstrap';
+import { ref, computed, watch, onMounted } from "vue";
+import { useDateStore } from "@/stores/select-date.js";
+import Picker from "../sides/header-datePicker.vue";
+import { Modal } from "bootstrap";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+const isMainPage = computed(() => route.name === "main");
+// 현재 페이지가 메인인지 체크 (라우터 name 기준)
+
+const pageTitle = computed(() => {
+  const titles = {
+    report: "통계 및 차트 리포트",
+    history: "세부 거래내역",
+    profile: "프로필 및 설정",
+  };
+  return titles[route.name] || "";
+});
 
 const dateStore = useDateStore();
 const tempDate = ref(
-  `${dateStore.selectedYear}-${String(dateStore.selectedMonth).padStart(2, '0')}`,
+  `${dateStore.selectedYear}-${String(dateStore.selectedMonth).padStart(2, "0")}`,
 );
 
 watch(
   [() => dateStore.selectedYear, () => dateStore.selectedMonth],
   ([newYear, newMonth]) => {
-    tempDate.value = `${newYear}-${String(newMonth).padStart(2, '0')}`;
+    tempDate.value = `${newYear}-${String(newMonth).padStart(2, "0")}`;
   },
 );
 const applyDate = () => {
   if (tempDate.value) {
-    const [year, month] = tempDate.value.split('-').map(Number);
+    const [year, month] = tempDate.value.split("-").map(Number);
     dateStore.setDate(year, month);
   }
 };
 
 const displayDate = computed(() => {
   const yy = String(dateStore.selectedYear).slice(-2);
-  const mm = String(dateStore.selectedMonth).padStart(2, '0');
+  const mm = String(dateStore.selectedMonth).padStart(2, "0");
 
   return `${yy}. ${mm}`;
 });
@@ -171,21 +163,23 @@ const handleNextMonth = () => {
 const modalRef = ref(null);
 let bsModal = null;
 
-// 2. onMounted에서 ref.value로 꽂기
-onMounted(() => {
-  if (modalRef.value) {
-    bsModal = new Modal(modalRef.value, {
-      focus: false, // Bootstrap 포커스 가로채기 방지 (안전빵)
-    });
-  }
-});
+// 2. onMounted에서 제거
+onMounted(() => {});
 
 // 3. 모달 열기 함수
+// 기존 openDateModal 함수를 아래로 교체
 const openDateModal = () => {
-  if (!bsModal && modalRef.value) {
-    bsModal = new Modal(modalRef.value, { focus: false });
+  // 💡 onMounted에서 이미 선언한 bsModal을 바로 사용
+  if (bsModal) {
+    bsModal.show();
+  } else {
+    // 혹시라도 bsModal이 초기화 전이라면 직접 찾기 (안전장치)
+    const modalElem = document.getElementById("dateModal");
+    if (modalElem) {
+      const myModal = new Modal(modalElem);
+      myModal.show();
+    }
   }
-  bsModal?.show();
 };
 </script>
 

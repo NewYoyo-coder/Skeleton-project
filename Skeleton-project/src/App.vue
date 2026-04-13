@@ -1,39 +1,64 @@
 <template>
-  <div class="d-flex flex-column">
-    <main class="container-fluid py-2">
-      <Header v-if="!isStartPage" />
-      <RouterView />
-    </main>
-    <router-link
-      v-if="!isStartPage && !isAddTransaction"
-      to="/addTransaction"
-      class="btn btn-dark rounded-circle position-fixed shadow-lg d-flex justify-content-center align-items-center opacity-75"
+  <div class="toaster-layer">
+    <Toaster position="top-center" :offset="40" richColors />
+  </div>
+  <div>
+    <div
+      id="app-container"
       style="
-        width: 56px;
-        height: 56px;
-        bottom: 80px;
-        right: max(20px, calc(50% - 280px));
-        z-index: 9999;
+        max-width: 600px;
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        background: transparent;
       "
     >
-      <i class="fa-solid fa-plus fs-4"></i>
-    </router-link>
-    <Navigation />
+      <Header v-if="!isStartPage" />
+      <RouterView />
+      <main class="flex-grow-1 p-0"></main>
+      <router-link
+        v-if="!isStartPage && !isAddTransaction"
+        to="/addTransaction"
+        class="btn btn-dark rounded-circle position-fixed shadow-lg d-flex justify-content-center align-items-center opacity-75"
+        style="
+          width: 56px;
+          height: 56px;
+          bottom: 150px;
+          right: max(20px, calc(50% - 280px));
+          z-index: 9999;
+        "
+      >
+        <i class="fa-solid fa-plus fs-4"></i>
+      </router-link>
+      <Navigation v-if="!isStartPage" />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { useRoute, RouterView } from 'vue-router';
-import Header from '@/sides/header-page.vue';
-import Navigation from '@/sides/TheNavigator.vue';
+import { computed } from "vue";
+import { useRoute, RouterView } from "vue-router";
+import Header from "@/sides/header-page.vue";
+import Navigation from "@/sides/TheNavigator.vue";
+import { onMounted } from "vue";
+import { useUserStore } from "@/stores/userStore";
+import { Toaster } from "vue-sonner";
+import { notify } from "@/utils/overlay";
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './assets/style.css';
+const userStore = useUserStore();
+
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./assets/style.css";
 
 const route = useRoute();
-const isStartPage = computed(() => route.name === 'startPage');
-const isAddTransaction = computed(() => route.path === '/addTransaction');
+const isStartPage = computed(() => route.name === "start");
+const isAddTransaction = computed(() => route.path === "/addTransaction");
+
+onMounted(() => {
+  // 💡 새로고침 시 스토어가 가진 theme 값(localStorage에서 읽어온 값)을
+  // 실제 HTML의 data-theme 속성에 다시 박아넣습니다.
+  document.documentElement.setAttribute("data-theme", userStore.theme);
+});
 </script>
 
 <style>
@@ -44,44 +69,129 @@ const isAddTransaction = computed(() => route.path === '/addTransaction');
   --t-ease: all 0.35s cubic-bezier(0.4, 0, 0.2, 1.2);
 }
 
-/* 전역 스타일 설정 */
-html {
-  /* 스크롤바가 생겨도 레이아웃 밀림 방지 (핵심) */
-  scrollbar-gutter: stable;
+/* 🚀 1. 좀비 스크롤 완전 박멸 (최상단) */
+html,
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important; /* 🔥 전체 스크롤 금지 */
+  overscroll-behavior: none; /* 당겨서 새로고침 방지 */
 }
 
-/* 또는 특정 컨테이너에서만 방지하고 싶을 때 */
-.mx-auto {
-  scrollbar-gutter: stable;
+/* 모든 요소 계산 방식 통일 (패딩 때문에 삐져나오는거 방지) */
+*,
+*::before,
+*::after {
+  box-sizing: border-box !important;
 }
 
-/* 1. 래퍼: 외부에서 width, height를 주면 그에 맞춰 반응함 */
+#app {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+/* 🚀 2. 앱 컨테이너 (모바일 주소창 대응) */
+#app-container {
+  max-width: 600px;
+  width: 100%;
+  height: 100vh; /* 기본 */
+  height: 100dvh; /* 🔥 모바일 브라우저 주소창 뺀 진짜 높이 */
+  margin: 0 auto;
+  position: relative;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden !important; /* 내부에서도 밖으로 못 나가게 차단 */
+}
+
+/* 🚀 3. 토스트 레이어 (격리 및 중앙 정렬) */
+.toaster-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 99999;
+  pointer-events: none;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.toaster-layer > * {
+  pointer-events: auto;
+}
+
+/* --- 이하 Toaster 및 컴포넌트 스타일 (동일하게 유지하되 확실히 고정) --- */
+
+[data-sonner-toaster] {
+  display: flex !important;
+  justify-content: center !important;
+  width: 100% !important;
+}
+
+[data-sonner-toaster] [data-sonner-toast] {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 240px !important;
+  padding: 20px !important;
+  border-radius: 24px !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+  border: none !important;
+}
+
+[data-sonner-toast] [data-content],
+[data-sonner-toast] [data-content] > div {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+[data-sonner-toaster] ol,
+[data-sonner-toaster] li {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+[data-sonner-toast] [data-title] {
+  font-weight: 700 !important;
+  word-break: keep-all !important;
+}
+
+/* 쫀득한 토스 스타일 컴포넌트 유지 */
 .t-wrapper {
-  display: flex; /* 내부 요소 균등 배치를 위해 flex 필수 */
+  display: flex;
   position: relative;
   background: var(--t-bg);
   padding: 2px;
   border-radius: 14px;
-  z-index: 0;
-  box-sizing: border-box; /* 크기 설정 시 패딩 포함 계산 */
-  overflow: hidden; /* 내부 요소 삐져나감 방지 */
+  overflow: hidden;
 }
 
-/* 2. 슬라이딩 판: 래퍼 높이에 꽉 차게 반응 */
 .t-active-bg {
   position: absolute;
   top: 2px;
-  bottom: 2px; /* top/bottom 2px로 높이 자동 맞춤 */
+  bottom: 2px;
   left: 2px;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
   transition: var(--t-ease);
-  width: calc(var(--t-width, 50%) - 4px); /* 변수값에 따라 너비 결정 */
+  width: calc(var(--t-width, 50%) - 4px);
   z-index: 1;
 }
 
-/* 3. 버튼: 높이와 너비를 래퍼에 꽉 채우고 텍스트를 정중앙 배치 */
 .t-btn {
   flex: 1 1 0;
   height: 100%;
@@ -92,80 +202,28 @@ html {
   justify-content: center;
   border: none;
   background: none;
-  padding: 0 10px;
+  padding: 12px;
   font-size: 15px;
   font-weight: 600;
   color: var(--t-sub);
-
-  /* 1. 지우지 말고 유지해야 하는 것들 */
-  flex-shrink: 0;
-  backface-visibility: hidden;
-  transform-origin: center;
-  will-change: background-color, color;
-
-  /* 2. '통합 속성 */
-  transition:
-    background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-    color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.1s ease,
-    box-shadow 0.25s ease;
-
+  transition: all 0.25s ease;
   cursor: pointer;
-  white-space: nowrap;
-  outline: none !important;
-  -webkit-tap-highlight-color: transparent;
-  text-decoration: none;
 }
 
 .t-btn.active {
   color: var(--t-blue);
 }
-
-/* 4. 물리 피드백 (쫀득한 클릭) */
 .t-push:active {
-  transform: scale(0.96); /* 높이/너비 상관없이 비율로 축소 */
-  background-image: linear-gradient(
-    rgba(0, 0, 0, 0.1),
-    rgba(0, 0, 0, 0.05)
-  ) !important;
+  transform: scale(0.96);
   transition: transform 0.1s ease;
 }
-
-/* 5. 단일 버튼 전용 (독립형 흰색 배경) */
-.t-single {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-/* 6. 부트스트랩/기본 포커스 테두리 제거 */
-button:focus {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-/* 카테고리 칩 전용 활성화 스타일 */
-/* 선택되지 않은 기본 상태 (연한 회색 느낌) */
-.t-btn.t-single {
-  background-color: #ffffff;
-  color: var(--t-sub);
-  border: 1px solid rgba(0, 0, 0, 0.05) !important;
-}
-
-/* 선택된 상태 (토스 블루로 부드럽게 전환) */
-/* 2. 활성화 상태: 깜박임 방지를 위해 !important 남발 자제 및 부드러운 전환 */
 .active-chip {
   background-color: var(--t-blue) !important;
   color: #ffffff !important;
   box-shadow: 0 4px 12px rgba(49, 130, 246, 0.25) !important;
-  border-color: transparent !important;
-  /* 텍스트 렌더링 깨짐 방지 */
-  -webkit-font-smoothing: antialiased;
 }
-
-/* 3. 정렬 버튼 그룹 애니메이션 끊김 방지 */
-.t-push {
-  backface-visibility: hidden;
-  transform: translateZ(0); /* 하드웨어 가속 */
+button:focus {
+  outline: none !important;
+  box-shadow: none !important;
 }
 </style>

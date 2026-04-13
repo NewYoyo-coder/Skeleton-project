@@ -1,21 +1,5 @@
 <template>
   <div class="calendar-container p-3">
-    <div class="d-flex justify-content-between align-items-center mb-3 px-2">
-      <button
-        class="btn btn-sm btn-light rounded-circle"
-        @click="changeMonth(-1)"
-      >
-        <i class="bi bi-chevron-left"></i>
-      </button>
-      <h5 class="m-0 fw-bold">{{ currentYear }}년 {{ currentMonth }}월</h5>
-      <button
-        class="btn btn-sm btn-light rounded-circle"
-        @click="changeMonth(1)"
-      >
-        <i class="bi bi-chevron-right"></i>
-      </button>
-    </div>
-
     <div class="cal-grid mb-4">
       <div
         class="text-center small text-muted fw-bold pb-2"
@@ -24,7 +8,6 @@
       >
         {{ d }}
       </div>
-
       <div
         v-for="n in firstDayOffset"
         :key="'empty-' + n"
@@ -52,111 +35,107 @@
       </div>
     </div>
 
-    <div class="selected-day-list border-top pt-3">
-      <h6 class="fw-bold mb-3 px-1">
-        {{ currentMonth }}월 {{ selectedDate }}일 내역
-      </h6>
+    <div
+      class="selected-day-list pt-3 d-flex flex-column"
+      style="height: 300px"
+    >
+      <h6 class="fw-bold mb-3 px-1">{{ month }}월 {{ selectedDate }}일 내역</h6>
 
-      <div v-if="selectedTransactions.length > 0">
-        <div
-          v-for="t in selectedTransactions"
-          :key="t.id"
-          class="d-flex justify-content-between align-items-center p-3 mb-2 bg-light rounded-4"
-        >
-          <div>
-            <span
-              class="badge"
-              :class="
-                t.transaction_type === 'income'
-                  ? 'text-bg-primary'
-                  : 'text-bg-danger'
-              "
-            >
-              {{ CATEGORY_LABEL[t.category] || t.category }}
-            </span>
-            <span class="ms-2 small text-secondary">{{
-              t.memo || '내역'
-            }}</span>
-          </div>
+      <div
+        class="flex-grow-1 overflow-y-auto px-1 custom-scroll"
+        style="max-height: 100%"
+      >
+        <div v-if="selectedTransactions.length > 0">
           <div
-            class="fw-bold"
-            :class="
-              t.transaction_type === 'income' ? 'text-primary' : 'text-danger'
-            "
+            v-for="t in selectedTransactions"
+            :key="t.id"
+            class="d-flex justify-content-between align-items-center p-3 mb-2 bg-light rounded-4 transition-all"
           >
-            {{ t.transaction_type === 'income' ? '+' : '-'
-            }}{{ t.amount.toLocaleString() }}원
+            <div class="d-flex align-items-center gap-2">
+              <div
+                class="px-2 py-1 rounded-3 fw-bold"
+                style="
+                  background-color: rgba(0, 0, 0, 0.05);
+                  font-size: 0.75rem;
+                  color: #6b7684;
+                "
+              >
+                {{ t.category }}
+              </div>
+
+              <div class="fw-bold text-dark" style="font-size: 0.9rem">
+                {{ t.description }}
+              </div>
+            </div>
+
+            <div class="text-end">
+              <div
+                class="fw-bold"
+                :class="
+                  t.transaction_type === 'income'
+                    ? 'text-primary'
+                    : 'text-danger'
+                "
+                style="font-size: 0.95rem"
+              >
+                {{ t.transaction_type === "income" ? "+" : "-" }}
+                {{ Number(t.amount).toLocaleString() }}원
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div v-else class="text-center text-muted py-4 small">
-        이날은 거래 내역이 없네요 🍃
+        <div v-else class="text-center text-muted py-4 small">
+          이날은 거래 내역이 없네요 🍃
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { useTransactionStore } from '@/stores/transaction';
-// 합치신 상수를 임포트 (경로는 본인 프로젝트에 맞게 수정)
-import { CATEGORY_LABEL } from '@/constants/categories.js';
+import { ref, computed, watch } from "vue";
+import { useTransactionStore } from "@/stores/transaction";
+import { CATEGORY_LABEL } from "@/constants/categories.js";
 
+// 🚀 부모로부터 연도와 월을 주입받음
+const props = defineProps(["year", "month"]);
 const transactionStore = useTransactionStore();
 
-const today = new Date();
-const currentYear = ref(today.getFullYear());
-const currentMonth = ref(today.getMonth() + 1);
-const selectedDate = ref(today.getDate());
+const selectedDate = ref(1);
 
-// 달력 계산 로직
+// 부모의 연/월이 바뀔 때마다 1일로 초기화
+watch(
+  () => [props.year, props.month],
+  () => {
+    selectedDate.value = 1;
+  },
+);
+
 const daysInMonth = computed(() =>
-  new Date(currentYear.value, currentMonth.value, 0).getDate(),
+  new Date(props.year, props.month, 0).getDate(),
 );
 const firstDayOffset = computed(() =>
-  new Date(currentYear.value, currentMonth.value - 1, 1).getDay(),
+  new Date(props.year, props.month - 1, 1).getDay(),
 );
 
-// 월 변경 함수
-const changeMonth = (delta) => {
-  let newM = currentMonth.value + delta;
-  let newY = currentYear.value;
-  if (newM > 12) {
-    newM = 1;
-    newY++;
-  } else if (newM < 1) {
-    newM = 12;
-    newY--;
-  }
-  currentMonth.value = newM;
-  currentYear.value = newY;
-  selectedDate.value = 1; // 달 바뀌면 1일로 초기화
-};
-
-// 이번 달 전체 데이터 필터링
 const currentMonthTransactions = computed(() => {
   return transactionStore.transactions.filter((t) => {
     const d = new Date(t.date);
-    return (
-      d.getFullYear() === currentYear.value &&
-      d.getMonth() + 1 === currentMonth.value
-    );
+    return d.getFullYear() === props.year && d.getMonth() + 1 === props.month;
   });
 });
 
-// 날짜별 수입/지출 점 찍기용 요약 맵 생성
 const dailySummary = computed(() => {
   const map = {};
   currentMonthTransactions.value.forEach((t) => {
     const day = new Date(t.date).getDate();
     if (!map[day]) map[day] = { hasIncome: false, hasExpense: false };
-    if (t.transaction_type === 'income') map[day].hasIncome = true;
-    if (t.transaction_type === 'expense') map[day].hasExpense = true;
+    if (t.transaction_type === "income") map[day].hasIncome = true;
+    if (t.transaction_type === "expense") map[day].hasExpense = true;
   });
   return map;
 });
 
-// 선택한 날짜의 상세 내역
 const selectedTransactions = computed(() => {
   return currentMonthTransactions.value.filter(
     (t) => new Date(t.date).getDate() === selectedDate.value,
@@ -205,5 +184,16 @@ const selectedTransactions = computed(() => {
 }
 .cal-cell.active .dot {
   background-color: rgba(255, 255, 255, 0.7);
-} /* 선택시 점 색상 반전 */
+}
+.custom-scroll::-webkit-scrollbar {
+  width: 4px; /* 아주 얇게 */
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+.custom-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #e2e8f0 transparent;
+}
 </style>

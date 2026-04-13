@@ -1,6 +1,6 @@
 <template>
   <div
-    class="hover-card p-3 rounded-4 border-0 shadow-sm bg-white d-flex align-items-center justify-content-between"
+    class="hover-card p-2 rounded-4 border-0 shadow-sm bg-white d-flex align-items-center justify-content-between"
     @click="$emit('click')"
   >
     <div class="d-flex align-items-center gap-3 overflow-hidden">

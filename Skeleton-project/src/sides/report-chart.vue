@@ -1,88 +1,136 @@
 <template>
-  <div class="chart-container p-3">
-    <div class="d-flex gap-2 justify-content-center mb-4">
-      <button
-        v-for="p in [1, 3, 6]"
-        :key="p"
-        class="period-chip btn rounded-pill px-4 py-1 fw-bold"
-        :class="period === p ? 'active shadow-sm' : 'inactive'"
-        @click="period = p"
-      >
-        {{ p }}개월
-      </button>
-    </div>
-
+  <div
+    class="chart-container h-100 d-flex flex-column p-2 gap-2 overflow-hidden bg-light"
+  >
     <div
-      class="ai-summary p-4 mb-4 rounded-4 position-relative overflow-hidden shadow-sm"
+      class="ai-summary p-3 rounded-4 shadow-sm bg-white position-relative flex-shrink-0 border"
     >
       <div
-        class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-ai opacity-10"
+        class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-ai opacity-10 rounded-4"
       ></div>
-      <div class="d-flex align-items-center gap-2 mb-2 position-relative z-1">
-        <i class="bi bi-robot fs-5 text-primary"></i>
-        <span class="fw-bold text-primary" style="font-size: 13px"
-          >AI 지출 분석</span
+      <div class="d-flex align-items-center gap-2 mb-1 position-relative z-1">
+        <i class="bi bi-robot fs-6 text-warning"></i>
+        <span class="fw-bold text-warning" style="font-size: 0.8rem"
+          >AI 금융 비서</span
         >
       </div>
-      <h6
-        class="m-0 fw-bold lh-base position-relative z-1 text-dark"
-        style="word-break: keep-all"
+      <div class="position-relative z-1 text-dark d-flex flex-column gap-1">
+        <div class="d-flex align-items-center gap-1 text-truncate">
+          <span style="font-size: 0.85rem">📈</span>
+          <span class="fw-bold text-truncate" style="font-size: 0.8rem">{{
+            aiIncomeSummaryText
+          }}</span>
+        </div>
+        <div class="d-flex align-items-center gap-1 text-truncate">
+          <span style="font-size: 0.85rem">📉</span>
+          <span class="fw-bold text-truncate" style="font-size: 0.8rem">{{
+            aiExpenseSummaryText
+          }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 flex-shrink-0" style="height: 220px">
+      <div
+        class="w-50 bg-white rounded-4 p-2 shadow-sm border d-flex flex-column position-relative"
       >
-        {{ aiSummaryText }}
-      </h6>
+        <div
+          class="text-center fw-bold text-danger mb-1"
+          style="font-size: 0.8rem"
+        >
+          지출 비중
+        </div>
+        <div class="flex-grow-1 position-relative" style="min-height: 0">
+          <apexchart
+            v-if="totalExpense > 0"
+            type="donut"
+            height="100%"
+            :options="expenseOptions"
+            :series="expenseSeries"
+          />
+          <div
+            v-else
+            class="h-100 d-flex align-items-center justify-content-center text-muted"
+            style="font-size: 0.75rem"
+          >
+            무지출 🎉
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="w-50 bg-white rounded-4 p-2 shadow-sm border d-flex flex-column position-relative"
+      >
+        <div
+          class="text-center fw-bold text-primary mb-1"
+          style="font-size: 0.8rem"
+        >
+          수입 비중
+        </div>
+        <div class="flex-grow-1 position-relative" style="min-height: 0">
+          <apexchart
+            v-if="totalIncome > 0"
+            type="donut"
+            height="100%"
+            :options="incomeOptions"
+            :series="incomeSeries"
+          />
+          <div
+            v-else
+            class="h-100 d-flex align-items-center justify-content-center text-muted"
+            style="font-size: 0.75rem"
+          >
+            수입 없음 💦
+          </div>
+        </div>
+      </div>
     </div>
 
     <div
-      class="chart-wrapper bg-white rounded-4 p-3 shadow-sm"
-      style="min-height: 300px"
+      class="bg-white rounded-4 p-2 shadow-sm border flex-grow-1 d-flex flex-column min-h-0 mb-1"
     >
-      <h6 class="fw-bold mb-3 text-center">지출 카테고리 비중</h6>
-      <div v-if="totalExpense > 0">
-        <apexchart
-          type="donut"
-          height="300"
-          :options="chartOptions"
-          :series="chartSeries"
-        />
+      <div
+        class="text-center fw-bold text-dark mb-1"
+        style="font-size: 0.85rem"
+      >
+        수입 vs 지출 대결
       </div>
-      <div v-else class="text-center text-muted py-5 mt-4">
-        해당 기간에 지출 내역이 없습니다! 🎉
+      <div class="flex-grow-1 position-relative" style="min-height: 0">
+        <apexchart
+          type="bar"
+          height="100%"
+          :options="vsOptions"
+          :series="vsSeries"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { useTransactionStore } from '@/stores/transaction';
-import { CATEGORY_LABEL } from '@/constants/categories.js';
+import { computed } from "vue";
+import { useTransactionStore } from "@/stores/transaction";
+import { CATEGORY_LABEL } from "@/constants/categories.js";
 
+const props = defineProps(["year", "month"]);
 const transactionStore = useTransactionStore();
-const period = ref(1); // 1, 3, 6개월
 
-// 선택된 기간만큼의 데이터 필터링
-const filteredData = computed(() => {
-  const now = new Date();
-  const past = new Date(
-    now.getFullYear(),
-    now.getMonth() - period.value + 1,
-    1,
-  ); // 지정한 개월 수 전의 1일
-
-  return transactionStore.transactions.filter((t) => {
-    const d = new Date(t.date);
-    return d >= past && d <= now && t.transaction_type === 'expense'; // '지출'만 차트로 분석
-  });
-});
-
-// 카테고리별 합산
-const categoryTotals = computed(() => {
+// ==========================================
+// 🔴 지출 (Expense) 데이터 세팅
+// ==========================================
+const expenseTotals = computed(() => {
   const totals = {};
-  filteredData.value.forEach((t) => {
-    totals[t.category] = (totals[t.category] || 0) + Math.abs(t.amount);
-  });
-
-  // 큰 금액 순으로 정렬된 배열 생성
+  transactionStore.transactions
+    .filter(
+      (t) =>
+        new Date(t.date).getFullYear() === props.year &&
+        new Date(t.date).getMonth() + 1 === props.month &&
+        t.transaction_type === "expense",
+    )
+    .forEach(
+      (t) =>
+        (totals[t.category] = (totals[t.category] || 0) + Math.abs(t.amount)),
+    );
   return Object.keys(totals)
     .map((key) => ({
       key,
@@ -91,86 +139,181 @@ const categoryTotals = computed(() => {
     }))
     .sort((a, b) => b.amount - a.amount);
 });
-
 const totalExpense = computed(() =>
-  categoryTotals.value.reduce((sum, item) => sum + item.amount, 0),
+  expenseTotals.value.reduce((sum, i) => sum + i.amount, 0),
 );
+const expenseSeries = computed(() => expenseTotals.value.map((c) => c.amount));
 
-// ApexCharts 옵션 바인딩
-const chartSeries = computed(() => categoryTotals.value.map((c) => c.amount));
-const chartOptions = computed(() => ({
-  labels: categoryTotals.value.map((c) => c.label),
-  chart: { type: 'donut', fontFamily: 'inherit' },
-  colors: ['#3182f6', '#56b6f7', '#ff6b6b', '#fcc419', '#20c997', '#845ef7'], // 좃깐지 색상 조합
+const expenseOptions = computed(() => ({
+  labels: expenseTotals.value.map((c) => c.label),
+  chart: {
+    type: "donut",
+    fontFamily: "inherit",
+    animations: { dynamicAnimation: { speed: 400 } },
+  },
+  colors: ["#ff6b6b", "#fcc419", "#ff922b", "#f06595", "#cc5de8"],
   plotOptions: {
     pie: {
       donut: {
-        size: '65%',
+        size: "70%",
         labels: {
           show: true,
+          name: { show: false },
+          value: {
+            show: true,
+            fontSize: "12px",
+            fontWeight: "bold",
+            formatter: () => "총 지출",
+          },
           total: {
             showAlways: true,
             show: true,
-            label: '총 지출',
-            fontSize: '14px',
-            formatter: (w) =>
-              `${w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString()}원`,
+            label: "총 지출",
+            color: "#ff6b6b",
+            formatter: () => "지출",
           },
         },
       },
     },
   },
-  dataLabels: { enabled: false }, // 차트 위에 글씨 뜨는거 끄기 (지저분함)
-  legend: { position: 'bottom' },
-  stroke: { width: 0 },
+  dataLabels: { enabled: false }, // 🚀 좁으니까 글씨 싹 다 없앰!
+  legend: { show: false }, // 🚀 범례도 과감히 생략 (터치하면 툴팁 뜸)
+  stroke: { width: 1, colors: ["#fff"] },
+  tooltip: { y: { formatter: (val) => val.toLocaleString() + "원" } },
 }));
 
-// 🤖 AI 1줄 요약 로직 생성기
-const aiSummaryText = computed(() => {
-  if (totalExpense.value === 0)
-    return '지출 0원! 무지출 챌린지 대성공인가요? 갓벽합니다 💸';
-
-  const top = categoryTotals.value[0];
-  const percent = ((top.amount / totalExpense.value) * 100).toFixed(1);
-  const catKey = top.key;
-
-  // 카테고리별 뼈 때리는 멘트 매핑
-  const jokes = {
-    food: `엥겔지수 폭발! 식비로만 전체 지출의 ${percent}%를 태웠습니다. 맛있는 거 많이 드셨네요 🍔`,
-    cafe: `혈중 카페인 농도 MAX... 커피값으로 ${percent}%가 날아갔어요. 카페인 줄이셔야 할 듯 ☕`,
-    shopping: `지름신 강림! 택배 뜯는 재미에 ${percent}%를 바치셨군요. 다음 달 카드값 조심하세요 🎁`,
-    transportation: `길바닥에 돈 뿌리기 장인! 교통비 비중이 ${percent}%나 됩니다. 🚕`,
-    housing: `숨만 쉬어도 나가는 주거비... 뼈 아픈 고정 지출이 ${percent}%를 차지했어요 🏠`,
-    taxes: `성실한 납세자 등장! 세금으로 뭉칫돈(${percent}%)이 나갔습니다. 국세청이 좋아합니다 💸`,
-    insurance: `미래를 위한 투자지만 꽤 큽니다. 보험료 비중이 ${percent}%를 차지했네요 🏥`,
-    etc: `기타 지출이 1위(${percent}%)? 어딘가 은밀한 곳에 돈을 쓰고 계신 건 아니겠죠? 👀`,
-  };
-
-  return (
-    jokes[catKey] ||
-    `이번 기간은 ${top.label} 지출이 ${percent}%로 압도적 1위네요!`
-  );
+const aiExpenseSummaryText = computed(() => {
+  if (totalExpense.value === 0) return "지갑 봉인 완료! 완벽한 무지출입니다.";
+  const top = expenseTotals.value[0];
+  return `이번 달은 ${top.label} 지출이 1위! 텅장 주의보 💸`;
 });
+
+// ==========================================
+// 🔵 수입 (Income) 데이터 세팅
+// ==========================================
+const incomeTotals = computed(() => {
+  const totals = {};
+  transactionStore.transactions
+    .filter(
+      (t) =>
+        new Date(t.date).getFullYear() === props.year &&
+        new Date(t.date).getMonth() + 1 === props.month &&
+        t.transaction_type === "income",
+    )
+    .forEach(
+      (t) =>
+        (totals[t.category] = (totals[t.category] || 0) + Math.abs(t.amount)),
+    );
+  return Object.keys(totals)
+    .map((key) => ({
+      key,
+      label: CATEGORY_LABEL[key] || key,
+      amount: totals[key],
+    }))
+    .sort((a, b) => b.amount - a.amount);
+});
+const totalIncome = computed(() =>
+  incomeTotals.value.reduce((sum, i) => sum + i.amount, 0),
+);
+const incomeSeries = computed(() => incomeTotals.value.map((c) => c.amount));
+
+const incomeOptions = computed(() => ({
+  labels: incomeTotals.value.map((c) => c.label),
+  chart: {
+    type: "donut",
+    fontFamily: "inherit",
+    animations: { dynamicAnimation: { speed: 400 } },
+  },
+  colors: ["#3182f6", "#20c997", "#51cf66", "#339af0", "#8ce99a"],
+  plotOptions: {
+    pie: {
+      donut: {
+        size: "70%",
+        labels: {
+          show: true,
+          name: { show: false },
+          value: {
+            show: true,
+            fontSize: "12px",
+            fontWeight: "bold",
+            formatter: () => "총 수입",
+          },
+          total: {
+            showAlways: true,
+            show: true,
+            label: "총 수입",
+            color: "#3182f6",
+            formatter: () => "수입",
+          },
+        },
+      },
+    },
+  },
+  dataLabels: { enabled: false }, // 🚀 글씨 생략
+  legend: { show: false }, // 🚀 범례 생략
+  stroke: { width: 1, colors: ["#fff"] },
+  tooltip: { y: { formatter: (val) => val.toLocaleString() + "원" } },
+}));
+
+const aiIncomeSummaryText = computed(() => {
+  if (totalIncome.value === 0)
+    return "수입 0원... 숨만 쉬어도 돈이 나갑니다 💦";
+  const top = incomeTotals.value[0];
+  return `${top.label} 덕분에 숨통이 트이네요! 나이스 💰`;
+});
+
+// ==========================================
+// 🥊 수입 vs 지출 대결 (Vs Chart)
+// ==========================================
+const vsSeries = computed(() => [
+  {
+    name: "금액",
+    data: [totalIncome.value, totalExpense.value],
+  },
+]);
+
+const vsOptions = computed(() => ({
+  chart: { type: "bar", fontFamily: "inherit", toolbar: { show: false } },
+  plotOptions: {
+    bar: {
+      horizontal: true,
+      borderRadius: 6,
+      barHeight: "50%",
+      distributed: true,
+    },
+  },
+  colors: ["#3182f6", "#ff6b6b"], // 수입 파랑, 지출 빨강
+  dataLabels: {
+    enabled: true,
+    textAnchor: "start",
+    style: { colors: ["#fff"], fontSize: "11px" },
+    formatter: (val) => val.toLocaleString() + "원",
+    offsetX: 10,
+  },
+  xaxis: {
+    categories: ["수입", "지출"],
+    labels: { show: false },
+    axisBorder: { show: false },
+    axisTicks: { show: false },
+  },
+  yaxis: { labels: { style: { fontWeight: "bold", fontSize: "12px" } } },
+  grid: { show: false },
+  legend: { show: false },
+  tooltip: { y: { formatter: (val) => val.toLocaleString() + "원" } },
+}));
 </script>
 
 <style scoped>
-.period-chip {
-  font-size: 13px;
-  background-color: #f1f3f5;
-  color: #adb5bd;
-  border: 1px solid transparent;
-  transition: all 0.2s;
-}
-.period-chip.active {
-  background-color: #fff;
-  color: #3182f6;
-  border-color: #3182f6;
+.min-h-0 {
+  min-height: 0;
 }
 .bg-gradient-ai {
   background: linear-gradient(135deg, #3182f6 0%, #845ef7 100%);
 }
-.ai-summary {
-  background-color: #f8f9fc;
-  border: 1px solid #e2e8f0;
+/* 텍스트가 넘치면 말줄임표(...) 처리 */
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

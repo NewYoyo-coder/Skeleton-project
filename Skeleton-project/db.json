@@ -2,11 +2,11 @@
   "user": {
     "name": "허강상",
     "email": "gjrkdtkd@email.com",
+    "password": "1234",
     "currency": "KRW",
     "last_login": "2026-04-12",
     "settings": {
-      "theme": "light",
-      "auto_login": true
+      "theme": "dark"
     }
   },
   "categories": {
@@ -26420,7 +26420,7 @@
     {
       "id": "2446",
       "date": "2026-04-01",
-      "amount": 4900,
+      "amount": 5600,
       "category": "카페",
       "payment_method": "card",
       "shop_name": "스타벅스",

@@ -1,12 +1,12 @@
 {
   "user": {
-    "name": "허강상",
-    "email": "gjrkdtkd@email.com",
-    "password": "1234",
+    "name": "홍길동",
+    "email": "root@naver.com",
+    "password": "root",
     "currency": "KRW",
     "last_login": "2026-04-12",
     "settings": {
-      "theme": "dark"
+      "theme": "light"
     }
   }
 }

@@ -3,7 +3,12 @@
 > KB IT's Your Life 7기 29회차 2조 (전공반) - 지능형 가계부 솔루션 프로젝트
   
 <img width="2979" height="1967" alt="Fram323242423vg3423232e 2" src="https://github.com/user-attachments/assets/01fe8996-cb15-4c9f-98a4-aecec03f1c30" />
-    
+
+```bash
+"name": "홍길동",
+"email": "root@naver.com",
+"password": "root"
+```
 🔗 **Live Demo (배포 버전):** [https://kbskeleton.vercel.app](https://kbskeleton.vercel.app)
 🗓 **개발 기간:** 2026.04.07 ~ 2026.04.13
 

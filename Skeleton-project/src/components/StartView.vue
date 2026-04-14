@@ -90,7 +90,7 @@
       <div v-if="!isLoginMode" class="mt-3 px-3">
         <p
           class="small text-danger fw-bold mb-2"
-          style="font-size: 0.75rem; letter-spacing: -0.5px"
+          style="font-size: 0.7em; letter-spacing: -0.5px"
         >
           현재는 프로토타입의 JSON Server를 운영 중이에요!
         </p>
@@ -98,10 +98,10 @@
         <div
           class="text-secondary m-0"
           style="
-            font-size: 0.6rem;
-            line-height: 1.6;
+            font-size: 0.5rem;
+            line-height: 1.2;
             word-break: keep-all;
-            letter-spacing: -0.3px;
+            letter-spacing: -0.32x;
           "
         >
           <p class="mb-1">
@@ -118,7 +118,7 @@
           </p>
           <p class="mb-1">• 저희는 개인정보 보호를 최우선으로 삼을게요</p>
 
-          <div class="text-primary fw-bold mt-2" style="font-size: 0.75rem">
+          <div class="text-primary fw-bold mt-2" style="font-size: 0.6rem">
             더 안전하고 든든한 모습으로 추후에 다시 만나요!
           </div>
         </div>

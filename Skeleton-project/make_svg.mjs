@@ -1,10 +1,9 @@
 import fs from "fs";
 
-// --- 설정 및 색상 (SVG용 HEX) ---
-const MAGENTA = "#FF69B4";
-const KB_MAIN = "#FFD400";
-const KB_DEEP = "#FFB400";
-const RESET = "#CCCCCC";
+// --- 설정 및 색상 (SVG용 HEX, 윈도우 그림자 지운 기념으로 시인성 강화) ---
+const MAGENTA = "#FF00FF"; // 더 쨍한 마젠타 (투명 배경에서 잘 보이게)
+const KB_MAIN = "#FFD400"; // 정품 노랑
+const KB_DEEP = "#FFB400"; // 진한 노랑
 const PETALS = ["🌸", "*", "`"];
 
 const LOGO = [
@@ -14,6 +13,10 @@ const LOGO = [
   "   / /| |/ /_/ /  / /_/ / /_/ / /_/ / / / / /___/ ___ |/ /  / / ____/ ",
   "  /_/ |_/_____/  /_____/\\____/\\____/ /_/  \\____/_/  |_/_/  /_/_/      ",
 ];
+
+// 이스케이프 유틸리티 (SVG 내부 특수문자 깨짐 방지)
+const escapeSVG = (str) =>
+  str.replace(/\\/g, "&#92;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 function generateSVG() {
   const width = 800;
@@ -28,9 +31,15 @@ function generateSVG() {
     LOGO.forEach((line, i) => {
       let rowText = "";
       [...line].forEach((char, x) => {
+        if (char === " ") return; // 공백은 렌더링 안 함
+
         const val = x + i * 5;
         let color = KB_MAIN;
-        let content = char === " " ? " " : char;
+        let content = char;
+
+        // 그라데이션 대신 KB 정품 노랑 팔레트 적용 (진한 노랑 -> 메인 노랑 -> 메인 노랑)
+        const phase = x % 15;
+        color = phase < 5 ? KB_DEEP : KB_MAIN;
 
         if (val >= threshold && val <= threshold + 25) {
           if (Math.random() < 0.35) {
@@ -38,11 +47,7 @@ function generateSVG() {
             content = PETALS[Math.floor(Math.random() * PETALS.length)];
           }
         }
-        // SVG 특수문자 이스케이프
-        const safeContent = content
-          .replace(/\\/g, "&#92;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;");
+        const safeContent = escapeSVG(content);
         frameContent += `<text x="${x * 9 + 20}" y="${i * 20 + 40}" fill="${color}" font-family="monospace" font-size="14">${safeContent}</text>`;
       });
     });
@@ -62,15 +67,13 @@ function generateSVG() {
   const svg = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}">
     <style>
-        rect { fill: #0d1117; }
         ${css}
     </style>
-    <rect width="100%" height="100%" rx="10" />
     ${frames.join("")}
 </svg>`;
 
   fs.writeFileSync("animation.svg", svg);
-  console.log("animation.svg 생성 완료!");
+  console.log("배경 투명 animation.svg 생성 완료!");
 }
 
 generateSVG();

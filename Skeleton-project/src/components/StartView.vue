@@ -73,6 +73,20 @@
         </button>
       </div>
 
+      <div class="mt-3 p-2 border rounded-3 bg-light opacity-75">
+        <p class="mb-1 fw-bold text-dark" style="font-size: 0.7rem">
+          테스트 계정 정보
+        </p>
+        <div
+          class="d-flex justify-content-center gap-2 text-secondary"
+          style="font-size: 0.65rem"
+        >
+          <span>이름: <strong>홍길동</strong></span>
+          <span>아이디: <strong>root@naver.com</strong></span>
+          <span>PW: <strong>root</strong></span>
+        </div>
+      </div>
+
       <div v-if="!isLoginMode" class="mt-3 px-3">
         <p
           class="small text-danger fw-bold mb-2"

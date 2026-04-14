@@ -174,7 +174,8 @@ const handleLogout = () => {
 .profile-page {
   background-color: var(--bg);
   color: var(--text);
-  overflow: hidden; /* 페이지 자체 스크롤 방지 */
+  /* overflow: hidden;  */
+  /* 페이지 자체 스크롤 방지 */
   height: 100vh;
 }
 

@@ -92,30 +92,15 @@ onMounted(async () => {
 }
 
 /* 🚀 1. 좀비 스크롤 완전 박멸 (최상단) */
-html,
-body {
-  margin: 0 !important;
-  padding: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  overflow: hidden !important; /* 🔥 전체 스크롤 금지 */
-  overscroll-behavior: none; /* 당겨서 새로고침 방지 */
-}
+/* 사용성 너무 떨어져서 지움 */
 
-/* 모든 요소 계산 방식 통일 (패딩 때문에 삐져나오는거 방지) */
-*,
-*::before,
-*::after {
-  box-sizing: border-box !important;
-}
-
-#app {
+/* #app {
   width: 100% !important;
   height: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
   overflow: hidden !important;
-}
+} */
 
 /* 🚀 2. 앱 컨테이너 (모바일 주소창 대응) */
 #app-container {

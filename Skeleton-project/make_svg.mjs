@@ -1,11 +1,11 @@
 import fs from "fs";
 
-// --- 설정 및 색상 (SVG용 HEX, 윈도우 그림자 지운 기념으로 시인성 강화) ---
-const MAGENTA = "#FF00FF"; // 더 쨍한 마젠타 (투명 배경에서 잘 보이게)
-const KB_MAIN = "#FFD400"; // 정품 노랑
-const KB_DEEP = "#FFB400"; // 진한 노랑
+const MAGENTA = "#FF00FF";
+const KB_MAIN = "#FFD400";
+const KB_DEEP = "#FFB400";
 const PETALS = ["🌸", "*", "`"];
 
+// 로고 원복 (백슬래시 그대로 사용)
 const LOGO = [
   "      __ __ ____     ____  ____  ____  _______________    __  _______ ",
   "     / //_// __ )   / __ )/ __ \\/ __ \\/_  __/ ____/   |  /  |/  / __ \\",
@@ -14,32 +14,31 @@ const LOGO = [
   "  /_/ |_/_____/  /_____/\\____/\\____/ /_/  \\____/_/  |_/_/  /_/_/      ",
 ];
 
-// 이스케이프 유틸리티 (SVG 내부 특수문자 깨짐 방지)
+// 깃허브 보안 필터에 가장 안전한 이스케이프
 const escapeSVG = (str) =>
-  str.replace(/\\/g, "&#92;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 
 function generateSVG() {
-  const width = 800;
-  const height = 200;
+  const viewBoxWidth = 850;
+  const viewBoxHeight = 200;
   const frames = [];
-  const frameCount = 20; // 애니메이션 단계
+  const frameCount = 20;
 
   for (let f = 0; f < frameCount; f++) {
-    let frameContent = `<g class="frame" id="frame-${f}">`;
+    let frameContent = `<g class="frame">`; // ID 제거 (중복 ID 오류 방지)
     const threshold = LOGO[0].length + 30 - f * 6;
 
     LOGO.forEach((line, i) => {
-      let rowText = "";
       [...line].forEach((char, x) => {
-        if (char === " ") return; // 공백은 렌더링 안 함
+        if (char === " ") return;
 
         const val = x + i * 5;
-        let color = KB_MAIN;
+        let color = x % 15 < 5 ? KB_DEEP : KB_MAIN;
         let content = char;
-
-        // 그라데이션 대신 KB 정품 노랑 팔레트 적용 (진한 노랑 -> 메인 노랑 -> 메인 노랑)
-        const phase = x % 15;
-        color = phase < 5 ? KB_DEEP : KB_MAIN;
 
         if (val >= threshold && val <= threshold + 25) {
           if (Math.random() < 0.35) {
@@ -47,33 +46,37 @@ function generateSVG() {
             content = PETALS[Math.floor(Math.random() * PETALS.length)];
           }
         }
+
         const safeContent = escapeSVG(content);
-        frameContent += `<text x="${x * 9 + 20}" y="${i * 20 + 40}" fill="${color}" font-family="monospace" font-size="14">${safeContent}</text>`;
+        // 백슬래시는 직접 출력하되 폰트로 제어
+        frameContent += `<text x="${x * 9.2 + 20}" y="${i * 22 + 40}" fill="${color}">${safeContent}</text>`;
       });
     });
     frameContent += `</g>`;
     frames.push(frameContent);
   }
 
-  const css = `
+  const svg = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${viewBoxWidth} ${viewBoxHeight}" width="100%">
+    <style>
+        /* 원화기호 방지 + 고정폭 유지 끝판왕 폰트 설정 */
+        text {
+            font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Console", monospace;
+            font-size: 16px;
+            font-weight: bold;
+        }
         @keyframes play {
             0%, 100% { opacity: 0; }
             ${100 / frameCount}% { opacity: 1; }
         }
-        .frame { opacity: 0; animation: play ${frameCount * 0.1}s infinite; }
-        ${frames.map((_, i) => `.frame:nth-child(${i + 1}) { animation-delay: ${i * 0.1}s; }`).join("\n")}
-    `;
-
-  const svg = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}">
-    <style>
-        ${css}
+        .frame { opacity: 0; animation: play ${frameCount * 0.15}s infinite; }
+        ${frames.map((_, i) => `.frame:nth-child(${i + 1}) { animation-delay: ${i * 0.15}s; }`).join("\n")}
     </style>
     ${frames.join("")}
 </svg>`;
 
   fs.writeFileSync("animation.svg", svg);
-  console.log("배경 투명 animation.svg 생성 완료!");
+  console.log("오류 해결 버전 생성 완료!");
 }
 
 generateSVG();

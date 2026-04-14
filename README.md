@@ -1,8 +1,9 @@
 # 💰 Skeleton-Project: Smart Ledger Architecture
 > **"단순한 기록을 넘어, 당신의 금융 UX를 통제하다."**
 > KB IT's Your Life 7기 29회차 2조 (전공반) - 지능형 가계부 솔루션 프로젝트
-  
-<img width="2979" height="1967" alt="Fram323242423vg3423232e 2" src="https://github.com/user-attachments/assets/01fe8996-cb15-4c9f-98a4-aecec03f1c30" />
+
+![KB Animation](Skeleton-project/animation.svg)
+<img width="2000" height="800" alt="Fram323242423vg3423232e 2" src="https://github.com/user-attachments/assets/01fe8996-cb15-4c9f-98a4-aecec03f1c30" />
 
 ```bash
 "name": "홍길동",
